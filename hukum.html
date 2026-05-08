@@ -2,9 +2,9 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TermoDinamika Atom & Bumi | Hukum 0, I, II | Visual 3D</title>
-    <!-- Font Awesome 6 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Simulasi Atom & Termodinamika Bumi | Hukum 0, I, II | Perubahan Iklim</title>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -15,286 +15,221 @@
         }
         body {
             overflow: hidden;
-            font-family: 'Inter', system-ui, 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
-            background: #030318;
-            color: #f0f3fa;
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+            background: #010113;
+            color: #fff;
         }
-        /* Tombol toggle panel yang lebih modern */
+        /* Tombol toggle kontrol */
         .toggle-panel {
             position: absolute;
-            bottom: 24px;
-            right: 24px;
-            z-index: 60;
-            background: rgba(0, 0, 0, 0.7);
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            background: rgba(0,0,0,0.7);
             backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 10px 20px;
+            border-radius: 50px;
+            padding: 10px 18px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
-            border: 1px solid #ff8c42;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #ff8844;
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
             pointer-events: auto;
-            font-family: monospace;
         }
-        .toggle-panel:hover {
-            background: #ff6600cc;
-            border-color: #ffbb77;
-            transform: scale(1.02);
-        }
-        .toggle-panel:active { transform: scale(0.96); }
+        .toggle-panel:active { transform: scale(0.96); background: #ff6600; }
         
-        /* Panel kontrol utama - desain lebih rapi */
+        /* Panel utama */
         #controlPanel {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 12, 28, 0.92);
-            backdrop-filter: blur(24px);
-            padding: 20px 24px 28px;
-            border-top-left-radius: 32px;
-            border-top-right-radius: 32px;
-            border-top: 1px solid rgba(255, 140, 66, 0.5);
-            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            z-index: 50;
+            background: rgba(12, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            padding: 18px 20px 25px;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            border-top: 1px solid rgba(255,120,50,0.5);
+            transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            z-index: 40;
             pointer-events: auto;
-            box-shadow: 0 -8px 25px rgba(0,0,0,0.4);
         }
         #controlPanel.hide {
             transform: translateY(100%);
         }
         .slider-block {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
         .slider-label {
             display: flex;
             justify-content: space-between;
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 10px;
-            letter-spacing: 0.2px;
-            color: #ddd;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
         }
         input[type="range"] {
             width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, #2f86a6, #ffae5a, #ff4d2e);
+            height: 6px;
+            background: linear-gradient(90deg, #2299aa, #ffaa44, #ff4411);
             border-radius: 10px;
             -webkit-appearance: none;
-            outline: none;
         }
         input[type="range"]::-webkit-slider-thumb {
             width: 22px;
             height: 22px;
-            background: #ffb347;
+            background: #ffaa55;
             border-radius: 50%;
             border: 2px solid white;
             cursor: pointer;
-            box-shadow: 0 0 6px #ff9944;
-            transition: 0.1s;
+            box-shadow: 0 0 8px #ff8844;
         }
         .layer-buttons {
             display: flex;
-            gap: 12px;
-            margin: 20px 0 18px;
+            gap: 10px;
+            margin: 12px 0 16px;
             flex-wrap: wrap;
             justify-content: center;
         }
         .layer-btn {
-            background: #1e1f2c;
+            background: #1e1e2f;
             border: none;
-            padding: 8px 15px;
-            border-radius: 50px;
-            color: #bbb;
-            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 40px;
+            color: #ccc;
+            font-weight: bold;
             font-size: 12px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid #ff8c4266;
-            backdrop-filter: blur(4px);
-        }
-        .layer-btn i {
-            font-size: 14px;
+            transition: 0.2s;
+            border: 1px solid #ff884466;
         }
         .layer-btn.active {
-            background: #ff7b2c;
+            background: #ff6600;
             color: white;
-            box-shadow: 0 0 12px #ff8844;
-            border-color: #ffbb77;
+            box-shadow: 0 0 8px orange;
         }
         .stats-grid {
             display: flex;
-            gap: 15px;
-            margin: 16px 0;
+            gap: 12px;
+            margin: 12px 0;
             flex-wrap: wrap;
         }
         .stat-card {
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(6px);
-            border-radius: 28px;
-            padding: 10px 12px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 24px;
+            padding: 8px 12px;
             flex: 1;
-            min-width: 100px;
             text-align: center;
             border-left: 3px solid #ffaa55;
-            border-bottom: 1px solid #ffaa5533;
-        }
-        .stat-card .label {
-            font-size: 10px;
-            text-transform: uppercase;
-            font-weight: 500;
-            letter-spacing: 1px;
-            color: #aaa;
-            margin-bottom: 6px;
-        }
-        .stat-val {
-            font-weight: 800;
-            font-size: 18px;
-            font-family: 'JetBrains Mono', monospace;
-            color: #ffc48a;
         }
         .reset-btn {
-            background: linear-gradient(100deg, #ff571c, #ff2a00);
+            background: linear-gradient(95deg, #ff5e00, #ff2d00);
             width: 100%;
             border: none;
             padding: 12px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 14px;
+            border-radius: 50px;
+            font-weight: bold;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin: 12px 0 6px;
+            margin: 8px 0 6px;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        .reset-btn:active {
-            transform: scale(0.97);
-            background: linear-gradient(100deg, #ff3c0c, #dd2a00);
-        }
-        /* Badge info kiri & kanan */
         .badge-status {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(5, 5, 15, 0.75);
-            backdrop-filter: blur(12px);
-            padding: 8px 18px;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            padding: 5px 14px;
             border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-            z-index: 30;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 20;
             pointer-events: none;
-            border-left: 4px solid #66ffaa;
-            letter-spacing: 0.3px;
+            border-left: 3px solid #66ffaa;
         }
         .temp-big-badge {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
             backdrop-filter: blur(12px);
-            padding: 8px 20px;
-            border-radius: 60px;
+            padding: 8px 16px;
+            border-radius: 50px;
             text-align: center;
             font-family: monospace;
-            z-index: 30;
-            font-weight: 700;
-            border-right: 3px solid #ff7755;
-            font-size: 14px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        .temp-big-badge span {
-            font-size: 24px;
-            font-weight: 800;
-            margin-left: 6px;
+            z-index: 20;
+            font-weight: bold;
+            border-right: 3px solid #ff6633;
         }
         .atom-hint {
             position: absolute;
-            bottom: 110px;
-            left: 18px;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(5px);
+            bottom: 100px;
+            left: 12px;
+            background: rgba(0,0,0,0.5);
             font-size: 9px;
-            padding: 6px 12px;
-            border-radius: 40px;
+            padding: 4px 8px;
+            border-radius: 20px;
             pointer-events: none;
             z-index: 25;
-            font-family: monospace;
-            border: 0.5px solid #ffaa6644;
         }
-        @media (max-width: 600px) {
-            .layer-btn { padding: 6px 12px; font-size: 10px; }
-            .stat-val { font-size: 15px; }
-            .temp-big-badge { padding: 5px 12px; top: 12px; right: 12px; font-size: 11px; }
-            .temp-big-badge span { font-size: 18px; }
-            .badge-status { font-size: 9px; top: 12px; left: 12px; padding: 5px 12px; }
-            .atom-hint { bottom: 95px; font-size: 7px; }
-            .toggle-panel { bottom: 16px; right: 16px; padding: 6px 15px; }
-        }
-        footer {
-            position: absolute;
-            bottom: 12px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 8px;
-            color: #aaa7;
-            pointer-events: none;
-            z-index: 20;
+        @media (max-width: 550px) {
+            .layer-btn { font-size: 10px; padding: 5px 10px; }
+            .stat-card .label { font-size: 9px; }
+            .temp-big-badge { font-size: 11px; padding: 5px 12px; top: 10px; right: 10px; }
+            .badge-status { font-size: 9px; top: 10px; left: 10px; }
+            .atom-hint { bottom: 85px; font-size: 8px;}
         }
     </style>
 </head>
 <body>
     <div class="badge-status" id="statusLabel">
-        <i class="fas fa-atom"></i> <span id="phaseText">⚖️ Ekuilibrium Termal</span>
+        <i class="fas fa-atom"></i> <span id="phaseText">Ekuilibrium Termal</span>
     </div>
     <div class="temp-big-badge" id="tempBadge">
         <i class="fas fa-temperature-high"></i> ΔT = <span id="anomalyDisplay">+0.0</span>°C
     </div>
     <div class="toggle-panel" id="togglePanelBtn">
-        <i class="fas fa-sliders-h" id="toggleIcon"></i> 
+        <i class="fas fa-chart-simple" id="toggleIcon"></i> 
         <span id="toggleLabel">Sembunyikan Panel</span>
     </div>
     <div class="atom-hint">
-        <i class="fas fa-microscope"></i> Atom & Kisi | Hk.0: Kesetimbangan • Hk.I: ΔU = Q-W • Hk.II: Entropi ↑
+        <i class="fas fa-microscope"></i> Kinetika atom & vibrasi kisi | Hk.0, I, II
     </div>
 
     <div id="controlPanel">
         <div class="slider-block">
             <div class="slider-label">
-                <span><i class="fas fa-industry"></i> Emisi GRK (Indeks Termal)</span>
-                <span id="emissValue" style="background:#030318aa; padding:2px 14px; border-radius: 60px; font-family:monospace;">0.80</span>
+                <span><i class="fas fa-industry"></i> Emisi GRK (Intensitas Termal)</span>
+                <span id="emissValue" style="background:#00000066; padding:2px 12px; border-radius: 50px;">0.80</span>
             </div>
             <input type="range" id="co2Emission" min="0.5" max="2.2" step="0.01" value="0.8">
         </div>
         
         <div class="layer-buttons" id="layerControls">
             <button class="layer-btn" data-layer="nucleus"><i class="fas fa-circle-nodes"></i> Inti Atom</button>
-            <button class="layer-btn" data-layer="electrons"><i class="fas fa-bolt"></i> Elektron</button>
+            <button class="layer-btn" data-layer="electrons"><i class="fas fa-bolt"></i> Elektron Valensi</button>
             <button class="layer-btn active" data-layer="lattice"><i class="fas fa-border-all"></i> Kisi Kristal</button>
             <button class="layer-btn active" data-layer="phonon"><i class="fas fa-waveform"></i> Fonon</button>
         </div>
         
         <div class="stats-grid">
-            <div class="stat-card"><div class="label"><i class="fas fa-fire"></i> Energi Dalam (U)</div><div><span id="internalEnergyStat" class="stat-val">0.42</span> <span style="font-size:10px;">kJ/mol</span></div></div>
-            <div class="stat-card"><div class="label"><i class="fas fa-exchange-alt"></i> Q_in / Q_out</div><div><span id="fluxStat" class="stat-val">0.85/0.82</span></div></div>
-            <div class="stat-card"><div class="label"><i class="fas fa-chaos"></i> Entropi (S)</div><div><span id="entropyStat" class="stat-val">312</span> <span style="font-size:10px;">J/K</span></div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-fire"></i> Energi Dalam (U)</div><span id="internalEnergyStat" class="stat-val">0.42</span> <span style="font-size:10px">kJ/mol</span></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-exchange-alt"></i> Q_in / Q_out</div><span id="fluxStat" class="stat-val">0.85/0.82</span></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-atom"></i> Entropi Sistem (S)</div><span id="entropyStat" class="stat-val">312</span> <span style="font-size:10px">J/K</span></div>
         </div>
-        <button class="reset-btn" id="resetThermo"><i class="fas fa-undo-alt"></i> Reset ke Pra-Industri (ΔT=0°C)</button>
-        <div style="font-size:9px; text-align:center; margin-top: 8px; opacity:0.7;">
-            <i class="fas fa-chalkboard-teacher"></i> Hukum 0 Termal • Hukum I energi • Hukum II Entropi & Ireversibilitas
+        <button class="reset-btn" id="resetThermo"><i class="fas fa-undo-alt"></i> Setel Ulang : Keadaan Pra-Industri</button>
+        <div class="slider-label" style="font-size:10px; margin-top:6px; text-align:center">
+            <i class="fas fa-chalkboard-user"></i> Hukum 0 (kesetimbangan termal) • Hk I (ΔU = Q - W) • Hk II (Entropi naik)
         </div>
     </div>
 
@@ -311,13 +246,13 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         
-        // ---------- Setup Scene ----------
+        // --- Setup Scene (visualisasi atom + termodinamika) ---
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x02021a);
-        scene.fog = new THREE.FogExp2(0x02021a, 0.0025);
+        scene.background = new THREE.Color(0x020218);
+        scene.fog = new THREE.FogExp2(0x020218, 0.003);
         
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.set(2.2, 1.4, 4.0);
+        camera.position.set(2, 1.2, 3.8);
         camera.lookAt(0, 0, 0);
         
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -328,64 +263,67 @@
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.7;
+        controls.autoRotateSpeed = 0.8;
         controls.enableZoom = true;
         controls.enablePan = false;
         controls.target.set(0, 0, 0);
         
-        // ---------- Model Atom & Kisi Kristal ----------
-        // Inti atom (nukleus)
-        const nucleusMat = new THREE.MeshStandardMaterial({ color: 0xff5a3a, emissive: 0xcc3311, emissiveIntensity: 0.5, metalness: 0.4, roughness: 0.3 });
-        const nucleus = new THREE.Mesh(new THREE.SphereGeometry(0.28, 72, 72), nucleusMat);
+        // -------- STRUKTUR ATOM DAN KISI KRISTAL (molekul model)--------
+        // Inti pusat (nukleus)
+        const nucleusMat = new THREE.MeshStandardMaterial({ color: 0xff6666, emissive: 0xaa2222, emissiveIntensity: 0.45, metalness: 0.3 });
+        const nucleus = new THREE.Mesh(new THREE.SphereGeometry(0.28, 64, 64), nucleusMat);
         scene.add(nucleus);
         
-        // Glow inti
-        const innerGlow = new THREE.Mesh(new THREE.SphereGeometry(0.33, 48, 48), new THREE.MeshBasicMaterial({ color: 0xff7744, transparent: true, opacity: 0.25, side: THREE.BackSide }));
+        // Lapisan proton-neutron (detail)
+        const innerGlow = new THREE.Mesh(new THREE.SphereGeometry(0.32, 48, 48), new THREE.MeshBasicMaterial({ color: 0xff8866, transparent: true, opacity: 0.2, side: THREE.BackSide }));
         scene.add(innerGlow);
         
-        // Elektron (3 orbit)
-        const electronMat = new THREE.MeshStandardMaterial({ color: 0xffcc77, emissive: 0xff9933, emissiveIntensity: 0.65 });
+        // Elektron valensi (partikel mengorbit)
+        const electronGroup = new THREE.Group();
+        const electronMat = new THREE.MeshStandardMaterial({ color: 0xffcc77, emissive: 0xff9922, emissiveIntensity: 0.6 });
         const orbits = [];
         const electrons = [];
-        const orbitRadii = [0.72, 0.98, 1.24];
-        const orbitColors = [0xffaa66, 0xffbb77, 0xffcc99];
+        const orbitRadii = [0.7, 0.95, 1.2];
+        const orbitColors = [0xffaa66, 0xffaa88, 0xffcc99];
         for (let i = 0; i < 3; i++) {
+            const orbitPoints = [];
             const radius = orbitRadii[i];
-            const points = [];
-            for (let ang = 0; ang <= 2 * Math.PI; ang += 0.08) {
-                points.push(new THREE.Vector3(Math.cos(ang) * radius, Math.sin(ang) * radius * 0.6, 0));
-            }
-            const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
-            const orbitLine = new THREE.LineLoop(lineGeo, new THREE.LineBasicMaterial({ color: orbitColors[i], transparent: true, opacity: 0.3 }));
+            const curve = new THREE.EllipseCurve(0, 0, radius, radius, 0, 2 * Math.PI);
+            const divisions = 80;
+            const points = curve.getPoints(divisions);
+            const lineGeo = new THREE.BufferGeometry().setFromPoints(points.map(p => new THREE.Vector3(p.x, p.y, 0)));
+            const orbitLine = new THREE.LineLoop(lineGeo, new THREE.LineBasicMaterial({ color: orbitColors[i], transparent: true, opacity: 0.25 }));
             scene.add(orbitLine);
             orbits.push(orbitLine);
-            const elect = new THREE.Mesh(new THREE.SphereGeometry(0.09, 32, 32), electronMat);
+            // tambah elektron (bola kecil)
+            const elect = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 24), electronMat);
             scene.add(elect);
-            electrons.push({ mesh: elect, radius: radius, angle: (i * Math.PI * 2 / 3), speed: 1.1 - i * 0.15 });
+            electrons.push({ mesh: elect, radius: radius, angle: (i * Math.PI * 2 / 3), speed: 1.2 - i * 0.2 });
         }
         
-        // Kisi Kristal (3D kubus + atom)
+        // Kisi Kristal (model kubik / kisi 3D)
         const latticeGroup = new THREE.Group();
+        const latticeSpacing = 0.48;
         const latticeAtoms = [];
         const positions = [
-            [-0.85, -0.85, -0.85], [0.85, -0.85, -0.85], [0.85, 0.85, -0.85], [-0.85, 0.85, -0.85],
-            [-0.85, -0.85, 0.85], [0.85, -0.85, 0.85], [0.85, 0.85, 0.85], [-0.85, 0.85, 0.85],
-            [0, 0, -1.05], [0, 0, 1.05], [1.05, 0, 0], [-1.05, 0, 0], [0, 1.05, 0], [0, -1.05, 0]
+            [-0.8, -0.8, -0.8], [0.8, -0.8, -0.8], [0.8, 0.8, -0.8], [-0.8, 0.8, -0.8],
+            [-0.8, -0.8, 0.8], [0.8, -0.8, 0.8], [0.8, 0.8, 0.8], [-0.8, 0.8, 0.8],
+            [0, 0, -1.0], [0, 0, 1.0], [1.0, 0, 0], [-1.0, 0, 0], [0, 1.0, 0], [0, -1.0, 0]
         ];
-        const atomKisiMat = new THREE.MeshStandardMaterial({ color: 0x88bbff, emissive: 0x2266aa, emissiveIntensity: 0.2, metalness: 0.2 });
+        const atomKisiMat = new THREE.MeshStandardMaterial({ color: 0x88aaff, emissive: 0x2266aa, emissiveIntensity: 0.2 });
         positions.forEach(pos => {
-            const atom = new THREE.Mesh(new THREE.SphereGeometry(0.095, 28, 28), atomKisiMat);
+            const atom = new THREE.Mesh(new THREE.SphereGeometry(0.09, 24, 24), atomKisiMat);
             atom.position.set(pos[0], pos[1], pos[2]);
             latticeGroup.add(atom);
             latticeAtoms.push(atom);
         });
-        // Garis kisi
+        // garis kisi
         const edges = [
-            [[-0.85,-0.85,-0.85],[0.85,-0.85,-0.85]], [[0.85,-0.85,-0.85],[0.85,0.85,-0.85]], [[0.85,0.85,-0.85],[-0.85,0.85,-0.85]], [[-0.85,0.85,-0.85],[-0.85,-0.85,-0.85]],
-            [[-0.85,-0.85,0.85],[0.85,-0.85,0.85]], [[0.85,-0.85,0.85],[0.85,0.85,0.85]], [[0.85,0.85,0.85],[-0.85,0.85,0.85]], [[-0.85,0.85,0.85],[-0.85,-0.85,0.85]],
-            [[-0.85,-0.85,-0.85],[-0.85,-0.85,0.85]], [[0.85,-0.85,-0.85],[0.85,-0.85,0.85]], [[0.85,0.85,-0.85],[0.85,0.85,0.85]], [[-0.85,0.85,-0.85],[-0.85,0.85,0.85]]
+            [[-0.8,-0.8,-0.8],[0.8,-0.8,-0.8]], [[0.8,-0.8,-0.8],[0.8,0.8,-0.8]], [[0.8,0.8,-0.8],[-0.8,0.8,-0.8]], [[-0.8,0.8,-0.8],[-0.8,-0.8,-0.8]],
+            [[-0.8,-0.8,0.8],[0.8,-0.8,0.8]], [[0.8,-0.8,0.8],[0.8,0.8,0.8]], [[0.8,0.8,0.8],[-0.8,0.8,0.8]], [[-0.8,0.8,0.8],[-0.8,-0.8,0.8]],
+            [[-0.8,-0.8,-0.8],[-0.8,-0.8,0.8]], [[0.8,-0.8,-0.8],[0.8,-0.8,0.8]], [[0.8,0.8,-0.8],[0.8,0.8,0.8]], [[-0.8,0.8,-0.8],[-0.8,0.8,0.8]]
         ];
-        const lineMat = new THREE.LineBasicMaterial({ color: 0x66aaff, transparent: true, opacity: 0.35 });
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x44aaff, transparent: true, opacity: 0.3 });
         edges.forEach(edge => {
             const points = [new THREE.Vector3(edge[0][0], edge[0][1], edge[0][2]), new THREE.Vector3(edge[1][0], edge[1][1], edge[1][2])];
             const geom = new THREE.BufferGeometry().setFromPoints(points);
@@ -394,88 +332,101 @@
         });
         scene.add(latticeGroup);
         
-        // Fonon: partikel getaran
-        const phononCount = 550;
+        // Fonon (gelombang vibrasi) - partikel efek
+        const phononParticles = [];
+        const phononCount = 400;
         const phononGeo = new THREE.BufferGeometry();
         const phononPositions = [];
         for (let i = 0; i < phononCount; i++) {
-            phononPositions.push((Math.random() - 0.5) * 3.8, (Math.random() - 0.5) * 3.2, (Math.random() - 0.5) * 3.2);
+            const x = (Math.random() - 0.5) * 3.5;
+            const y = (Math.random() - 0.5) * 3;
+            const z = (Math.random() - 0.5) * 3;
+            phononPositions.push(x, y, z);
         }
         phononGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(phononPositions), 3));
         const phononMat = new THREE.PointsMaterial({ color: 0x77ddff, size: 0.018, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending });
         const phononPoints = new THREE.Points(phononGeo, phononMat);
         scene.add(phononPoints);
         
-        // Partikel termal (fluks energi)
+        // Background: efek partikel panas (energi)
         const thermalFluxGeo = new THREE.BufferGeometry();
-        const fluxCount = 1000;
+        const fluxCount = 800;
         const fluxPos = [];
         for (let i = 0; i < fluxCount; i++) {
-            fluxPos.push((Math.random() - 0.5) * 7, (Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5 - 1);
+            fluxPos.push((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5 - 1);
         }
         thermalFluxGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(fluxPos), 3));
-        const fluxParticles = new THREE.Points(thermalFluxGeo, new THREE.PointsMaterial({ color: 0xff8844, size: 0.013, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending }));
+        const fluxParticles = new THREE.Points(thermalFluxGeo, new THREE.PointsMaterial({ color: 0xff8844, size: 0.012, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending }));
         scene.add(fluxParticles);
         
-        // Lighting
+        // additional glow & ambient
         const ambientLight = new THREE.AmbientLight(0x222244);
         scene.add(ambientLight);
-        const dirLight = new THREE.DirectionalLight(0xfff5dd, 1.1);
+        const dirLight = new THREE.DirectionalLight(0xffeedd, 1.0);
         dirLight.position.set(2, 3, 4);
         scene.add(dirLight);
-        const fillLight = new THREE.PointLight(0xffaa77, 0.5);
-        fillLight.position.set(0.5, 1, 2);
-        scene.add(fillLight);
-        const backLight = new THREE.PointLight(0xff6644, 0.3);
-        backLight.position.set(-1, 0.5, -1.5);
+        const backLight = new THREE.PointLight(0xffaa66, 0.4);
+        backLight.position.set(-1, 1, 2);
         scene.add(backLight);
         
-        // ---------- TERMODINAMIKA ----------
-        let internalEnergy = 0.42;
+        // --- SISTEM TERMODINAMIKA (Hukum 0, I, II) ---
+        let internalEnergy = 0.42;      // energi dalam skala realtif
         let qIn = 0.85, qOut = 0.82;
-        let entropy = 312.0;
+        let entropy = 312.0;             // J/K
+        let co2Index = 350;              // ppm
         let currentAnomaly = 0.0;
         
+        // Fungsi update berdasarkan emisi (indeks pemanasan)
         function updateThermoFromEmission(emissionIdx) {
+            // emisiIdx 0.5 = rendah -> 2.2 ekstrim
             const forcing = Math.max(0, (emissionIdx - 0.7) / 1.5);
             qIn = Math.min(1.62, 0.82 + forcing * 0.72);
             qOut = Math.min(1.38, 0.78 + forcing * 0.55);
+            // perubahan energi dalam ΔU ~ Q_in - Q_out (hukum I)
             const deltaU = (qIn - qOut) * 0.011;
-            internalEnergy = Math.min(0.88, Math.max(0.38, internalEnergy + deltaU));
+            internalEnergy = Math.min(0.85, Math.max(0.38, internalEnergy + deltaU));
+            // CO2 ekuivalen
+            co2Index = Math.min(820, Math.max(310, 350 + (emissionIdx - 0.7) * 460));
+            // Anomali suhu (modelling)
             let anomaly = forcing * 3.6;
             if (emissionIdx > 0.95 && emissionIdx < 1.05) anomaly = 1.2 + (emissionIdx - 1.0) * 2.3;
-            anomaly = Math.max(-0.15, Math.min(4.4, anomaly));
-            entropy = Math.min(440, Math.max(298, 312 + anomaly * 12.8));
+            anomaly = Math.max(-0.1, Math.min(4.3, anomaly));
+            // Hukum II: entropi naik seiring dengan peningkatan emisi -> irreversibilitas
+            entropy = Math.min(430, Math.max(298, 312 + anomaly * 12.5));
             return anomaly;
         }
         
-        function updateVisualDynamics(anomaly) {
-            const intensity = Math.min(1.0, anomaly / 3.6);
-            // Inti
-            nucleusMat.emissiveIntensity = 0.48 + intensity * 0.7;
-            nucleusMat.color.setHex(0xff5533);
-            innerGlow.material.opacity = 0.2 + intensity * 0.35;
-            // Elektron
-            electronMat.emissiveIntensity = 0.55 + intensity * 0.85;
-            electronMat.color.setHex(0xffbb77);
-            // Kisi
-            const latticeHeat = 0.2 + intensity * 0.7;
+        // efek visual berdasarkan anomali dan energi (warna atom vibrasi, fonon, partikel)
+        function updateVisualDynamics(anomaly, energy) {
+            const intensity = Math.min(1.0, anomaly / 3.5);
+            // inti atom semakin merah/panas
+            nucleusMat.emissiveIntensity = 0.45 + intensity * 0.55;
+            nucleusMat.color.setHex(0xff6644);
+            innerGlow.material.opacity = 0.2 + intensity * 0.3;
+            // elektron valensi glow efek kinetik
+            electronMat.emissiveIntensity = 0.5 + intensity * 0.8;
+            // kisi kristal - vibrasi diperkuat
+            const latticeHeat = 0.2 + intensity * 0.65;
             atomKisiMat.emissiveIntensity = latticeHeat;
-            atomKisiMat.color.setRGB(0.5 + intensity*0.45, 0.6, 1.0 - intensity*0.5);
-            latticeAtoms.forEach(atom => { atom.material.emissiveIntensity = latticeHeat * 0.9; });
-            // Fonon
-            phononMat.color.setHSL(0.55, 1.0, 0.55 + intensity*0.3);
-            phononMat.size = 0.018 + intensity * 0.022;
-            // Partikel fluks
-            fluxParticles.material.color.setHex(0xff8844);
-            fluxParticles.material.opacity = 0.4 + intensity * 0.5;
-            // Kecepatan elektron (energi kinetik)
+            atomKisiMat.color.setRGB(0.5 + intensity*0.4, 0.6, 1.0 - intensity*0.5);
+            latticeAtoms.forEach(atom => {
+                atom.material.emissiveIntensity = latticeHeat * 0.8;
+            });
+            // Fonon : partikel tambah kecepatan dan warna panas
+            const phononHue = 0.5 + intensity * 0.7;
+            phononMat.color.setHSL(0.55, 1.0, 0.5 + intensity*0.3);
+            phononMat.size = 0.018 + intensity * 0.02;
+            // Partikel termal flux (q)
+            fluxParticles.material.color.setHex(0xff9944);
+            fluxParticles.material.opacity = 0.35 + intensity * 0.4;
+            
+            // Rotasi elektron lebih cepat jika anomali tinggi (molekul bergerak lebih cepat -> energi kinetik ↑)
             electrons.forEach((e, idx) => {
-                e.speed = 1.1 - idx * 0.15 + intensity * 1.3;
+                e.speed = 1.2 - idx * 0.2 + intensity * 1.2;
             });
         }
         
-        // DOM elements
+        // UI elements
         const emissionSlider = document.getElementById('co2Emission');
         const emissValueSpan = document.getElementById('emissValue');
         const internalSpan = document.getElementById('internalEnergyStat');
@@ -483,7 +434,7 @@
         const entropySpan = document.getElementById('entropyStat');
         const anomalyDisplaySpan = document.getElementById('anomalyDisplay');
         const phaseTextSpan = document.getElementById('phaseText');
-        const resetBtn = document.getElementById('resetThermo');
+        const resetThermoBtn = document.getElementById('resetThermo');
         
         let currentEmission = 0.8;
         let lastAnomaly = 0;
@@ -494,34 +445,41 @@
             fluxSpan.innerText = qInVal.toFixed(2) + "/" + qOutVal.toFixed(2);
             entropySpan.innerText = Math.floor(entr);
             anomalyDisplaySpan.innerHTML = (anomaly >= 0 ? '+' : '') + anomaly.toFixed(1);
-            if (anomaly > 1.8) anomalyDisplaySpan.style.color = '#ff7777';
-            else if (anomaly > 0.9) anomalyDisplaySpan.style.color = '#ffbb66';
-            else anomalyDisplaySpan.style.color = '#99ddff';
+            if (anomaly > 1.8) anomalyDisplaySpan.style.color = '#ff5555';
+            else if (anomaly > 0.9) anomalyDisplaySpan.style.color = '#ffaa66';
+            else anomalyDisplaySpan.style.color = '#88ccff';
             
-            if (emission < 0.85) phaseTextSpan.innerHTML = "⚖️ Kesetimbangan Termal | ΔS kecil";
-            else if (emission < 1.1) phaseTextSpan.innerHTML = "🔥 Hk.I : ΔU = Q - W | Entropi ↑";
-            else if (emission < 1.6) phaseTextSpan.innerHTML = "⚠️ Hk.II : Entropi naik drastis | Tak-balik";
-            else phaseTextSpan.innerHTML = "💥 Krisis Energi | Hk.0 terganggu";
+            // Status teks termodinamika dan hukum
+            if (emission < 0.85) phaseTextSpan.innerHTML = "Ekuilibrium Termal | ΔS kecil";
+            else if (emission < 1.1) phaseTextSpan.innerHTML = "Hk.I : ΔU = Q - W | Entropi ↑";
+            else if (emission < 1.6) phaseTextSpan.innerHTML = "Hk.II : Entropi naik drastis | Tak-balik";
+            else phaseTextSpan.innerHTML = "Krisis Energi | Hk.0 gagal setimbang";
         }
         
         emissionSlider.addEventListener('input', (e) => {
             currentEmission = parseFloat(e.target.value);
             const anomalyNew = updateThermoFromEmission(currentEmission);
             lastAnomaly = anomalyNew;
-            updateVisualDynamics(anomalyNew);
+            updateVisualDynamics(anomalyNew, internalEnergy);
             refreshUI(currentEmission, anomalyNew, internalEnergy, qIn, qOut, entropy);
         });
         
-        resetBtn.addEventListener('click', () => {
+        resetThermoBtn.addEventListener('click', () => {
             currentEmission = 0.80;
             emissionSlider.value = '0.80';
             const anomalyNew = updateThermoFromEmission(0.80);
             lastAnomaly = anomalyNew;
-            updateVisualDynamics(anomalyNew);
+            updateVisualDynamics(anomalyNew, internalEnergy);
             refreshUI(0.80, anomalyNew, internalEnergy, qIn, qOut, entropy);
         });
         
-        // Layer visibility toggle
+        // Layer visibility (atom components)
+        const layerMap = {
+            nucleus: nucleus,
+            electrons: true, // grup elektron perlu dimanage terpisah
+            lattice: latticeGroup,
+            phonon: phononPoints
+        };
         let electronsVisible = true;
         document.querySelectorAll('.layer-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -547,7 +505,7 @@
             });
         });
         
-        // Toggle panel
+        // toggle panel
         const panelDiv = document.getElementById('controlPanel');
         const toggleBtn = document.getElementById('togglePanelBtn');
         const toggleIconSpan = document.getElementById('toggleIcon');
@@ -562,77 +520,88 @@
             } else {
                 panelDiv.classList.remove('hide');
                 toggleLabelSpan.innerText = 'Sembunyikan Panel';
-                toggleIconSpan.className = 'fas fa-sliders-h';
+                toggleIconSpan.className = 'fas fa-chart-simple';
             }
         });
         
-        // Animations orbital & fonon
+        // Animasi orbit elektron & fonon (vibrasi termal)
         let timeAnim = 0;
         function animateElectrons() {
             electrons.forEach((e, idx) => {
-                e.angle += 0.022 * e.speed;
+                e.angle += 0.025 * e.speed;
                 const x = Math.cos(e.angle) * e.radius;
                 const z = Math.sin(e.angle) * e.radius;
                 e.mesh.position.set(x, 0, z);
-                e.mesh.position.y = Math.sin(timeAnim * 2 + idx) * 0.035;
+                // efek kecil sumbu y
+                e.mesh.position.y = Math.sin(timeAnim * 2 + idx) * 0.03;
             });
         }
         
+        // animasi fonon: partikel bergerak random + getaran termal
+        let phononTime = 0;
         function animatePhononHeat() {
-            const intensityFactor = Math.min(1.0, lastAnomaly / 2.9);
-            const jitter = 0.003 + intensityFactor * 0.013;
+            phononTime += 0.02;
+            const intensityFactor = Math.min(1.0, lastAnomaly / 2.8);
+            const jitter = 0.003 + intensityFactor * 0.01;
+            // update posisi points untuk efek vibrasi
             const positionsAttr = phononPoints.geometry.attributes.position.array;
             for (let i = 0; i < phononCount; i++) {
-                positionsAttr[i*3] += (Math.random() - 0.5) * jitter * 0.6;
-                positionsAttr[i*3+1] += (Math.random() - 0.5) * jitter * 0.6;
-                positionsAttr[i*3+2] += (Math.random() - 0.5) * jitter * 0.6;
-                if (Math.abs(positionsAttr[i*3]) > 2.5) positionsAttr[i*3] *= 0.98;
-                if (Math.abs(positionsAttr[i*3+1]) > 2.3) positionsAttr[i*3+1] *= 0.98;
-                if (Math.abs(positionsAttr[i*3+2]) > 2.5) positionsAttr[i*3+2] *= 0.98;
+                // sedikit gerak brown
+                positionsAttr[i*3] += (Math.random() - 0.5) * jitter * 0.5;
+                positionsAttr[i*3+1] += (Math.random() - 0.5) * jitter * 0.5;
+                positionsAttr[i*3+2] += (Math.random() - 0.5) * jitter * 0.5;
+                // clamp batas
+                if (Math.abs(positionsAttr[i*3]) > 2.2) positionsAttr[i*3] *= 0.98;
+                if (Math.abs(positionsAttr[i*3+1]) > 2) positionsAttr[i*3+1] *= 0.99;
+                if (Math.abs(positionsAttr[i*3+2]) > 2.2) positionsAttr[i*3+2] *= 0.98;
             }
             phononPoints.geometry.attributes.position.needsUpdate = true;
+            // kisi kristal small vibration
             latticeGroup.children.forEach(child => {
                 if (child.isMesh && child !== latticeGroup) {
-                    child.position.x += (Math.random() - 0.5) * 0.0022 * intensityFactor;
-                    child.position.y += (Math.random() - 0.5) * 0.0022 * intensityFactor;
-                    child.position.z += (Math.random() - 0.5) * 0.0022 * intensityFactor;
+                    child.position.x += (Math.random() - 0.5) * 0.002 * intensityFactor;
+                    child.position.y += (Math.random() - 0.5) * 0.002 * intensityFactor;
+                    child.position.z += (Math.random() - 0.5) * 0.002 * intensityFactor;
                 }
             });
         }
         
-        function animateFlux() {
+        // animasi partikel termal
+        function animateThermalParticles() {
             const posAttr = fluxParticles.geometry.attributes.position.array;
             for (let i = 0; i < fluxCount; i++) {
-                posAttr[i*3] += (Math.random() - 0.5) * 0.009;
-                posAttr[i*3+1] += (Math.random() - 0.5) * 0.009;
-                posAttr[i*3+2] += (Math.random() - 0.5) * 0.009;
-                if (Math.abs(posAttr[i*3]) > 4) posAttr[i*3] *= 0.97;
-                if (Math.abs(posAttr[i*3+1]) > 3.2) posAttr[i*3+1] *= 0.97;
-                if (Math.abs(posAttr[i*3+2]) > 3.5) posAttr[i*3+2] *= 0.97;
+                posAttr[i*3] += (Math.random() - 0.5) * 0.008;
+                posAttr[i*3+1] += (Math.random() - 0.5) * 0.008;
+                posAttr[i*3+2] += (Math.random() - 0.5) * 0.008;
+                if (Math.abs(posAttr[i*3]) > 3.5) posAttr[i*3] *= 0.96;
+                if (Math.abs(posAttr[i*3+1]) > 2.8) posAttr[i*3+1] *= 0.96;
+                if (Math.abs(posAttr[i*3+2]) > 3) posAttr[i*3+2] *= 0.96;
             }
             fluxParticles.geometry.attributes.position.needsUpdate = true;
         }
         
-        // initial call
+        // inisialisasi
         updateThermoFromEmission(0.8);
-        updateVisualDynamics(0);
+        updateVisualDynamics(0, 0.42);
         refreshUI(0.8, 0, 0.42, qIn, qOut, entropy);
         
-        // animate loop
+        // animasi utama loop
         function animate() {
             timeAnim += 0.016;
+            // update termodinamika periodik minor (mengikuti slider, tetapi guard update)
             const anomalyNow = updateThermoFromEmission(currentEmission);
             lastAnomaly = anomalyNow;
-            updateVisualDynamics(anomalyNow);
+            updateVisualDynamics(anomalyNow, internalEnergy);
             refreshUI(currentEmission, anomalyNow, internalEnergy, qIn, qOut, entropy);
             
             animateElectrons();
             animatePhononHeat();
-            animateFlux();
+            animateThermalParticles();
             
-            nucleus.rotation.y += 0.0035;
-            latticeGroup.rotation.y += 0.0018;
-            latticeGroup.rotation.x = Math.sin(timeAnim * 0.35) * 0.04;
+            // Rotasi sistem atom secara global
+            nucleus.rotation.y += 0.003;
+            latticeGroup.rotation.y += 0.0015;
+            latticeGroup.rotation.x = Math.sin(timeAnim * 0.4) * 0.05;
             phononPoints.rotation.y += 0.002;
             
             controls.update();
@@ -641,19 +610,19 @@
         }
         
         animate();
+        
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
         
-        // default visibility all true
+        // set default visibility
         nucleus.visible = true;
         electrons.forEach(e => e.mesh.visible = true);
         orbits.forEach(o => o.visible = true);
         latticeGroup.visible = true;
         phononPoints.visible = true;
     </script>
-    <footer>Simulasi 3D | Hukum Termodinamika & Struktur Atom | Geser emisi → pantau perubahan energi & entropi</footer>
 </body>
 </html>
