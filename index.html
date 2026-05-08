@@ -182,7 +182,6 @@
             font-size: 1rem;
         }
 
-        /* AR Container */
         .ar-container {
             background: linear-gradient(135deg, #1a2a3a, #0a1520);
             border-radius: 18px;
@@ -227,7 +226,6 @@
             transform: scale(0.97);
         }
 
-        /* Animasi Container */
         .anim-card {
             background: rgba(25, 32, 50, 0.7);
             border-radius: 18px;
@@ -243,14 +241,6 @@
             position: relative;
             margin-bottom: 12px;
             overflow: hidden;
-        }
-        .electron-orbit {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .nucleus {
             width: 30px;
@@ -282,6 +272,7 @@
             margin-top: 8px;
         }
 
+        /* Bottom Navigation - Hanya 4 menu */
         .bottom-nav {
             position: sticky;
             bottom: 0;
@@ -356,18 +347,16 @@
 
     <div class="main-content" id="mainContent"></div>
 
+    <!-- Bottom Navigation - Hanya 4 menu: Beranda, Simulasi, Scanner, AR -->
     <div class="bottom-nav">
         <button class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>Beranda</span></button>
         <button class="nav-item" data-page="simulation"><i class="fas fa-play-circle"></i><span>Simulasi</span></button>
         <button class="nav-item" data-page="scanner"><i class="fas fa-qrcode"></i><span>Scanner</span></button>
         <button class="nav-item" data-page="ar"><i class="fas fa-vr-cardboard"></i><span>AR</span></button>
-        <button class="nav-item" data-page="animation"><i class="fas fa-film"></i><span>Animasi</span></button>
-        <button class="nav-item" data-page="laws"><i class="fas fa-book"></i><span>Hukum</span></button>
     </div>
 </div>
 
 <script>
-    // Animasi elektron
     let animInterval = null;
     
     function startElectronAnimation() {
@@ -385,10 +374,12 @@
         
         let angle1 = 0, angle2 = 120, angle3 = 240;
         const radius = 50;
-        const centerX = container.offsetWidth / 2;
-        const centerY = container.offsetHeight / 2;
         
-        animInterval = setInterval(() => {
+        function updatePositions() {
+            const containerRect = container.getBoundingClientRect();
+            const centerX = containerRect.width / 2;
+            const centerY = containerRect.height / 2;
+            
             const e1 = document.getElementById('electron1');
             const e2 = document.getElementById('electron2');
             const e3 = document.getElementById('electron3');
@@ -411,7 +402,14 @@
             e2.style.top = (centerY + radius * Math.sin(rad2) - 5) + 'px';
             e3.style.left = (centerX + radius * Math.cos(rad3) - 5) + 'px';
             e3.style.top = (centerY + radius * Math.sin(rad3) - 5) + 'px';
-        }, 30);
+        }
+        
+        updatePositions();
+        animInterval = setInterval(updatePositions, 30);
+        
+        window.addEventListener('resize', () => {
+            if (animInterval) updatePositions();
+        });
     }
 
     const pages = {
@@ -428,7 +426,7 @@
                             <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
                         </div>
                     </div>
-                    <div class="card" data-nav="hukum.html">
+                    <div class="card" data-page="laws">
                         <div class="card-row">
                             <div class="card-icon"><i class="fas fa-gavel"></i></div>
                             <div class="card-info">
@@ -563,31 +561,49 @@
                     <i class="fas fa-microscope"></i>
                     <span class="info-text"><strong>Fenomena:</strong> Getaran atom (fonon) meningkat seiring suhu, menyebabkan entropi bertambah (Hukum II Termodinamika).</span>
                 </div>
+                <button class="play-anim-btn" id="backHomeBtn" style="margin-top: 12px; width:100%;"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</button>
             `
         },
         laws: {
             render: () => `
                 <div class="section-title"><i class="fas fa-gavel"></i> Tiga Hukum Termodinamika</div>
-                <div class="card" data-nav="hukum.html">
+                <div class="card">
                     <div class="card-row">
                         <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
                         <div class="card-info">
-                            <h3>Buka Materi Hukum</h3>
-                            <p>Penjelasan lengkap Hukum 0, I, II Termodinamika dengan contoh aplikasi.</p>
+                            <h3>Hukum ke-0 (Kesetimbangan Termal)</h3>
+                            <p>Jika sistem A setimbang termal dengan B, dan B setimbang dengan C, maka A setimbang dengan C.</p>
                         </div>
-                        <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-row">
+                        <div class="card-icon"><i class="fas fa-charging-station"></i></div>
+                        <div class="card-info">
+                            <h3>Hukum I (Kekekalan Energi)</h3>
+                            <p>ΔU = Q - W. Energi dalam sistem berubah karena kalor dan kerja. Energi tidak dapat diciptakan atau dimusnahkan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-row">
+                        <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="card-info">
+                            <h3>Hukum II (Entropi)</h3>
+                            <p>Entropi total alam semesta selalu meningkat pada proses spontan. ΔS ≥ 0.</p>
+                        </div>
                     </div>
                 </div>
                 <div class="info-widget">
                     <i class="fas fa-microscope"></i>
                     <span class="info-text"><strong>Aplikasi:</strong> Getaran kisi (fonon) meningkat seiring suhu → entropi naik. Elektron bergerak lebih cepat.</span>
                 </div>
+                <button class="play-anim-btn" id="backHomeFromLaws" style="margin-top: 12px; width:100%;"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</button>
             `
         }
     };
 
     let currentPage = 'home';
-    let animIntervalId = null;
 
     function navigateToFile(filename) {
         try {
@@ -598,9 +614,9 @@
     }
 
     function stopAnimation() {
-        if (animIntervalId) {
-            clearInterval(animIntervalId);
-            animIntervalId = null;
+        if (animInterval) {
+            clearInterval(animInterval);
+            animInterval = null;
         }
     }
 
@@ -650,6 +666,7 @@
         if (pageId === 'animation') {
             const startBtn = document.getElementById('startAnimBtn');
             const vibrationBtn = document.getElementById('vibrationBtn');
+            const backBtn = document.getElementById('backHomeBtn');
             
             if (startBtn) {
                 startBtn.addEventListener('click', () => {
@@ -663,17 +680,22 @@
                 });
             }
             
-            // Auto start animation when page loads
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    renderPage('home');
+                });
+            }
+            
             setTimeout(() => startElectronAnimation(), 100);
         }
         
         if (pageId === 'laws') {
-            document.querySelectorAll('.card[data-nav]').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    const targetFile = card.getAttribute('data-nav');
-                    if (targetFile) navigateToFile(targetFile);
+            const backBtn = document.getElementById('backHomeFromLaws');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    renderPage('home');
                 });
-            });
+            }
         }
     }
 
@@ -705,7 +727,7 @@
     });
 
     document.getElementById('menuBtn')?.addEventListener('click', () => {
-        alert("📱 ThermoAtom v2.0\n\n• Beranda - Fitur utama\n• Simulasi - Simulasi 3D atom\n• Scanner - QR scanner edukasi\n• AR - Augmented Reality atom 3D\n• Animasi - Animasi gerak elektron & vibrasi\n• Hukum - 3 Hukum Termodinamika");
+        alert("📱 ThermoAtom v2.0\n\n• Beranda - Fitur utama (Simulasi, Hukum, Scanner, AR, Animasi)\n• Simulasi - Simulasi 3D atom\n• Scanner - QR scanner edukasi\n• AR - Augmented Reality atom 3D\n\nMenu Animasi dan Hukum dapat diakses dari halaman Beranda.");
     });
 
     renderPage('home');
