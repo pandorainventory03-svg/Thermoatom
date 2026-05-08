@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Simulasi Termodinamika - Layer Bumi | Perubahan Iklim | Hukum 0, I, II</title>
+    <!-- Font Awesome 6 (Free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background: #000;
+        }
+        /* Tombol toggle navbar */
+        .toggle-nav {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 30;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 50px;
+            padding: 10px 16px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid rgba(255,100,50,0.5);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: auto;
+        }
+        .toggle-nav:active {
+            transform: scale(0.95);
+            background: #ff6600;
+        }
+        /* UI Overlay - bisa di-toggle */
+        #ui {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 20, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 16px 18px 22px;
+            z-index: 20;
+            pointer-events: auto;
+            border-top: 1px solid rgba(255, 100, 50, 0.3);
+            border-radius: 24px 24px 0 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #ui.hidden {
+            transform: translateY(100%);
+            pointer-events: none;
+        }
+        .slider-container {
+            margin-bottom: 16px;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            color: #eee;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+        .slider-label i {
+            margin-right: 6px;
+            color: #ffaa44;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #2a6f8f, #44aa88, #ffaa44, #ff4444);
+            border-radius: 10px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ffaa44;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+        }
+        .layer-controls {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 14px 0;
+        }
+        .layer-btn {
+            background: rgba(25, 30, 45, 0.9);
+            border: none;
+            color: #ccc;
+            padding: 8px 4px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid rgba(255, 100, 50, 0.3);
+        }
+        .layer-btn i {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        .layer-btn.active {
+            background: #ff6600;
+            color: white;
+            border-color: #ffaa44;
+            box-shadow: 0 2px 8px rgba(255, 100, 0, 0.4);
+        }
+        .layer-btn:active {
+            transform: scale(0.96);
+        }
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 10px;
+        }
+        .stat-card {
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            padding: 8px 6px;
+            border-radius: 20px;
+            flex: 1;
+            text-align: center;
+            border: 1px solid rgba(255, 170, 68, 0.3);
+        }
+        .stat-card .label {
+            font-size: 10px;
+            color: #aaa;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-weight: bold;
+            font-size: 15px;
+            color: #ffaa66;
+            font-family: monospace;
+        }
+        .reset-btn {
+            background: linear-gradient(135deg, #ff6600, #ff4400);
+            border: none;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 14px;
+            width: 100%;
+            margin: 6px 0 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .reset-btn:active {
+            transform: scale(0.97);
+            background: linear-gradient(135deg, #ff8822, #ff6622);
+        }
+        .warning-text {
+            font-size: 9px;
+            color: #ffaa77;
+            text-align: center;
+            margin-top: 8px;
+            background: rgba(0,0,0,0.4);
+            padding: 4px 8px;
+            border-radius: 30px;
+            display: inline-block;
+            width: 100%;
+        }
+        .instruction {
+            font-size: 9px;
+            text-align: center;
+            margin-top: 6px;
+            color: #aaa;
+        }
+        .badge-left {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(12px);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #88ccff;
+            border-left: 3px solid #00aaff;
+            pointer-events: none;
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .temp-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            font-family: monospace;
+            text-align: center;
+            pointer-events: none;
+            z-index: 15;
+            border-right: 3px solid #ff6644;
+            min-width: 110px;
+        }
+        .temp-big {
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        @media (max-width: 550px) {
+            .layer-btn i { font-size: 14px; }
+            .layer-btn span { font-size: 9px; }
+            .layer-btn { padding: 6px 2px; }
+            .stat-value { font-size: 13px; }
+            .temp-big { font-size: 18px; }
+            .temp-badge { padding: 6px 12px; min-width: 90px; }
+            .badge-left { font-size: 9px; padding: 4px 12px; top: 10px; left: 10px; }
+            .temp-badge { top: 10px; right: 10px; }
+            .toggle-nav { bottom: 15px; right: 15px; padding: 8px 14px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tombol toggle navbar -->
+    <div class="toggle-nav" id="toggleNavBtn">
+        <i class="fas fa-chevron-down" id="toggleIcon"></i>
+        <span id="toggleText">Sembunyikan Panel</span>
+    </div>
+
+    <div class="badge-left">
+        <i class="fas fa-leaf" style="color:#88ff88;"></i> 
+        <span id="statusBadge">Pra-Industri (Seimbang)</span>
+    </div>
+    <div class="temp-badge">
+        <i class="fas fa-temperature-high" style="margin-right: 4px;"></i> Anomali Suhu<br>
+        <span id="anomaliValue" class="temp-big" style="color:#88ccff">+0.0</span> °C
+    </div>
+    
+    <div id="ui">
+        <div class="slider-container">
+            <div class="slider-label">
+                <span><i class="fas fa-industry"></i> Emisi GRK (Indeks Pemanasan)</span>
+                <span id="emisiValue" style="background:#00000066; padding:2px 10px; border-radius:20px;">0.80</span>
+            </div>
+            <input type="range" id="emisiSlider" min="0.5" max="2.2" step="0.01" value="0.8">
+        </div>
+        
+        <div class="layer-controls">
+            <button class="layer-btn" data-layer="core"><i class="fas fa-fire"></i><span>Inti</span></button>
+            <button class="layer-btn" data-layer="crust"><i class="fas fa-mountain"></i><span>Kerak</span></button>
+            <button class="layer-btn active" data-layer="surface"><i class="fas fa-globe-asia"></i><span>Permukaan</span></button>
+            <button class="layer-btn active" data-layer="clouds"><i class="fas fa-cloud-sun"></i><span>Awan</span></button>
+            <button class="layer-btn active" data-layer="atmos"><i class="fas fa-wind"></i><span>Atmosfer</span></button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-bolt"></i> Energi Sistem</div>
+                <div><span id="energyStat" class="stat-value">42%</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-smog"></i> CO₂ ekuivalen</div>
+                <div><span id="co2Stat" class="stat-value">350 ppm</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-sun"></i> Radiasi</div>
+                <div><span id="qStats" class="stat-value">0.85/0.82</span></div>
+            </div>
+        </div>
+        
+        <button class="reset-btn" id="resetBtn">
+            <i class="fas fa-undo-alt"></i> Reset ke Kondisi Pra-Industri
+        </button>
+        <div class="instruction">
+            <i class="fas fa-fingerprint"></i> Klik ikon layer untuk tampilkan/sembunyikan | Emisi 1.0 = kondisi saat ini (+1.2°C)
+        </div>
+        <div class="warning-text" id="warningText"></div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        
+        // --- Setup Scene ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x030318);
+        scene.fog = new THREE.FogExp2(0x030318, 0.002);
+        
+        const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.2, 100);
+        camera.position.set(0, 0.15, 4.2);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+        
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.06;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.65;
+        controls.enableZoom = true;
+        controls.enablePan = false;
+        controls.rotateSpeed = 0.8;
+        controls.zoomSpeed = 0.8;
+        controls.target.set(0, 0, 0);
+        
+        // ========== LAYER BUMI ==========
+        
+        // 1. INTI BUMI
+        const coreMat = new THREE.MeshStandardMaterial({ color: 0xff4400, emissive: 0xff2200, emissiveIntensity: 0.55, metalness: 0.7, roughness: 0.4 });
+        const coreGeom = new THREE.SphereGeometry(0.35, 64, 64);
+        const core = new THREE.Mesh(coreGeom, coreMat);
+        scene.add(core);
+        
+        const coreGlowMat = new THREE.MeshBasicMaterial({ color: 0xff6622, transparent: true, opacity: 0.12, side: THREE.BackSide });
+        const coreGlowGeom = new THREE.SphereGeometry(0.4, 48, 48);
+        const coreGlow = new THREE.Mesh(coreGlowGeom, coreGlowMat);
+        scene.add(coreGlow);
+        
+        // 2. KERAK BUMI
+        const crustMat = new THREE.MeshPhongMaterial({ color: 0xaa8866, transparent: true, opacity: 0.3, emissive: 0x331100 });
+        const crustGeom = new THREE.SphereGeometry(0.75, 96, 96);
+        const crust = new THREE.Mesh(crustGeom, crustMat);
+        scene.add(crust);
+        
+        // 3. PERMUKAAN BUMI (tekstur asli)
+        const textureLoader = new THREE.TextureLoader();
+        const earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+        const earthSpecular = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+        const earthMaterial = new THREE.MeshPhongMaterial({ map: earthMap, specularMap: earthSpecular, shininess: 8, specular: new THREE.Color('grey') });
+        const earthGeom = new THREE.SphereGeometry(0.98, 128, 128);
+        const earthSurface = new THREE.Mesh(earthGeom, earthMaterial);
+        scene.add(earthSurface);
+        
+        // Overlay panas (HANYA muncul saat suhu meningkat, default 0%)
+        const overlayGeom = new THREE.SphereGeometry(0.985, 128, 128);
+        const overlayMat = new THREE.ShaderMaterial({
+            uniforms: { heatIntensity: { value: 0.0 } },
+            vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+            fragmentShader: `
+                uniform float heatIntensity;
+                varying vec2 vUv;
+                void main() {
+                    float intensity = clamp(heatIntensity, 0.0, 0.85);
+                    if (intensity < 0.05) discard;
+                    vec3 colorHot = vec3(1.0, 0.2, 0.1);
+                    gl_FragColor = vec4(colorHot, intensity * 0.65);
+                }
+            `,
+            transparent: true
+        });
+        const heatOverlay = new THREE.Mesh(overlayGeom, overlayMat);
+        scene.add(heatOverlay);
+        
+        // 4. AWAN
+        const cloudCanvas = document.createElement('canvas');
+        cloudCanvas.width = 512; cloudCanvas.height = 512;
+        const ctx = cloudCanvas.getContext('2d');
+        ctx.fillStyle = 'white'; ctx.fillRect(0, 0, cloudCanvas.width, cloudCanvas.height);
+        for (let i = 0; i < 4000; i++) {
+            const x = Math.random() * cloudCanvas.width, y = Math.random() * cloudCanvas.height, r = 4 + Math.random() * 22;
+            const alpha = 0.2 + Math.random() * 0.5;
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`; ctx.fill();
+        }
+        const cloudTexture = new THREE.CanvasTexture(cloudCanvas);
+        cloudTexture.wrapS = THREE.RepeatWrapping; cloudTexture.wrapT = THREE.RepeatWrapping;
+        cloudTexture.repeat.set(3, 1.8);
+        const cloudMat = new THREE.MeshPhongMaterial({ map: cloudTexture, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, color: 0xffffff });
+        const cloudGeom = new THREE.SphereGeometry(1.04, 128, 128);
+        const clouds = new THREE.Mesh(cloudGeom, cloudMat);
+        scene.add(clouds);
+        
+        // 5. ATMOSFER
+        const atmosMat = new THREE.MeshPhongMaterial({ color: 0x88aaff, emissive: 0x224466, transparent: true, opacity: 0.12, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
+        const atmosGeom = new THREE.SphereGeometry(1.12, 96, 96);
+        const atmosphere = new THREE.Mesh(atmosGeom, atmosMat);
+        scene.add(atmosphere);
+        
+        const coronaMat = new THREE.MeshPhongMaterial({ color: 0xffaa66, emissive: 0xff4422, transparent: true, opacity: 0.08, side: THREE.BackSide, blending: THREE.AdditiveBlending });
+        const coronaGeom = new THREE.SphereGeometry(1.18, 64, 64);
+        const corona = new THREE.Mesh(coronaGeom, coronaMat);
+        scene.add(corona);
+        
+        // Partikel atmosfer
+        const particleCount = 1400;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePos = [];
+        for (let i = 0; i < particleCount; i++) {
+            const theta = Math.random() * Math.PI * 2, phi = Math.acos(2 * Math.random() - 1), r = 1.08 + Math.random() * 0.12;
+            particlePos.push(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(particlePos), 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.006, transparent: true, opacity: 0.4 });
+        const atmosphereParticles = new THREE.Points(particleGeo, particleMat);
+        scene.add(atmosphereParticles);
+        
+        // Bintang
+        const starField = new THREE.BufferGeometry();
+        const starPositions = [];
+        for (let i = 0; i < 1200; i++) starPositions.push((Math.random() - 0.5) * 600, (Math.random() - 0.5) * 400, (Math.random() - 0.5) * 250 - 100);
+        starField.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPositions), 3));
+        const stars = new THREE.Points(starField, new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true, opacity: 0.7 }));
+        scene.add(stars);
+        
+        // Pencahayaan
+        const ambient = new THREE.AmbientLight(0x222233); scene.add(ambient);
+        const mainLight = new THREE.DirectionalLight(0xffeedd, 1.2); mainLight.position.set(5, 8, 6); scene.add(mainLight);
+        const fillLight = new THREE.PointLight(0xffaa66, 0.4); fillLight.position.set(1, 1, 3); scene.add(fillLight);
+        const coreLight = new THREE.PointLight(0xff4400, 0.5); coreLight.position.set(0, 0, 0); scene.add(coreLight);
+        
+        // Layer visibility management
+        const layers = { core, crust, surface: earthSurface, clouds, atmos: atmosphere };
+        core.visible = false;
+        crust.visible = false;
+        
+        document.querySelectorAll('.layer-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const layerName = btn.dataset.layer;
+                if (layers[layerName]) {
+                    layers[layerName].visible = !layers[layerName].visible;
+                    btn.classList.toggle('active', layers[layerName].visible);
+                }
+                if (layerName === 'atmos') { 
+                    atmosphereParticles.visible = layers[layerName].visible; 
+                    corona.visible = layers[layerName].visible; 
+                }
+            });
+        });
+        
+        // ========== TERMODINAMIKA ==========
+        let internalEnergy = 0.42, qIn = 0.85, qOut = 0.82, co2ppm = 350, currentAnomaly = 0.0;
+        
+        function updateTemperature(emisi) {
+            const emissionFactor = Math.max(0, (emisi - 0.7) / 1.4);
+            qIn = Math.min(1.55, 0.82 + emissionFactor * 0.55);
+            qOut = Math.min(1.32, 0.72 + emissionFactor * 0.45);
+            internalEnergy = Math.min(0.82, Math.max(0.38, internalEnergy + (qIn - qOut) * 0.008));
+            co2ppm = Math.min(800, Math.max(310, 350 + (emisi - 0.7) * 420));
+            let anomaly = emissionFactor * 3.5;
+            if (emisi > 0.95 && emisi < 1.05) anomaly = 1.2 + (emisi - 1.0) * 2;
+            return Math.max(-0.2, Math.min(4.2, anomaly));
+        }
+        
+        function updateVisuals(anomaly) {
+            // Overlay panas - hanya muncul saat anomali > 0.3°C
+            const heatIntensity = Math.min(0.85, Math.max(0, (anomaly - 0.3) / 4.0));
+            overlayMat.uniforms.heatIntensity.value = heatIntensity;
+            
+            // Inti bumi glow
+            const coreIntensity = 0.5 + Math.min(0.6, anomaly * 0.15);
+            coreMat.emissiveIntensity = coreIntensity; 
+            coreLight.intensity = 0.4 + anomaly * 0.1; 
+            coreGlowMat.opacity = 0.1 + anomaly * 0.04;
+            
+            // Warna awan (putih -> kuning -> oranye)
+            const cloudFactor = Math.min(1.0, anomaly / 2.5);
+            if (cloudFactor > 0.08) {
+                const r = 1.0, g = Math.min(1.0, 0.85 + cloudFactor * 0.25), b = Math.min(1.0, 0.85 - cloudFactor * 0.7);
+                cloudMat.color.setRGB(r, g, Math.max(0.3, b)); 
+                cloudMat.emissiveIntensity = cloudFactor * 0.35; 
+                cloudMat.opacity = 0.45 + cloudFactor * 0.25;
+            } else { 
+                cloudMat.color.setHex(0xffffff); 
+                cloudMat.emissiveIntensity = 0; 
+                cloudMat.opacity = 0.45; 
+            }
+            
+            // Warna atmosfer (biru -> kemerahan)
+            const atmosFactor = Math.min(0.25, anomaly * 0.07);
+            atmosMat.color.setRGB(0.5 + atmosFactor, 0.6 + atmosFactor * 0.5, 1.0 - atmosFactor * 1.5);
+            atmosMat.emissiveIntensity = anomaly * 0.05; 
+            atmosMat.opacity = 0.1 + anomaly * 0.02;
+            
+            coronaMat.opacity = 0.06 + anomaly * 0.03; 
+            coronaMat.emissiveIntensity = anomaly * 0.04;
+            
+            // Partikel atmosfer
+            particleMat.color.setRGB(0.5 + anomaly * 0.2, 0.6 + anomaly * 0.2, 1.0 - anomaly * 0.3);
+        }
+        
+        // UI Elements
+        const emisiSlider = document.getElementById('emisiSlider'), emisiValueSpan = document.getElementById('emisiValue');
+        const energyStatSpan = document.getElementById('energyStat'), co2StatSpan = document.getElementById('co2Stat'), qStatsSpan = document.getElementById('qStats');
+        const anomaliSpan = document.getElementById('anomaliValue'), statusBadgeSpan = document.getElementById('statusBadge'), warningTextSpan = document.getElementById('warningText');
+        const resetBtn = document.getElementById('resetBtn');
+        let currentEmisi = 0.8;
+        
+        // ========== TOGGLE NAVBAR ==========
+        const uiPanel = document.getElementById('ui');
+        const toggleBtn = document.getElementById('toggleNavBtn');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const toggleText = document.getElementById('toggleText');
+        let isPanelVisible = true;
+        
+        toggleBtn.addEventListener('click', () => {
+            isPanelVisible = !isPanelVisible;
+            if (isPanelVisible) {
+                uiPanel.classList.remove('hidden');
+                toggleIcon.className = 'fas fa-chevron-down';
+                toggleText.innerText = 'Sembunyikan Panel';
+            } else {
+                uiPanel.classList.add('hidden');
+                toggleIcon.className = 'fas fa-chevron-up';
+                toggleText.innerText = 'Tampilkan Panel';
+            }
+        });
+        
+        function updateUI(emisi, anomaly) {
+            emisiValueSpan.innerText = emisi.toFixed(2);
+            energyStatSpan.innerText = Math.floor(internalEnergy * 100) + '%';
+            co2StatSpan.innerText = Math.floor(co2ppm) + ' ppm';
+            qStatsSpan.innerText = qIn.toFixed(2) + '/' + qOut.toFixed(2);
+            anomaliSpan.innerHTML = (anomaly > 0 ? '+' : '') + anomaly.toFixed(1);
+            if (anomaly > 1.8) anomaliSpan.style.color = '#ff4444';
+            else if (anomaly > 1.0) anomaliSpan.style.color = '#ff8866';
+            else if (anomaly > 0.4) anomaliSpan.style.color = '#ffaa66';
+            else anomaliSpan.style.color = '#88ccff';
+            
+            if (emisi < 0.85) { 
+                statusBadgeSpan.innerHTML = 'Pra-Industri (Seimbang)'; 
+                warningTextSpan.innerHTML = ''; 
+            } else if (emisi < 1.05) { 
+                statusBadgeSpan.innerHTML = 'Kondisi Saat Ini (Pemanasan)'; 
+                warningTextSpan.innerHTML = '🔥 +1.2°C sejak era industri'; 
+            } else if (emisi < 1.5) { 
+                statusBadgeSpan.innerHTML = 'Pemanasan Signifikan'; 
+                warningTextSpan.innerHTML = '⚠️ Melebihi target Paris Agreement (1.5°C)'; 
+            } else if (emisi < 1.9) { 
+                statusBadgeSpan.innerHTML = 'Krisis Iklim'; 
+                warningTextSpan.innerHTML = '⚡ Gelombang panas, naiknya air laut'; 
+            } else { 
+                statusBadgeSpan.innerHTML = 'Skenario Terburuk'; 
+                warningTextSpan.innerHTML = '🆘 Anomali >3°C | Titik kritis!'; 
+            }
+        }
+        
+        emisiSlider.addEventListener('input', (e) => {
+            currentEmisi = parseFloat(e.target.value);
+            const anomaly = updateTemperature(currentEmisi);
+            currentAnomaly = anomaly;
+            updateVisuals(anomaly);
+            updateUI(currentEmisi, anomaly);
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            currentEmisi = 0.8; 
+            emisiSlider.value = '0.8';
+            const anomaly = updateTemperature(0.8);
+            currentAnomaly = anomaly;
+            updateVisuals(anomaly);
+            updateUI(0.8, anomaly);
+        });
+        
+        let time = 0;
+        function animate() {
+            time += 0.016;
+            const anomaly = updateTemperature(currentEmisi);
+            currentAnomaly = anomaly;
+            updateVisuals(anomaly);
+            updateUI(currentEmisi, anomaly);
+            
+            const pulse = 1 + Math.sin(time * 3) * 0.03;
+            core.scale.set(pulse, pulse, pulse); 
+            coreGlow.scale.set(pulse * 1.05, pulse * 1.05, pulse * 1.05);
+            
+            clouds.rotation.y += 0.0008; 
+            atmosphereParticles.rotation.y += 0.0003; 
+            stars.rotation.y += 0.0002;
+            
+            controls.update();
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        
+        updateTemperature(0.8); 
+        updateVisuals(0); 
+        updateUI(0.8, 0);
+        animate();
+        
+        window.addEventListener('resize', () => { 
+            camera.aspect = window.innerWidth / window.innerHeight; 
+            camera.updateProjectionMatrix(); 
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+        });
+    </script>
+</body>
+</html>
