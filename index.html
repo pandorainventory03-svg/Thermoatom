@@ -35,7 +35,6 @@
             position: relative;
         }
 
-        /* Header lebih kecil */
         .app-header {
             padding: 12px 16px 10px;
             display: flex;
@@ -96,14 +95,12 @@
             transform: scale(0.95);
         }
 
-        /* Content Area */
         .main-content {
             flex: 1;
             overflow-y: auto;
             padding: 14px 16px 90px;
         }
 
-        /* Card lebih kecil */
         .card {
             background: rgba(25, 32, 50, 0.7);
             backdrop-filter: blur(10px);
@@ -153,7 +150,6 @@
             opacity: 0.7;
         }
 
-        /* Info Widget lebih kecil */
         .info-widget {
             background: rgba(0, 0, 0, 0.35);
             border-radius: 16px;
@@ -172,7 +168,6 @@
             line-height: 1.4;
         }
 
-        /* Section Title lebih kecil */
         .section-title {
             font-size: 1rem;
             font-weight: 700;
@@ -187,7 +182,106 @@
             font-size: 1rem;
         }
 
-        /* Bottom Navigation - TETAP BESAR */
+        /* AR Container */
+        .ar-container {
+            background: linear-gradient(135deg, #1a2a3a, #0a1520);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 140, 80, 0.4);
+        }
+        .ar-preview {
+            width: 100%;
+            height: 200px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ar-placeholder {
+            text-align: center;
+            color: #ffaa66;
+        }
+        .ar-placeholder i {
+            font-size: 48px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .ar-btn {
+            background: linear-gradient(135deg, #ff8844, #ff5e2e);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            width: 100%;
+        }
+        .ar-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Animasi Container */
+        .anim-card {
+            background: rgba(25, 32, 50, 0.7);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .atom-animation {
+            width: 100%;
+            height: 150px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            position: relative;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .electron-orbit {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nucleus {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ff8844, #ff4400);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px #ff8844;
+        }
+        .electron {
+            width: 10px;
+            height: 10px;
+            background: #ffcc77;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 10px #ffaa55;
+        }
+        .play-anim-btn {
+            background: rgba(255, 136, 68, 0.3);
+            border: 1px solid #ff8844;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: #ffaa66;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
         .bottom-nav {
             position: sticky;
             bottom: 0;
@@ -231,7 +325,6 @@
             transform: scale(0.95);
         }
 
-        /* Scrollbar */
         .main-content::-webkit-scrollbar {
             width: 3px;
         }
@@ -255,60 +348,72 @@
             <div class="icon-badge"><i class="fas fa-atom"></i></div>
             <div class="title-text">
                 <h1>Thermo<span style="color:#ffaa66;">Atom</span></h1>
-                <p>Hukum 0, I, II · Energi & Entropi</p>
+                <p>Hukum 0, I, II · AR & Animasi</p>
             </div>
         </div>
         <button class="menu-btn" id="menuBtn"><i class="fas fa-ellipsis-v"></i></button>
     </div>
 
-    <div class="main-content" id="mainContent">
-        <div id="homePage">
-            <div class="card" data-nav="simulation1.html">
-                <div class="card-row">
-                    <div class="card-icon"><i class="fas fa-cubes"></i></div>
-                    <div class="card-info">
-                        <h3>Simulasi 3D Termodinamika</h3>
-                        <p>Model atom interaktif, kisi kristal, entropi & energi dalam.</p>
-                    </div>
-                    <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
-                </div>
-            </div>
-            <div class="card" data-nav="hukum.html">
-                <div class="card-row">
-                    <div class="card-icon"><i class="fas fa-gavel"></i></div>
-                    <div class="card-info">
-                        <h3>Hukum Termodinamika</h3>
-                        <p>Pelajari Hukum 0, I, II dengan contoh fisika dan entropi.</p>
-                    </div>
-                    <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
-                </div>
-            </div>
-            <div class="card" data-nav="scanner.html">
-                <div class="card-row">
-                    <div class="card-icon"><i class="fas fa-qrcode"></i></div>
-                    <div class="card-info">
-                        <h3>QR Scanner Edukasi</h3>
-                        <p>Scan kode QR materi termodinamika & struktur atom.</p>
-                    </div>
-                    <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
-                </div>
-            </div>
-            <div class="info-widget">
-                <i class="fas fa-atom"></i>
-                <span class="info-text"><strong>Fakta:</strong> Entropi alam semesta selalu meningkat (Hk.II). Energi tidak dapat diciptakan/dimusnahkan (Hk.I).</span>
-            </div>
-        </div>
-    </div>
+    <div class="main-content" id="mainContent"></div>
 
     <div class="bottom-nav">
         <button class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>Beranda</span></button>
         <button class="nav-item" data-page="simulation"><i class="fas fa-play-circle"></i><span>Simulasi</span></button>
         <button class="nav-item" data-page="scanner"><i class="fas fa-qrcode"></i><span>Scanner</span></button>
+        <button class="nav-item" data-page="ar"><i class="fas fa-vr-cardboard"></i><span>AR</span></button>
+        <button class="nav-item" data-page="animation"><i class="fas fa-film"></i><span>Animasi</span></button>
         <button class="nav-item" data-page="laws"><i class="fas fa-book"></i><span>Hukum</span></button>
     </div>
 </div>
 
 <script>
+    // Animasi elektron
+    let animInterval = null;
+    
+    function startElectronAnimation() {
+        const container = document.getElementById('electronAnimContainer');
+        if (!container) return;
+        
+        if (animInterval) clearInterval(animInterval);
+        
+        container.innerHTML = `
+            <div class="nucleus"></div>
+            <div class="electron" id="electron1" style="top: 50%; left: 50%;"></div>
+            <div class="electron" id="electron2" style="top: 50%; left: 50%;"></div>
+            <div class="electron" id="electron3" style="top: 50%; left: 50%;"></div>
+        `;
+        
+        let angle1 = 0, angle2 = 120, angle3 = 240;
+        const radius = 50;
+        const centerX = container.offsetWidth / 2;
+        const centerY = container.offsetHeight / 2;
+        
+        animInterval = setInterval(() => {
+            const e1 = document.getElementById('electron1');
+            const e2 = document.getElementById('electron2');
+            const e3 = document.getElementById('electron3');
+            if (!e1 || !e2 || !e3) {
+                clearInterval(animInterval);
+                return;
+            }
+            
+            angle1 = (angle1 + 3) % 360;
+            angle2 = (angle2 + 3) % 360;
+            angle3 = (angle3 + 3) % 360;
+            
+            const rad1 = angle1 * Math.PI / 180;
+            const rad2 = angle2 * Math.PI / 180;
+            const rad3 = angle3 * Math.PI / 180;
+            
+            e1.style.left = (centerX + radius * Math.cos(rad1) - 5) + 'px';
+            e1.style.top = (centerY + radius * Math.sin(rad1) - 5) + 'px';
+            e2.style.left = (centerX + radius * Math.cos(rad2) - 5) + 'px';
+            e2.style.top = (centerY + radius * Math.sin(rad2) - 5) + 'px';
+            e3.style.left = (centerX + radius * Math.cos(rad3) - 5) + 'px';
+            e3.style.top = (centerY + radius * Math.sin(rad3) - 5) + 'px';
+        }, 30);
+    }
+
     const pages = {
         home: {
             render: () => `
@@ -339,6 +444,26 @@
                             <div class="card-info">
                                 <h3>QR Scanner Edukasi</h3>
                                 <p>Scan kode QR materi termodinamika & struktur atom.</p>
+                            </div>
+                            <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                    <div class="card" data-page="ar">
+                        <div class="card-row">
+                            <div class="card-icon"><i class="fas fa-vr-cardboard"></i></div>
+                            <div class="card-info">
+                                <h3>Augmented Reality (AR)</h3>
+                                <p>Lihat model atom 3D langsung di dunia nyata melalui kamera.</p>
+                            </div>
+                            <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                    <div class="card" data-page="animation">
+                        <div class="card-row">
+                            <div class="card-icon"><i class="fas fa-film"></i></div>
+                            <div class="card-info">
+                                <h3>Animasi Molekuler</h3>
+                                <p>Animasi gerak elektron, vibrasi molekul, dan energi termal.</p>
                             </div>
                             <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
                         </div>
@@ -392,6 +517,54 @@
                 </div>
             `
         },
+        ar: {
+            render: () => `
+                <div class="section-title"><i class="fas fa-vr-cardboard"></i> Augmented Reality</div>
+                <div class="ar-container">
+                    <div class="ar-preview" id="arPreview">
+                        <div class="ar-placeholder">
+                            <i class="fas fa-camera"></i>
+                            <p>AR akan membuka kamera untuk menampilkan model atom 3D di lingkungan nyata</p>
+                        </div>
+                    </div>
+                    <button class="ar-btn" id="startARBtn">
+                        <i class="fas fa-play"></i> Mulai AR (Lihat Atom 3D)
+                    </button>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="info-text"><strong>Cara Penggunaan AR:</strong> Klik tombol "Mulai AR", izinkan akses kamera, lalu arahkan ke permukaan datar untuk melihat model atom 3D berinteraksi.</span>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="info-text"><strong>Fitur AR:</strong> Tampilkan model atom helium, elektron berotasi, dan informasi energi dalam secara real-time.</span>
+                </div>
+            `
+        },
+        animation: {
+            render: () => `
+                <div class="section-title"><i class="fas fa-film"></i> Animasi Molekuler</div>
+                <div class="anim-card">
+                    <h3 style="margin-bottom: 8px; font-size:0.85rem;">⚛️ Gerak Elektron pada Atom</h3>
+                    <div class="atom-animation" id="electronAnimContainer"></div>
+                    <button class="play-anim-btn" id="startAnimBtn"><i class="fas fa-play"></i> Putar Animasi</button>
+                </div>
+                <div class="anim-card">
+                    <div class="card-row">
+                        <div class="card-icon"><i class="fas fa-waveform"></i></div>
+                        <div class="card-info">
+                            <h3>Vibrasi Molekul (Fonon)</h3>
+                            <p>Simulasi getaran kisi kristal akibat energi termal. Semakin tinggi suhu, semakin cepat vibrasi.</p>
+                        </div>
+                    </div>
+                    <button class="play-anim-btn" id="vibrationBtn" style="margin-top: 12px;"><i class="fas fa-chart-line"></i> Lihat Animasi Vibrasi</button>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-microscope"></i>
+                    <span class="info-text"><strong>Fenomena:</strong> Getaran atom (fonon) meningkat seiring suhu, menyebabkan entropi bertambah (Hukum II Termodinamika).</span>
+                </div>
+            `
+        },
         laws: {
             render: () => `
                 <div class="section-title"><i class="fas fa-gavel"></i> Tiga Hukum Termodinamika</div>
@@ -414,12 +587,93 @@
     };
 
     let currentPage = 'home';
+    let animIntervalId = null;
 
     function navigateToFile(filename) {
         try {
             window.location.href = filename;
         } catch(e) {
-            alert("File '" + filename + "' belum tersedia.");
+            alert("File '" + filename + "' belum tersedia. Buat file tersebut terlebih dahulu.");
+        }
+    }
+
+    function stopAnimation() {
+        if (animIntervalId) {
+            clearInterval(animIntervalId);
+            animIntervalId = null;
+        }
+    }
+
+    function setupPageEvents(pageId) {
+        if (pageId === 'home') {
+            document.querySelectorAll('.card[data-page]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const targetPage = card.getAttribute('data-page');
+                    if (targetPage && pages[targetPage]) renderPage(targetPage);
+                });
+            });
+            document.querySelectorAll('.card[data-nav]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const targetFile = card.getAttribute('data-nav');
+                    if (targetFile) navigateToFile(targetFile);
+                });
+            });
+        }
+        
+        if (pageId === 'simulation') {
+            document.querySelectorAll('.card[data-nav]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const targetFile = card.getAttribute('data-nav');
+                    if (targetFile) navigateToFile(targetFile);
+                });
+            });
+        }
+        
+        if (pageId === 'scanner') {
+            document.querySelectorAll('.card[data-nav]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const targetFile = card.getAttribute('data-nav');
+                    if (targetFile) navigateToFile(targetFile);
+                });
+            });
+        }
+        
+        if (pageId === 'ar') {
+            const arBtn = document.getElementById('startARBtn');
+            if (arBtn) {
+                arBtn.addEventListener('click', () => {
+                    alert("📱 Fitur AR:\n\nArahkan kamera ke permukaan datar. Model atom 3D akan muncul.\n\nCatatan: Untuk pengalaman AR penuh, gunakan browser yang mendukung WebXR atau aplikasi dengan library AR.js.\n\nDemo: Model atom Helium dengan elektron berotasi di sekitar inti.");
+                });
+            }
+        }
+        
+        if (pageId === 'animation') {
+            const startBtn = document.getElementById('startAnimBtn');
+            const vibrationBtn = document.getElementById('vibrationBtn');
+            
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    startElectronAnimation();
+                });
+            }
+            
+            if (vibrationBtn) {
+                vibrationBtn.addEventListener('click', () => {
+                    alert("🎬 Animasi Vibrasi Molekul:\n\nKetika suhu meningkat, atom-atom dalam kisi kristal bergetar lebih cepat. Fenomena ini disebut FONON. Semakin tinggi energi termal → amplitudo getaran membesar → entropi sistem meningkat (Hk.II Termodinamika).\n\nDalam simulasi 3D, Anda dapat melihat partikel-partikel bergerak acak semakin cepat saat suhu dinaikkan.");
+                });
+            }
+            
+            // Auto start animation when page loads
+            setTimeout(() => startElectronAnimation(), 100);
+        }
+        
+        if (pageId === 'laws') {
+            document.querySelectorAll('.card[data-nav]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const targetFile = card.getAttribute('data-nav');
+                    if (targetFile) navigateToFile(targetFile);
+                });
+            });
         }
     }
 
@@ -430,16 +684,11 @@
         const pageData = pages[pageId];
         if (!pageData) return;
         
+        stopAnimation();
         container.innerHTML = pageData.render();
         currentPage = pageId;
         
-        document.querySelectorAll('.card[data-nav]').forEach(card => {
-            card.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const targetFile = card.getAttribute('data-nav');
-                if (targetFile) navigateToFile(targetFile);
-            });
-        });
+        setTimeout(() => setupPageEvents(pageId), 50);
         
         document.querySelectorAll('.nav-item').forEach(btn => {
             const btnPage = btn.getAttribute('data-page');
@@ -456,7 +705,7 @@
     });
 
     document.getElementById('menuBtn')?.addEventListener('click', () => {
-        alert("📱 ThermoAtom\n\n• Beranda - Fitur utama\n• Simulasi - Simulasi 3D atom\n• Scanner - QR scanner edukasi\n• Hukum - 3 Hukum Termodinamika");
+        alert("📱 ThermoAtom v2.0\n\n• Beranda - Fitur utama\n• Simulasi - Simulasi 3D atom\n• Scanner - QR scanner edukasi\n• AR - Augmented Reality atom 3D\n• Animasi - Animasi gerak elektron & vibrasi\n• Hukum - 3 Hukum Termodinamika");
     });
 
     renderPage('home');
