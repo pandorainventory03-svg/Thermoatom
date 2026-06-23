@@ -9,8 +9,8 @@
     <title>ThermoAtom - Aplikasi Termodinamika</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <!-- Instascan Library untuk QR Scanner -->
-    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <!-- Menggunakan jsQR untuk QR Scanner yang lebih reliable -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <style>
         * {
             margin: 0;
@@ -288,6 +288,30 @@
             height: 300px;
             object-fit: cover;
             background: #000;
+            display: none;
+        }
+        #scanner-canvas {
+            width: 100%;
+            height: 300px;
+            display: none;
+        }
+        .scanner-placeholder {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0f1a;
+            color: #9aa9c9;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .scanner-placeholder i {
+            font-size: 48px;
+            color: #ff8844;
+        }
+        .scanner-placeholder p {
+            font-size: 0.8rem;
         }
         .scanner-overlay {
             position: absolute;
@@ -374,6 +398,76 @@
             font-size: 0.7rem;
             word-break: break-all;
         }
+        .scan-result .btn-open-link {
+            margin-top: 8px;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #ff8844, #ff5e2e);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            width: 100%;
+        }
+        .scan-result .btn-open-link:active {
+            transform: scale(0.95);
+        }
+
+        /* Redirect notification */
+        .redirect-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 40px;
+            border-radius: 20px;
+            border: 2px solid #ff8844;
+            text-align: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            max-width: 90%;
+        }
+        .redirect-notification i {
+            font-size: 48px;
+            color: #4caf50;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .redirect-notification h3 {
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .redirect-notification p {
+            color: #b7c2e2;
+            font-size: 0.8rem;
+            word-break: break-all;
+            margin-bottom: 12px;
+        }
+        .redirect-notification .btn-redirect {
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #ff8844, #ff5e2e);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        .redirect-notification .btn-cancel {
+            padding: 10px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #666;
+            border-radius: 30px;
+            color: #aaa;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .redirect-notification .btn-redirect:active,
+        .redirect-notification .btn-cancel:active {
+            transform: scale(0.95);
+        }
 
         /* Bottom Navigation - Hanya 4 menu */
         .bottom-nav {
@@ -433,6 +527,11 @@
         .hidden {
             display: none !important;
         }
+
+        .scanning-active {
+            border-color: #4caf50 !important;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -461,8 +560,11 @@
 
 <script>
     // Variabel global untuk scanner
-    let scannerInstance = null;
+    let scannerStream = null;
     let isScannerActive = false;
+    let scanAnimationId = null;
+    let lastScanTime = 0;
+    let isRedirecting = false;
 
     let animInterval = null;
     
@@ -606,10 +708,15 @@
         scanner: {
             render: () => `
                 <div class="section-title"><i class="fas fa-qrcode"></i> QR & Barcode Scanner</div>
-                <div class="scanner-container">
-                    <video id="scanner-video" playsinline></video>
+                <div class="scanner-container" id="scannerContainer">
+                    <video id="scanner-video" playsinline autoplay></video>
+                    <canvas id="scanner-canvas"></canvas>
+                    <div class="scanner-placeholder" id="scannerPlaceholder">
+                        <i class="fas fa-camera"></i>
+                        <p>Tekan tombol "Mulai Scanner" untuk mengaktifkan kamera</p>
+                    </div>
                     <div class="scanner-overlay">
-                        <div class="scanner-frame"></div>
+                        <div class="scanner-frame" id="scannerFrame"></div>
                     </div>
                 </div>
                 <div class="scanner-controls">
@@ -624,11 +731,14 @@
                     <div class="scan-result hidden" id="scanResult">
                         <h4><i class="fas fa-check-circle"></i> Hasil Scan</h4>
                         <p id="scanResultText">-</p>
+                        <button class="btn-open-link" id="openLinkBtn">
+                            <i class="fas fa-external-link-alt"></i> Buka Link
+                        </button>
                     </div>
                 </div>
                 <div class="info-widget">
                     <i class="fas fa-info-circle"></i>
-                    <span class="info-text"><strong>Informasi:</strong> Arahkan kamera ke kode QR. Contoh hasil: "Hk.II - Entropi meningkat" atau "ΔU = Q - W".</span>
+                    <span class="info-text"><strong>Informasi:</strong> Arahkan kamera ke kode QR. Link akan otomatis terbuka setelah scan.</span>
                 </div>
                 <div class="info-widget">
                     <i class="fas fa-lightbulb"></i>
@@ -743,22 +853,258 @@
 
     // Fungsi untuk menghentikan scanner
     function stopScanner() {
-        if (scannerInstance) {
+        if (scannerStream) {
             try {
-                scannerInstance.stop();
-                scannerInstance = null;
-                isScannerActive = false;
-                const video = document.getElementById('scanner-video');
-                if (video) {
-                    video.srcObject = null;
-                    video.style.display = 'none';
+                scannerStream.getTracks().forEach(track => track.stop());
+                scannerStream = null;
+            } catch(e) {
+                console.log('Error stopping stream:', e);
+            }
+        }
+        
+        if (scanAnimationId) {
+            cancelAnimationFrame(scanAnimationId);
+            scanAnimationId = null;
+        }
+        
+        isScannerActive = false;
+        
+        const video = document.getElementById('scanner-video');
+        const canvas = document.getElementById('scanner-canvas');
+        const placeholder = document.getElementById('scannerPlaceholder');
+        const container = document.getElementById('scannerContainer');
+        const frame = document.getElementById('scannerFrame');
+        
+        if (video) {
+            video.style.display = 'none';
+            video.srcObject = null;
+        }
+        if (canvas) {
+            canvas.style.display = 'none';
+        }
+        if (placeholder) {
+            placeholder.style.display = 'flex';
+        }
+        if (container) {
+            container.classList.remove('scanning-active');
+        }
+        if (frame) {
+            frame.style.borderColor = 'rgba(255, 136, 68, 0.8)';
+        }
+        
+        const resultContainer = document.getElementById('scanResult');
+        if (resultContainer) {
+            resultContainer.classList.add('hidden');
+        }
+    }
+
+    // Fungsi untuk menampilkan notifikasi redirect
+    function showRedirectNotification(url) {
+        // Hapus notifikasi lama jika ada
+        const oldNotif = document.querySelector('.redirect-notification');
+        if (oldNotif) oldNotif.remove();
+        
+        const notif = document.createElement('div');
+        notif.className = 'redirect-notification';
+        notif.innerHTML = `
+            <i class="fas fa-link"></i>
+            <h3>📱 Membuka Link...</h3>
+            <p>${url}</p>
+            <div>
+                <button class="btn-redirect" onclick="openLinkDirectly('${url}')">
+                    <i class="fas fa-external-link-alt"></i> Buka Sekarang
+                </button>
+                <button class="btn-cancel" onclick="this.closest('.redirect-notification').remove()">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+            </div>
+        `;
+        document.body.appendChild(notif);
+        
+        // Auto redirect setelah 3 detik
+        setTimeout(() => {
+            const notifEl = document.querySelector('.redirect-notification');
+            if (notifEl) {
+                openLinkDirectly(url);
+                notifEl.remove();
+            }
+        }, 3000);
+    }
+
+    // Fungsi untuk membuka link
+    function openLinkDirectly(url) {
+        if (isRedirecting) return;
+        isRedirecting = true;
+        
+        try {
+            // Cek apakah URL valid
+            let finalUrl = url.trim();
+            
+            // Jika tidak ada protocol, tambahkan https://
+            if (!finalUrl.match(/^https?:\/\//i) && !finalUrl.match(/^[a-zA-Z]+:\/\//)) {
+                // Cek apakah ini domain atau path
+                if (finalUrl.match(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)) {
+                    finalUrl = 'https://' + finalUrl;
+                } else {
+                    // Mungkin teks biasa atau JSON, tampilkan sebagai teks
+                    alert('Hasil Scan: ' + finalUrl);
+                    isRedirecting = false;
+                    return;
                 }
-                const resultContainer = document.getElementById('scanResult');
-                if (resultContainer) {
-                    resultContainer.classList.add('hidden');
+            }
+            
+            // Coba buka link dengan beberapa metode
+            try {
+                // Metode 1: Window open
+                const win = window.open(finalUrl, '_blank');
+                if (!win || win.closed) {
+                    // Metode 2: Location href
+                    window.location.href = finalUrl;
                 }
             } catch(e) {
-                console.log('Error stopping scanner:', e);
+                // Metode 3: Fallback
+                window.location.href = finalUrl;
+            }
+            
+            // Hentikan scanner setelah redirect
+            setTimeout(() => {
+                stopScanner();
+            }, 500);
+            
+        } catch(e) {
+            alert('Tidak dapat membuka link: ' + url);
+        }
+        
+        setTimeout(() => {
+            isRedirecting = false;
+        }, 2000);
+    }
+
+    // Fungsi untuk memproses frame video dan mendeteksi QR
+    function scanFrame() {
+        if (!isScannerActive) return;
+        
+        const video = document.getElementById('scanner-video');
+        const canvas = document.getElementById('scanner-canvas');
+        
+        if (!video || !canvas) {
+            scanAnimationId = requestAnimationFrame(scanFrame);
+            return;
+        }
+        
+        try {
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                
+                try {
+                    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+                    
+                    if (code && code.data) {
+                        const now = Date.now();
+                        // Hindari double scan dalam 2 detik
+                        if (now - lastScanTime > 2000) {
+                            lastScanTime = now;
+                            handleScanResult(code.data);
+                        }
+                    }
+                } catch(e) {
+                    // Error parsing QR, abaikan
+                }
+            }
+        } catch(e) {
+            // Error rendering, abaikan
+        }
+        
+        scanAnimationId = requestAnimationFrame(scanFrame);
+    }
+
+    // Fungsi handle hasil scan
+    function handleScanResult(content) {
+        const resultContainer = document.getElementById('scanResult');
+        const resultText = document.getElementById('scanResultText');
+        const openLinkBtn = document.getElementById('openLinkBtn');
+        const frame = document.getElementById('scannerFrame');
+        
+        if (resultContainer && resultText) {
+            resultContainer.classList.remove('hidden');
+            
+            // Tampilkan hasil
+            let displayText = content;
+            let isUrl = false;
+            
+            // Coba parse JSON
+            try {
+                const data = JSON.parse(content);
+                displayText = JSON.stringify(data, null, 2);
+                // Cek jika JSON memiliki field url/link
+                if (data.url) {
+                    content = data.url;
+                    isUrl = true;
+                } else if (data.link) {
+                    content = data.link;
+                    isUrl = true;
+                }
+            } catch(e) {
+                // Bukan JSON, cek apakah URL
+                if (content.match(/^https?:\/\//i) || content.match(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)) {
+                    isUrl = true;
+                }
+                displayText = content;
+            }
+            
+            resultText.textContent = displayText;
+            
+            // Jika URL, tampilkan tombol buka link
+            if (openLinkBtn) {
+                if (isUrl) {
+                    openLinkBtn.style.display = 'block';
+                    openLinkBtn.onclick = function() {
+                        openLinkDirectly(content);
+                    };
+                } else {
+                    openLinkBtn.style.display = 'none';
+                }
+            }
+            
+            // Animasi frame hijau
+            if (frame) {
+                frame.style.borderColor = '#4caf50';
+                setTimeout(() => {
+                    frame.style.borderColor = 'rgba(255, 136, 68, 0.8)';
+                }, 500);
+            }
+            
+            // Beri feedback dengan getaran
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
+            
+            // Play suara notifikasi
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.value = 0.3;
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.stop();
+                }, 150);
+            } catch(e) {}
+            
+            // Jika URL, langsung buka dengan notifikasi
+            if (isUrl) {
+                showRedirectNotification(content);
             }
         }
     }
@@ -766,6 +1112,11 @@
     // Fungsi untuk memulai scanner
     function startScanner() {
         const video = document.getElementById('scanner-video');
+        const canvas = document.getElementById('scanner-canvas');
+        const placeholder = document.getElementById('scannerPlaceholder');
+        const container = document.getElementById('scannerContainer');
+        const frame = document.getElementById('scannerFrame');
+        
         if (!video) return;
 
         // Cek dukungan kamera
@@ -777,71 +1128,107 @@
         // Hentikan scanner yang sedang berjalan
         stopScanner();
 
-        try {
-            // Buat instance scanner baru
-            scannerInstance = new Instascan.Scanner({
-                video: video,
-                mirror: true,
-                captureImage: false,
-                backgroundScan: true,
-                continuous: true
-            });
-
-            // Event ketika QR terdeteksi
-            scannerInstance.addListener('scan', function(content) {
-                const resultContainer = document.getElementById('scanResult');
-                const resultText = document.getElementById('scanResultText');
-                if (resultContainer && resultText) {
-                    resultContainer.classList.remove('hidden');
-                    // Coba parse JSON, jika gagal tampilkan sebagai teks biasa
-                    try {
-                        const data = JSON.parse(content);
-                        resultText.textContent = JSON.stringify(data, null, 2);
-                    } catch(e) {
-                        resultText.textContent = content;
-                    }
-                    // Beri feedback dengan getaran
-                    if (navigator.vibrate) {
-                        navigator.vibrate(100);
-                    }
-                }
-                // Play suara notifikasi
-                try {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    oscillator.frequency.value = 800;
-                    oscillator.type = 'sine';
-                    gainNode.gain.value = 0.3;
-                    oscillator.start();
-                    setTimeout(() => {
-                        oscillator.stop();
-                    }, 150);
-                } catch(e) {}
-            });
-
-            // Mulai scanner
-            Instascan.Camera.getCameras().then(function(cameras) {
-                if (cameras.length > 0) {
-                    // Gunakan kamera belakang jika ada
-                    const camera = cameras.find(cam => cam.name && cam.name.toLowerCase().includes('back')) || cameras[0];
-                    scannerInstance.start(camera);
-                    isScannerActive = true;
-                    video.style.display = 'block';
-                } else {
-                    alert('Tidak ada kamera yang terdeteksi.');
-                }
-            }).catch(function(err) {
-                console.error('Error accessing cameras:', err);
-                alert('Tidak dapat mengakses kamera. Pastikan Anda memberikan izin akses kamera.');
-            });
-
-        } catch(e) {
-            console.error('Error initializing scanner:', e);
-            alert('Gagal menginisialisasi scanner. Periksa koneksi internet dan coba lagi.');
+        // Tampilkan loading
+        if (placeholder) {
+            placeholder.innerHTML = '<i class="fas fa-spinner fa-spin"></i><p>Mengakses kamera...</p>';
         }
+
+        // Coba akses kamera belakang
+        navigator.mediaDevices.getUserMedia({
+            video: { 
+                facingMode: 'environment',
+                width: { ideal: 640 },
+                height: { ideal: 480 }
+            }
+        }).then(function(stream) {
+            scannerStream = stream;
+            video.srcObject = stream;
+            video.style.display = 'block';
+            
+            if (canvas) {
+                canvas.style.display = 'none';
+            }
+            
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+            
+            if (container) {
+                container.classList.add('scanning-active');
+            }
+            
+            if (frame) {
+                frame.style.borderColor = 'rgba(255, 136, 68, 0.8)';
+            }
+            
+            isScannerActive = true;
+            
+            // Tunggu video siap lalu mulai scan
+            video.onloadedmetadata = function() {
+                video.play();
+                // Mulai proses scanning
+                if (scanAnimationId) cancelAnimationFrame(scanAnimationId);
+                scanFrame();
+            };
+            
+            // Handle error video
+            video.onerror = function() {
+                alert('Error pada video stream. Coba refresh halaman.');
+                stopScanner();
+            };
+            
+        }).catch(function(err) {
+            console.error('Error accessing camera:', err);
+            
+            // Coba kamera depan jika kamera belakang gagal
+            navigator.mediaDevices.getUserMedia({
+                video: { 
+                    facingMode: 'user',
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                }
+            }).then(function(stream) {
+                scannerStream = stream;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                
+                if (canvas) {
+                    canvas.style.display = 'none';
+                }
+                
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+                
+                if (container) {
+                    container.classList.add('scanning-active');
+                }
+                
+                if (frame) {
+                    frame.style.borderColor = 'rgba(255, 136, 68, 0.8)';
+                }
+                
+                isScannerActive = true;
+                
+                video.onloadedmetadata = function() {
+                    video.play();
+                    if (scanAnimationId) cancelAnimationFrame(scanAnimationId);
+                    scanFrame();
+                };
+                
+                video.onerror = function() {
+                    alert('Error pada video stream. Coba refresh halaman.');
+                    stopScanner();
+                };
+                
+            }).catch(function(err2) {
+                console.error('Error accessing front camera:', err2);
+                if (placeholder) {
+                    placeholder.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i><p>Tidak dapat mengakses kamera. Pastikan Anda memberikan izin.</p>';
+                }
+                alert('Tidak dapat mengakses kamera. Pastikan Anda memberikan izin akses kamera dan menggunakan HTTPS.');
+            });
+        });
     }
 
     function setupPageEvents(pageId) {
@@ -888,9 +1275,15 @@
                 });
             }
 
-            // Hentikan scanner saat halaman di-unload
+            // Hentikan scanner saat halaman di-unload atau visibility berubah
             window.addEventListener('beforeunload', function() {
                 stopScanner();
+            });
+            
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && isScannerActive) {
+                    // pause scanning tapi tetap stream
+                }
             });
         }
         
