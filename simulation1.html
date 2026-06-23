@@ -3,633 +3,1372 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Simulasi Termodinamika - Layer Bumi | Perubahan Iklim | Hukum 0, I, II</title>
-    <!-- Font Awesome 6 (Free) -->
+    <meta name="theme-color" content="#ff6e2e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>ThermoAtom - Aplikasi Termodinamika</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Menggunakan jsQR untuk QR Scanner yang lebih reliable -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
+
         body {
-            overflow: hidden;
-            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
-            background: #000;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0B0F19;
+            min-height: 100vh;
+            color: #EFF3FC;
         }
-        /* Tombol toggle navbar */
-        .toggle-nav {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 30;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 50px;
-            padding: 10px 16px;
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: rgba(18, 25, 45, 0.85);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 0 1px rgba(255, 140, 80, 0.2);
+            position: relative;
+        }
+
+        .app-header {
+            padding: 12px 16px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 140, 80, 0.25);
+            background: rgba(10, 15, 28, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(20px);
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .icon-badge {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ff8844, #ff5e2e);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .icon-badge i {
+            font-size: 18px;
             color: white;
-            font-size: 14px;
-            font-weight: bold;
+        }
+        .title-text h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #FFFFFF, #D6E6FF);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .title-text p {
+            font-size: 0.55rem;
+            color: #9aa9c9;
+            margin-top: 1px;
+        }
+        .menu-btn {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
             cursor: pointer;
-            border: 1px solid rgba(255,100,50,0.5);
+            transition: all 0.2s;
+        }
+        .menu-btn:active {
+            background: rgba(255,255,255,0.2);
+            transform: scale(0.95);
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px 90px;
+        }
+
+        .card {
+            background: rgba(25, 32, 50, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 120, 70, 0.3);
+            cursor: pointer;
             transition: all 0.2s ease;
+        }
+        .card:active {
+            transform: scale(0.98);
+            background: rgba(40, 50, 72, 0.85);
+        }
+        .card-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 110, 46, 0.2);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #ff9955;
+        }
+        .card-info {
+            flex: 1;
+        }
+        .card-info h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .card-info p {
+            font-size: 0.65rem;
+            color: #b7c2e2;
+            line-height: 1.35;
+        }
+        .chevron-icon {
+            color: #ffaa66;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .info-widget {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin-top: 8px;
+            border-left: 3px solid #ff8844;
+        }
+        .info-widget i {
+            color: #ffaa55;
+            margin-right: 6px;
+            font-size: 0.7rem;
+        }
+        .info-text {
+            font-size: 0.65rem;
+            color: #cbd5f0;
+            line-height: 1.4;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 6px 0 12px;
             display: flex;
             align-items: center;
             gap: 8px;
-            pointer-events: auto;
+            padding-left: 2px;
         }
-        .toggle-nav:active {
-            transform: scale(0.95);
-            background: #ff6600;
+        .section-title i {
+            color: #ff8844;
+            font-size: 1rem;
         }
-        /* UI Overlay - bisa di-toggle */
-        #ui {
+
+        .ar-container {
+            background: linear-gradient(135deg, #1a2a3a, #0a1520);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 140, 80, 0.4);
+        }
+        .ar-preview {
+            width: 100%;
+            height: 200px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ar-placeholder {
+            text-align: center;
+            color: #ffaa66;
+        }
+        .ar-placeholder i {
+            font-size: 48px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .ar-btn {
+            background: linear-gradient(135deg, #ff8844, #ff5e2e);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            width: 100%;
+        }
+        .ar-btn:active {
+            transform: scale(0.97);
+        }
+
+        .anim-card {
+            background: rgba(25, 32, 50, 0.7);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .atom-animation {
+            width: 100%;
+            height: 150px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            position: relative;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .nucleus {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ff8844, #ff4400);
+            border-radius: 50%;
             position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px #ff8844;
+        }
+        .electron {
+            width: 10px;
+            height: 10px;
+            background: #ffcc77;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 10px #ffaa55;
+        }
+        .play-anim-btn {
+            background: rgba(255, 136, 68, 0.3);
+            border: 1px solid #ff8844;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: #ffaa66;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        /* QR Scanner Styles */
+        .scanner-container {
+            background: #0a0f1a;
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 2px solid rgba(255, 136, 68, 0.4);
+            position: relative;
+        }
+        #scanner-video {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            background: #000;
+            display: none;
+        }
+        #scanner-canvas {
+            width: 100%;
+            height: 300px;
+            display: none;
+        }
+        .scanner-placeholder {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0f1a;
+            color: #9aa9c9;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .scanner-placeholder i {
+            font-size: 48px;
+            color: #ff8844;
+        }
+        .scanner-placeholder p {
+            font-size: 0.8rem;
+        }
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scanner-frame {
+            width: 200px;
+            height: 200px;
+            border: 3px solid rgba(255, 136, 68, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(255, 136, 68, 0.2);
+            position: relative;
+        }
+        .scanner-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 30px;
+            height: 30px;
+            border-top: 4px solid #ff8844;
+            border-left: 4px solid #ff8844;
+            border-radius: 4px 0 0 0;
+        }
+        .scanner-frame::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 30px;
+            height: 30px;
+            border-bottom: 4px solid #ff8844;
+            border-right: 4px solid #ff8844;
+            border-radius: 0 0 4px 0;
+        }
+        .scanner-controls {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .scanner-controls button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-start-scanner {
+            background: linear-gradient(135deg, #ff8844, #ff5e2e);
+            color: white;
+        }
+        .btn-stop-scanner {
+            background: rgba(255, 60, 60, 0.3);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .btn-start-scanner:active, .btn-stop-scanner:active {
+            transform: scale(0.95);
+        }
+        .scan-result {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            border-left: 3px solid #4caf50;
+        }
+        .scan-result h4 {
+            color: #4caf50;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+        .scan-result p {
+            color: #cbd5f0;
+            font-size: 0.7rem;
+            word-break: break-all;
+        }
+        .scan-result .btn-open-link {
+            margin-top: 8px;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #ff8844, #ff5e2e);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            width: 100%;
+        }
+        .scan-result .btn-open-link:active {
+            transform: scale(0.95);
+        }
+
+        /* Redirect notification */
+        .redirect-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 40px;
+            border-radius: 20px;
+            border: 2px solid #ff8844;
+            text-align: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            max-width: 90%;
+        }
+        .redirect-notification i {
+            font-size: 48px;
+            color: #4caf50;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .redirect-notification h3 {
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .redirect-notification p {
+            color: #b7c2e2;
+            font-size: 0.8rem;
+            word-break: break-all;
+            margin-bottom: 12px;
+        }
+        .redirect-notification .btn-redirect {
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #ff8844, #ff5e2e);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        .redirect-notification .btn-cancel {
+            padding: 10px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #666;
+            border-radius: 30px;
+            color: #aaa;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .redirect-notification .btn-redirect:active,
+        .redirect-notification .btn-cancel:active {
+            transform: scale(0.95);
+        }
+
+        /* Bottom Navigation - Hanya 4 menu */
+        .bottom-nav {
+            position: sticky;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 10, 20, 0.85);
+            max-width: 480px;
+            margin: 0 auto;
+            background: rgba(10, 16, 26, 0.96);
             backdrop-filter: blur(20px);
-            padding: 16px 18px 22px;
-            z-index: 20;
-            pointer-events: auto;
-            border-top: 1px solid rgba(255, 100, 50, 0.3);
-            border-radius: 24px 24px 0 0;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        #ui.hidden {
-            transform: translateY(100%);
-            pointer-events: none;
-        }
-        .slider-container {
-            margin-bottom: 16px;
-        }
-        .slider-label {
             display: flex;
-            justify-content: space-between;
-            color: #eee;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            letter-spacing: 0.3px;
-        }
-        .slider-label i {
-            margin-right: 6px;
-            color: #ffaa44;
-        }
-        input[type="range"] {
+            justify-content: space-around;
+            padding: 8px 16px 20px;
+            border-top: 0.5px solid rgba(255, 140, 80, 0.35);
+            z-index: 40;
             width: 100%;
-            height: 6px;
-            -webkit-appearance: none;
-            background: linear-gradient(90deg, #2a6f8f, #44aa88, #ffaa44, #ff4444);
-            border-radius: 10px;
-            outline: none;
         }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #ffaa44;
-            border: 2px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        input[type="range"]::-webkit-slider-thumb:active {
-            transform: scale(1.1);
-        }
-        .layer-controls {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin: 14px 0;
-        }
-        .layer-btn {
-            background: rgba(25, 30, 45, 0.9);
-            border: none;
-            color: #ccc;
-            padding: 8px 4px;
-            border-radius: 40px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            backdrop-filter: blur(4px);
+        .nav-item {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            border: 1px solid rgba(255, 100, 50, 0.3);
-        }
-        .layer-btn i {
-            font-size: 16px;
-            margin-bottom: 2px;
-        }
-        .layer-btn.active {
-            background: #ff6600;
-            color: white;
-            border-color: #ffaa44;
-            box-shadow: 0 2px 8px rgba(255, 100, 0, 0.4);
-        }
-        .layer-btn:active {
-            transform: scale(0.96);
-        }
-        .stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 12px 0 10px;
-        }
-        .stat-card {
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(4px);
-            padding: 8px 6px;
-            border-radius: 20px;
-            flex: 1;
-            text-align: center;
-            border: 1px solid rgba(255, 170, 68, 0.3);
-        }
-        .stat-card .label {
-            font-size: 10px;
-            color: #aaa;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-        .stat-value {
-            font-weight: bold;
-            font-size: 15px;
-            color: #ffaa66;
-            font-family: monospace;
-        }
-        .reset-btn {
-            background: linear-gradient(135deg, #ff6600, #ff4400);
+            background: none;
             border: none;
-            color: white;
-            padding: 12px 16px;
-            border-radius: 60px;
-            font-weight: bold;
-            font-size: 14px;
-            width: 100%;
-            margin: 6px 0 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        .reset-btn:active {
-            transform: scale(0.97);
-            background: linear-gradient(135deg, #ff8822, #ff6622);
-        }
-        .warning-text {
-            font-size: 9px;
-            color: #ffaa77;
-            text-align: center;
-            margin-top: 8px;
-            background: rgba(0,0,0,0.4);
-            padding: 4px 8px;
-            border-radius: 30px;
-            display: inline-block;
-            width: 100%;
-        }
-        .instruction {
-            font-size: 9px;
-            text-align: center;
-            margin-top: 6px;
-            color: #aaa;
-        }
-        .badge-left {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            background: rgba(0,0,0,0.65);
-            backdrop-filter: blur(12px);
-            padding: 6px 16px;
-            border-radius: 40px;
+            color: #8a96b8;
             font-size: 11px;
-            font-weight: 600;
-            color: #88ccff;
-            border-left: 3px solid #00aaff;
-            pointer-events: none;
-            z-index: 15;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            padding: 6px 0;
+            border-radius: 40px;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
         }
-        .temp-badge {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(12px);
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-            font-family: monospace;
-            text-align: center;
-            pointer-events: none;
-            z-index: 15;
-            border-right: 3px solid #ff6644;
-            min-width: 110px;
+        .nav-item i {
+            font-size: 20px;
         }
-        .temp-big {
-            font-size: 22px;
-            font-weight: 800;
-            line-height: 1.2;
+        .nav-item.active {
+            color: #ff8844;
+            background: rgba(255, 136, 68, 0.12);
         }
-        @media (max-width: 550px) {
-            .layer-btn i { font-size: 14px; }
-            .layer-btn span { font-size: 9px; }
-            .layer-btn { padding: 6px 2px; }
-            .stat-value { font-size: 13px; }
-            .temp-big { font-size: 18px; }
-            .temp-badge { padding: 6px 12px; min-width: 90px; }
-            .badge-left { font-size: 9px; padding: 4px 12px; top: 10px; left: 10px; }
-            .temp-badge { top: 10px; right: 10px; }
-            .toggle-nav { bottom: 15px; right: 15px; padding: 8px 14px; font-size: 12px; }
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
+        .main-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        .main-content::-webkit-scrollbar-track {
+            background: #1a1f2e;
+        }
+        .main-content::-webkit-scrollbar-thumb {
+            background: #ff8844;
+            border-radius: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .scanning-active {
+            border-color: #4caf50 !important;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
         }
     </style>
 </head>
 <body>
-    <!-- Tombol toggle navbar -->
-    <div class="toggle-nav" id="toggleNavBtn">
-        <i class="fas fa-chevron-down" id="toggleIcon"></i>
-        <span id="toggleText">Sembunyikan Panel</span>
+<div class="app-container">
+    <div class="app-header">
+        <div class="logo-area">
+            <div class="icon-badge"><i class="fas fa-atom"></i></div>
+            <div class="title-text">
+                <h1>Thermo<span style="color:#ffaa66;">Atom</span></h1>
+                <p>Hukum 0, I, II · AR & Animasi</p>
+            </div>
+        </div>
+        <button class="menu-btn" id="menuBtn"><i class="fas fa-ellipsis-v"></i></button>
     </div>
 
-    <div class="badge-left">
-        <i class="fas fa-leaf" style="color:#88ff88;"></i> 
-        <span id="statusBadge">Pra-Industri (Seimbang)</span>
+    <div class="main-content" id="mainContent"></div>
+
+    <!-- Bottom Navigation - Hanya 4 menu: Beranda, Simulasi, Scanner, AR -->
+    <div class="bottom-nav">
+        <button class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>Beranda</span></button>
+        <button class="nav-item" data-page="simulation"><i class="fas fa-play-circle"></i><span>Simulasi</span></button>
+        <button class="nav-item" data-page="scanner"><i class="fas fa-qrcode"></i><span>Scanner</span></button>
+        <button class="nav-item" data-page="ar"><i class="fas fa-vr-cardboard"></i><span>AR</span></button>
     </div>
-    <div class="temp-badge">
-        <i class="fas fa-temperature-high" style="margin-right: 4px;"></i> Anomali Suhu<br>
-        <span id="anomaliValue" class="temp-big" style="color:#88ccff">+0.0</span> °C
-    </div>
+</div>
+
+<script>
+    // Variabel global untuk scanner
+    let scannerStream = null;
+    let isScannerActive = false;
+    let scanAnimationId = null;
+    let lastScanTime = 0;
+    let isRedirecting = false;
+
+    let animInterval = null;
     
-    <div id="ui">
-        <div class="slider-container">
-            <div class="slider-label">
-                <span><i class="fas fa-industry"></i> Emisi GRK (Indeks Pemanasan)</span>
-                <span id="emisiValue" style="background:#00000066; padding:2px 10px; border-radius:20px;">0.80</span>
-            </div>
-            <input type="range" id="emisiSlider" min="0.5" max="2.2" step="0.01" value="0.8">
-        </div>
+    function startElectronAnimation() {
+        const container = document.getElementById('electronAnimContainer');
+        if (!container) return;
         
-        <div class="layer-controls">
-            <button class="layer-btn" data-layer="core"><i class="fas fa-fire"></i><span>Inti</span></button>
-            <button class="layer-btn" data-layer="crust"><i class="fas fa-mountain"></i><span>Kerak</span></button>
-            <button class="layer-btn active" data-layer="surface"><i class="fas fa-globe-asia"></i><span>Permukaan</span></button>
-            <button class="layer-btn active" data-layer="clouds"><i class="fas fa-cloud-sun"></i><span>Awan</span></button>
-            <button class="layer-btn active" data-layer="atmos"><i class="fas fa-wind"></i><span>Atmosfer</span></button>
-        </div>
+        if (animInterval) clearInterval(animInterval);
         
-        <div class="stats">
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-bolt"></i> Energi Sistem</div>
-                <div><span id="energyStat" class="stat-value">42%</span></div>
-            </div>
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-smog"></i> CO₂ ekuivalen</div>
-                <div><span id="co2Stat" class="stat-value">350 ppm</span></div>
-            </div>
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-sun"></i> Radiasi</div>
-                <div><span id="qStats" class="stat-value">0.85/0.82</span></div>
-            </div>
-        </div>
+        container.innerHTML = `
+            <div class="nucleus"></div>
+            <div class="electron" id="electron1" style="top: 50%; left: 50%;"></div>
+            <div class="electron" id="electron2" style="top: 50%; left: 50%;"></div>
+            <div class="electron" id="electron3" style="top: 50%; left: 50%;"></div>
+        `;
         
-        <button class="reset-btn" id="resetBtn">
-            <i class="fas fa-undo-alt"></i> Reset ke Kondisi Pra-Industri
-        </button>
-        <div class="instruction">
-            <i class="fas fa-fingerprint"></i> Klik ikon layer untuk tampilkan/sembunyikan | Emisi 1.0 = kondisi saat ini (+1.2°C)
-        </div>
-        <div class="warning-text" id="warningText"></div>
-    </div>
+        let angle1 = 0, angle2 = 120, angle3 = 240;
+        const radius = 50;
+        
+        function updatePositions() {
+            const containerRect = container.getBoundingClientRect();
+            const centerX = containerRect.width / 2;
+            const centerY = containerRect.height / 2;
+            
+            const e1 = document.getElementById('electron1');
+            const e2 = document.getElementById('electron2');
+            const e3 = document.getElementById('electron3');
+            if (!e1 || !e2 || !e3) {
+                clearInterval(animInterval);
+                return;
+            }
+            
+            angle1 = (angle1 + 3) % 360;
+            angle2 = (angle2 + 3) % 360;
+            angle3 = (angle3 + 3) % 360;
+            
+            const rad1 = angle1 * Math.PI / 180;
+            const rad2 = angle2 * Math.PI / 180;
+            const rad3 = angle3 * Math.PI / 180;
+            
+            e1.style.left = (centerX + radius * Math.cos(rad1) - 5) + 'px';
+            e1.style.top = (centerY + radius * Math.sin(rad1) - 5) + 'px';
+            e2.style.left = (centerX + radius * Math.cos(rad2) - 5) + 'px';
+            e2.style.top = (centerY + radius * Math.sin(rad2) - 5) + 'px';
+            e3.style.left = (centerX + radius * Math.cos(rad3) - 5) + 'px';
+            e3.style.top = (centerY + radius * Math.sin(rad3) - 5) + 'px';
+        }
+        
+        updatePositions();
+        animInterval = setInterval(updatePositions, 30);
+        
+        window.addEventListener('resize', () => {
+            if (animInterval) updatePositions();
+        });
+    }
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+    const pages = {
+        home: {
+            render: () => `
+                <div id="homePage">
+                    <div class="card" data-nav="simulation1.html">
+                        <div class="card-row">
+                            <div class="card-icon"><i class="fas fa-cubes"></i></div>
+                            <div class="card-info">
+                                <h3>Simulasi 3D Termodinamika</h3>
+                                <p>Model atom interaktif, kisi kristal, entropi & energi dalam.</p>
+                            </div>
+                            <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                    <div class="card" data-page="laws">
+                        <div class="card-row">
+                            <div class="card-icon"><i class="fas fa-gavel"></i></div>
+                            <div class="card-info">
+                                <h3>Hukum Termodinamika</h3>
+                                <p>Pelajari Hukum 0, I, II dengan contoh fisika dan entropi.</p>
+                            </div>
+                            <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                    <div class="card" data-page="scanner">
+                        <div class="card-row">
+                            <div class="card-icon"><i class="fas fa-qrcode"></i></div>
+                            <div class="card-info">
+                                <h3>QR Scanner Edukasi</h3>
+                                <p>Scan kode QR materi termodinamika & struktur atom.</p>
+                            </div>
+                            <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                    <div class="card" data-page="ar">
+                        <div class="card-row">
+                            <div class="card-icon"><i class="fas fa-vr-cardboard"></i></div>
+                            <div class="card-info">
+                                <h3>Augmented Reality (AR)</h3>
+                                <p>Lihat model atom 3D langsung di dunia nyata melalui kamera.</p>
+                            </div>
+                            <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                    <div class="card" data-page="animation">
+                        <div class="card-row">
+                            <div class="card-icon"><i class="fas fa-film"></i></div>
+                            <div class="card-info">
+                                <h3>Animasi Molekuler</h3>
+                                <p>Animasi gerak elektron, vibrasi molekul, dan energi termal.</p>
+                            </div>
+                            <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                    <div class="info-widget">
+                        <i class="fas fa-atom"></i>
+                        <span class="info-text"><strong>Fakta:</strong> Entropi alam semesta selalu meningkat (Hk.II). Energi tidak dapat diciptakan/dimusnahkan (Hk.I).</span>
+                    </div>
+                </div>
+            `
+        },
+        simulation: {
+            render: () => `
+                <div class="section-title"><i class="fas fa-play-circle"></i> Simulasi Energi & Atom</div>
+                <div class="card" data-nav="hukum.html">
+                    <div class="card-row">
+                        <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                        <div class="card-info">
+                            <h3>Simulasi 3D Penuh</h3>
+                            <p>Visualisasi inti atom, elektron, kisi kristal, dan partikel termal (fonon).</p>
+                        </div>
+                        <div class="chevron-icon"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="info-text"><strong>Tips:</strong> Gunakan dua jari untuk rotasi dan zoom. Amati vibrasi atom saat suhu meningkat!</span>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-charging-station"></i>
+                    <span class="info-text"><strong>Prinsip:</strong> Energi Dalam (U) dipengaruhi Q_in & Q_out. Entropi ↑ sesuai Hk.II.</span>
+                </div>
+            `
+        },
+        scanner: {
+            render: () => `
+                <div class="section-title"><i class="fas fa-qrcode"></i> QR & Barcode Scanner</div>
+                <div class="scanner-container" id="scannerContainer">
+                    <video id="scanner-video" playsinline autoplay></video>
+                    <canvas id="scanner-canvas"></canvas>
+                    <div class="scanner-placeholder" id="scannerPlaceholder">
+                        <i class="fas fa-camera"></i>
+                        <p>Tekan tombol "Mulai Scanner" untuk mengaktifkan kamera</p>
+                    </div>
+                    <div class="scanner-overlay">
+                        <div class="scanner-frame" id="scannerFrame"></div>
+                    </div>
+                </div>
+                <div class="scanner-controls">
+                    <button class="btn-start-scanner" id="startScannerBtn">
+                        <i class="fas fa-play"></i> Mulai Scanner
+                    </button>
+                    <button class="btn-stop-scanner" id="stopScannerBtn">
+                        <i class="fas fa-stop"></i> Berhenti
+                    </button>
+                </div>
+                <div id="scanResultContainer">
+                    <div class="scan-result hidden" id="scanResult">
+                        <h4><i class="fas fa-check-circle"></i> Hasil Scan</h4>
+                        <p id="scanResultText">-</p>
+                        <button class="btn-open-link" id="openLinkBtn">
+                            <i class="fas fa-external-link-alt"></i> Buka Link
+                        </button>
+                    </div>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="info-text"><strong>Informasi:</strong> Arahkan kamera ke kode QR. Link akan otomatis terbuka setelah scan.</span>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="info-text"><strong>Tips:</strong> Pastikan pencahayaan cukup dan QR code terlihat jelas. Scanner akan otomatis mendeteksi.</span>
+                </div>
+            `
+        },
+        ar: {
+            render: () => `
+                <div class="section-title"><i class="fas fa-vr-cardboard"></i> Augmented Reality</div>
+                <div class="ar-container">
+                    <div class="ar-preview" id="arPreview">
+                        <div class="ar-placeholder">
+                            <i class="fas fa-camera"></i>
+                            <p>AR akan membuka kamera untuk menampilkan model atom 3D di lingkungan nyata</p>
+                        </div>
+                    </div>
+                    <button class="ar-btn" id="startARBtn">
+                        <i class="fas fa-play"></i> Mulai AR (Lihat Atom 3D)
+                    </button>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="info-text"><strong>Cara Penggunaan AR:</strong> Klik tombol "Mulai AR", izinkan akses kamera, lalu arahkan ke permukaan datar untuk melihat model atom 3D berinteraksi.</span>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="info-text"><strong>Fitur AR:</strong> Tampilkan model atom helium, elektron berotasi, dan informasi energi dalam secara real-time.</span>
+                </div>
+            `
+        },
+        animation: {
+            render: () => `
+                <div class="section-title"><i class="fas fa-film"></i> Animasi Molekuler</div>
+                <div class="anim-card">
+                    <h3 style="margin-bottom: 8px; font-size:0.85rem;">⚛️ Gerak Elektron pada Atom</h3>
+                    <div class="atom-animation" id="electronAnimContainer"></div>
+                    <button class="play-anim-btn" id="startAnimBtn"><i class="fas fa-play"></i> Putar Animasi</button>
+                </div>
+                <div class="anim-card">
+                    <div class="card-row">
+                        <div class="card-icon"><i class="fas fa-waveform"></i></div>
+                        <div class="card-info">
+                            <h3>Vibrasi Molekul (Fonon)</h3>
+                            <p>Simulasi getaran kisi kristal akibat energi termal. Semakin tinggi suhu, semakin cepat vibrasi.</p>
+                        </div>
+                    </div>
+                    <button class="play-anim-btn" id="vibrationBtn" style="margin-top: 12px;"><i class="fas fa-chart-line"></i> Lihat Animasi Vibrasi</button>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-microscope"></i>
+                    <span class="info-text"><strong>Fenomena:</strong> Getaran atom (fonon) meningkat seiring suhu, menyebabkan entropi bertambah (Hukum II Termodinamika).</span>
+                </div>
+                <button class="play-anim-btn" id="backHomeBtn" style="margin-top: 12px; width:100%;"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</button>
+            `
+        },
+        laws: {
+            render: () => `
+                <div class="section-title"><i class="fas fa-gavel"></i> Tiga Hukum Termodinamika</div>
+                <div class="card">
+                    <div class="card-row">
+                        <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
+                        <div class="card-info">
+                            <h3>Hukum ke-0 (Kesetimbangan Termal)</h3>
+                            <p>Jika sistem A setimbang termal dengan B, dan B setimbang dengan C, maka A setimbang dengan C.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-row">
+                        <div class="card-icon"><i class="fas fa-charging-station"></i></div>
+                        <div class="card-info">
+                            <h3>Hukum I (Kekekalan Energi)</h3>
+                            <p>ΔU = Q - W. Energi dalam sistem berubah karena kalor dan kerja. Energi tidak dapat diciptakan atau dimusnahkan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-row">
+                        <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="card-info">
+                            <h3>Hukum II (Entropi)</h3>
+                            <p>Entropi total alam semesta selalu meningkat pada proses spontan. ΔS ≥ 0.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-widget">
+                    <i class="fas fa-microscope"></i>
+                    <span class="info-text"><strong>Aplikasi:</strong> Getaran kisi (fonon) meningkat seiring suhu → entropi naik. Elektron bergerak lebih cepat.</span>
+                </div>
+                <button class="play-anim-btn" id="backHomeFromLaws" style="margin-top: 12px; width:100%;"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</button>
+            `
+        }
+    };
+
+    let currentPage = 'home';
+
+    function navigateToFile(filename) {
+        try {
+            window.location.href = filename;
+        } catch(e) {
+            alert("File '" + filename + "' belum tersedia. Buat file tersebut terlebih dahulu.");
+        }
+    }
+
+    function stopAnimation() {
+        if (animInterval) {
+            clearInterval(animInterval);
+            animInterval = null;
+        }
+    }
+
+    // Fungsi untuk menghentikan scanner
+    function stopScanner() {
+        if (scannerStream) {
+            try {
+                scannerStream.getTracks().forEach(track => track.stop());
+                scannerStream = null;
+            } catch(e) {
+                console.log('Error stopping stream:', e);
             }
         }
-    </script>
+        
+        if (scanAnimationId) {
+            cancelAnimationFrame(scanAnimationId);
+            scanAnimationId = null;
+        }
+        
+        isScannerActive = false;
+        
+        const video = document.getElementById('scanner-video');
+        const canvas = document.getElementById('scanner-canvas');
+        const placeholder = document.getElementById('scannerPlaceholder');
+        const container = document.getElementById('scannerContainer');
+        const frame = document.getElementById('scannerFrame');
+        
+        if (video) {
+            video.style.display = 'none';
+            video.srcObject = null;
+        }
+        if (canvas) {
+            canvas.style.display = 'none';
+        }
+        if (placeholder) {
+            placeholder.style.display = 'flex';
+        }
+        if (container) {
+            container.classList.remove('scanning-active');
+        }
+        if (frame) {
+            frame.style.borderColor = 'rgba(255, 136, 68, 0.8)';
+        }
+        
+        const resultContainer = document.getElementById('scanResult');
+        if (resultContainer) {
+            resultContainer.classList.add('hidden');
+        }
+    }
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    // Fungsi untuk menampilkan notifikasi redirect
+    function showRedirectNotification(url) {
+        // Hapus notifikasi lama jika ada
+        const oldNotif = document.querySelector('.redirect-notification');
+        if (oldNotif) oldNotif.remove();
         
-        // --- Setup Scene ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x030318);
-        scene.fog = new THREE.FogExp2(0x030318, 0.002);
+        const notif = document.createElement('div');
+        notif.className = 'redirect-notification';
+        notif.innerHTML = `
+            <i class="fas fa-link"></i>
+            <h3>📱 Membuka Link...</h3>
+            <p>${url}</p>
+            <div>
+                <button class="btn-redirect" onclick="openLinkDirectly('${url}')">
+                    <i class="fas fa-external-link-alt"></i> Buka Sekarang
+                </button>
+                <button class="btn-cancel" onclick="this.closest('.redirect-notification').remove()">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+            </div>
+        `;
+        document.body.appendChild(notif);
         
-        const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.2, 100);
-        camera.position.set(0, 0.15, 4.2);
+        // Auto redirect setelah 3 detik
+        setTimeout(() => {
+            const notifEl = document.querySelector('.redirect-notification');
+            if (notifEl) {
+                openLinkDirectly(url);
+                notifEl.remove();
+            }
+        }, 3000);
+    }
+
+    // Fungsi untuk membuka link
+    function openLinkDirectly(url) {
+        if (isRedirecting) return;
+        isRedirecting = true;
         
-        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        document.body.appendChild(renderer.domElement);
-        
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.06;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.65;
-        controls.enableZoom = true;
-        controls.enablePan = false;
-        controls.rotateSpeed = 0.8;
-        controls.zoomSpeed = 0.8;
-        controls.target.set(0, 0, 0);
-        
-        // ========== LAYER BUMI ==========
-        
-        // 1. INTI BUMI
-        const coreMat = new THREE.MeshStandardMaterial({ color: 0xff4400, emissive: 0xff2200, emissiveIntensity: 0.55, metalness: 0.7, roughness: 0.4 });
-        const coreGeom = new THREE.SphereGeometry(0.35, 64, 64);
-        const core = new THREE.Mesh(coreGeom, coreMat);
-        scene.add(core);
-        
-        const coreGlowMat = new THREE.MeshBasicMaterial({ color: 0xff6622, transparent: true, opacity: 0.12, side: THREE.BackSide });
-        const coreGlowGeom = new THREE.SphereGeometry(0.4, 48, 48);
-        const coreGlow = new THREE.Mesh(coreGlowGeom, coreGlowMat);
-        scene.add(coreGlow);
-        
-        // 2. KERAK BUMI
-        const crustMat = new THREE.MeshPhongMaterial({ color: 0xaa8866, transparent: true, opacity: 0.3, emissive: 0x331100 });
-        const crustGeom = new THREE.SphereGeometry(0.75, 96, 96);
-        const crust = new THREE.Mesh(crustGeom, crustMat);
-        scene.add(crust);
-        
-        // 3. PERMUKAAN BUMI (tekstur asli)
-        const textureLoader = new THREE.TextureLoader();
-        const earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-        const earthSpecular = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
-        const earthMaterial = new THREE.MeshPhongMaterial({ map: earthMap, specularMap: earthSpecular, shininess: 8, specular: new THREE.Color('grey') });
-        const earthGeom = new THREE.SphereGeometry(0.98, 128, 128);
-        const earthSurface = new THREE.Mesh(earthGeom, earthMaterial);
-        scene.add(earthSurface);
-        
-        // Overlay panas (HANYA muncul saat suhu meningkat, default 0%)
-        const overlayGeom = new THREE.SphereGeometry(0.985, 128, 128);
-        const overlayMat = new THREE.ShaderMaterial({
-            uniforms: { heatIntensity: { value: 0.0 } },
-            vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-            fragmentShader: `
-                uniform float heatIntensity;
-                varying vec2 vUv;
-                void main() {
-                    float intensity = clamp(heatIntensity, 0.0, 0.85);
-                    if (intensity < 0.05) discard;
-                    vec3 colorHot = vec3(1.0, 0.2, 0.1);
-                    gl_FragColor = vec4(colorHot, intensity * 0.65);
+        try {
+            // Cek apakah URL valid
+            let finalUrl = url.trim();
+            
+            // Jika tidak ada protocol, tambahkan https://
+            if (!finalUrl.match(/^https?:\/\//i) && !finalUrl.match(/^[a-zA-Z]+:\/\//)) {
+                // Cek apakah ini domain atau path
+                if (finalUrl.match(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)) {
+                    finalUrl = 'https://' + finalUrl;
+                } else {
+                    // Mungkin teks biasa atau JSON, tampilkan sebagai teks
+                    alert('Hasil Scan: ' + finalUrl);
+                    isRedirecting = false;
+                    return;
                 }
-            `,
-            transparent: true
-        });
-        const heatOverlay = new THREE.Mesh(overlayGeom, overlayMat);
-        scene.add(heatOverlay);
-        
-        // 4. AWAN
-        const cloudCanvas = document.createElement('canvas');
-        cloudCanvas.width = 512; cloudCanvas.height = 512;
-        const ctx = cloudCanvas.getContext('2d');
-        ctx.fillStyle = 'white'; ctx.fillRect(0, 0, cloudCanvas.width, cloudCanvas.height);
-        for (let i = 0; i < 4000; i++) {
-            const x = Math.random() * cloudCanvas.width, y = Math.random() * cloudCanvas.height, r = 4 + Math.random() * 22;
-            const alpha = 0.2 + Math.random() * 0.5;
-            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`; ctx.fill();
+            }
+            
+            // Coba buka link dengan beberapa metode
+            try {
+                // Metode 1: Window open
+                const win = window.open(finalUrl, '_blank');
+                if (!win || win.closed) {
+                    // Metode 2: Location href
+                    window.location.href = finalUrl;
+                }
+            } catch(e) {
+                // Metode 3: Fallback
+                window.location.href = finalUrl;
+            }
+            
+            // Hentikan scanner setelah redirect
+            setTimeout(() => {
+                stopScanner();
+            }, 500);
+            
+        } catch(e) {
+            alert('Tidak dapat membuka link: ' + url);
         }
-        const cloudTexture = new THREE.CanvasTexture(cloudCanvas);
-        cloudTexture.wrapS = THREE.RepeatWrapping; cloudTexture.wrapT = THREE.RepeatWrapping;
-        cloudTexture.repeat.set(3, 1.8);
-        const cloudMat = new THREE.MeshPhongMaterial({ map: cloudTexture, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, color: 0xffffff });
-        const cloudGeom = new THREE.SphereGeometry(1.04, 128, 128);
-        const clouds = new THREE.Mesh(cloudGeom, cloudMat);
-        scene.add(clouds);
         
-        // 5. ATMOSFER
-        const atmosMat = new THREE.MeshPhongMaterial({ color: 0x88aaff, emissive: 0x224466, transparent: true, opacity: 0.12, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
-        const atmosGeom = new THREE.SphereGeometry(1.12, 96, 96);
-        const atmosphere = new THREE.Mesh(atmosGeom, atmosMat);
-        scene.add(atmosphere);
+        setTimeout(() => {
+            isRedirecting = false;
+        }, 2000);
+    }
+
+    // Fungsi untuk memproses frame video dan mendeteksi QR
+    function scanFrame() {
+        if (!isScannerActive) return;
         
-        const coronaMat = new THREE.MeshPhongMaterial({ color: 0xffaa66, emissive: 0xff4422, transparent: true, opacity: 0.08, side: THREE.BackSide, blending: THREE.AdditiveBlending });
-        const coronaGeom = new THREE.SphereGeometry(1.18, 64, 64);
-        const corona = new THREE.Mesh(coronaGeom, coronaMat);
-        scene.add(corona);
+        const video = document.getElementById('scanner-video');
+        const canvas = document.getElementById('scanner-canvas');
         
-        // Partikel atmosfer
-        const particleCount = 1400;
-        const particleGeo = new THREE.BufferGeometry();
-        const particlePos = [];
-        for (let i = 0; i < particleCount; i++) {
-            const theta = Math.random() * Math.PI * 2, phi = Math.acos(2 * Math.random() - 1), r = 1.08 + Math.random() * 0.12;
-            particlePos.push(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
+        if (!video || !canvas) {
+            scanAnimationId = requestAnimationFrame(scanFrame);
+            return;
         }
-        particleGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(particlePos), 3));
-        const particleMat = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.006, transparent: true, opacity: 0.4 });
-        const atmosphereParticles = new THREE.Points(particleGeo, particleMat);
-        scene.add(atmosphereParticles);
         
-        // Bintang
-        const starField = new THREE.BufferGeometry();
-        const starPositions = [];
-        for (let i = 0; i < 1200; i++) starPositions.push((Math.random() - 0.5) * 600, (Math.random() - 0.5) * 400, (Math.random() - 0.5) * 250 - 100);
-        starField.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPositions), 3));
-        const stars = new THREE.Points(starField, new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true, opacity: 0.7 }));
-        scene.add(stars);
-        
-        // Pencahayaan
-        const ambient = new THREE.AmbientLight(0x222233); scene.add(ambient);
-        const mainLight = new THREE.DirectionalLight(0xffeedd, 1.2); mainLight.position.set(5, 8, 6); scene.add(mainLight);
-        const fillLight = new THREE.PointLight(0xffaa66, 0.4); fillLight.position.set(1, 1, 3); scene.add(fillLight);
-        const coreLight = new THREE.PointLight(0xff4400, 0.5); coreLight.position.set(0, 0, 0); scene.add(coreLight);
-        
-        // Layer visibility management
-        const layers = { core, crust, surface: earthSurface, clouds, atmos: atmosphere };
-        core.visible = false;
-        crust.visible = false;
-        
-        document.querySelectorAll('.layer-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const layerName = btn.dataset.layer;
-                if (layers[layerName]) {
-                    layers[layerName].visible = !layers[layerName].visible;
-                    btn.classList.toggle('active', layers[layerName].visible);
+        try {
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                
+                try {
+                    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+                    
+                    if (code && code.data) {
+                        const now = Date.now();
+                        // Hindari double scan dalam 2 detik
+                        if (now - lastScanTime > 2000) {
+                            lastScanTime = now;
+                            handleScanResult(code.data);
+                        }
+                    }
+                } catch(e) {
+                    // Error parsing QR, abaikan
                 }
-                if (layerName === 'atmos') { 
-                    atmosphereParticles.visible = layers[layerName].visible; 
-                    corona.visible = layers[layerName].visible; 
+            }
+        } catch(e) {
+            // Error rendering, abaikan
+        }
+        
+        scanAnimationId = requestAnimationFrame(scanFrame);
+    }
+
+    // Fungsi handle hasil scan
+    function handleScanResult(content) {
+        const resultContainer = document.getElementById('scanResult');
+        const resultText = document.getElementById('scanResultText');
+        const openLinkBtn = document.getElementById('openLinkBtn');
+        const frame = document.getElementById('scannerFrame');
+        
+        if (resultContainer && resultText) {
+            resultContainer.classList.remove('hidden');
+            
+            // Tampilkan hasil
+            let displayText = content;
+            let isUrl = false;
+            
+            // Coba parse JSON
+            try {
+                const data = JSON.parse(content);
+                displayText = JSON.stringify(data, null, 2);
+                // Cek jika JSON memiliki field url/link
+                if (data.url) {
+                    content = data.url;
+                    isUrl = true;
+                } else if (data.link) {
+                    content = data.link;
+                    isUrl = true;
                 }
+            } catch(e) {
+                // Bukan JSON, cek apakah URL
+                if (content.match(/^https?:\/\//i) || content.match(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)) {
+                    isUrl = true;
+                }
+                displayText = content;
+            }
+            
+            resultText.textContent = displayText;
+            
+            // Jika URL, tampilkan tombol buka link
+            if (openLinkBtn) {
+                if (isUrl) {
+                    openLinkBtn.style.display = 'block';
+                    openLinkBtn.onclick = function() {
+                        openLinkDirectly(content);
+                    };
+                } else {
+                    openLinkBtn.style.display = 'none';
+                }
+            }
+            
+            // Animasi frame hijau
+            if (frame) {
+                frame.style.borderColor = '#4caf50';
+                setTimeout(() => {
+                    frame.style.borderColor = 'rgba(255, 136, 68, 0.8)';
+                }, 500);
+            }
+            
+            // Beri feedback dengan getaran
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
+            
+            // Play suara notifikasi
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.value = 0.3;
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.stop();
+                }, 150);
+            } catch(e) {}
+            
+            // Jika URL, langsung buka dengan notifikasi
+            if (isUrl) {
+                showRedirectNotification(content);
+            }
+        }
+    }
+
+    // Fungsi untuk memulai scanner
+    function startScanner() {
+        const video = document.getElementById('scanner-video');
+        const canvas = document.getElementById('scanner-canvas');
+        const placeholder = document.getElementById('scannerPlaceholder');
+        const container = document.getElementById('scannerContainer');
+        const frame = document.getElementById('scannerFrame');
+        
+        if (!video) return;
+
+        // Cek dukungan kamera
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('Browser Anda tidak mendukung akses kamera. Gunakan browser terbaru.');
+            return;
+        }
+
+        // Hentikan scanner yang sedang berjalan
+        stopScanner();
+
+        // Tampilkan loading
+        if (placeholder) {
+            placeholder.innerHTML = '<i class="fas fa-spinner fa-spin"></i><p>Mengakses kamera...</p>';
+        }
+
+        // Coba akses kamera belakang
+        navigator.mediaDevices.getUserMedia({
+            video: { 
+                facingMode: 'environment',
+                width: { ideal: 640 },
+                height: { ideal: 480 }
+            }
+        }).then(function(stream) {
+            scannerStream = stream;
+            video.srcObject = stream;
+            video.style.display = 'block';
+            
+            if (canvas) {
+                canvas.style.display = 'none';
+            }
+            
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+            
+            if (container) {
+                container.classList.add('scanning-active');
+            }
+            
+            if (frame) {
+                frame.style.borderColor = 'rgba(255, 136, 68, 0.8)';
+            }
+            
+            isScannerActive = true;
+            
+            // Tunggu video siap lalu mulai scan
+            video.onloadedmetadata = function() {
+                video.play();
+                // Mulai proses scanning
+                if (scanAnimationId) cancelAnimationFrame(scanAnimationId);
+                scanFrame();
+            };
+            
+            // Handle error video
+            video.onerror = function() {
+                alert('Error pada video stream. Coba refresh halaman.');
+                stopScanner();
+            };
+            
+        }).catch(function(err) {
+            console.error('Error accessing camera:', err);
+            
+            // Coba kamera depan jika kamera belakang gagal
+            navigator.mediaDevices.getUserMedia({
+                video: { 
+                    facingMode: 'user',
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                }
+            }).then(function(stream) {
+                scannerStream = stream;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                
+                if (canvas) {
+                    canvas.style.display = 'none';
+                }
+                
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+                
+                if (container) {
+                    container.classList.add('scanning-active');
+                }
+                
+                if (frame) {
+                    frame.style.borderColor = 'rgba(255, 136, 68, 0.8)';
+                }
+                
+                isScannerActive = true;
+                
+                video.onloadedmetadata = function() {
+                    video.play();
+                    if (scanAnimationId) cancelAnimationFrame(scanAnimationId);
+                    scanFrame();
+                };
+                
+                video.onerror = function() {
+                    alert('Error pada video stream. Coba refresh halaman.');
+                    stopScanner();
+                };
+                
+            }).catch(function(err2) {
+                console.error('Error accessing front camera:', err2);
+                if (placeholder) {
+                    placeholder.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i><p>Tidak dapat mengakses kamera. Pastikan Anda memberikan izin.</p>';
+                }
+                alert('Tidak dapat mengakses kamera. Pastikan Anda memberikan izin akses kamera dan menggunakan HTTPS.');
             });
         });
-        
-        // ========== TERMODINAMIKA ==========
-        let internalEnergy = 0.42, qIn = 0.85, qOut = 0.82, co2ppm = 350, currentAnomaly = 0.0;
-        
-        function updateTemperature(emisi) {
-            const emissionFactor = Math.max(0, (emisi - 0.7) / 1.4);
-            qIn = Math.min(1.55, 0.82 + emissionFactor * 0.55);
-            qOut = Math.min(1.32, 0.72 + emissionFactor * 0.45);
-            internalEnergy = Math.min(0.82, Math.max(0.38, internalEnergy + (qIn - qOut) * 0.008));
-            co2ppm = Math.min(800, Math.max(310, 350 + (emisi - 0.7) * 420));
-            let anomaly = emissionFactor * 3.5;
-            if (emisi > 0.95 && emisi < 1.05) anomaly = 1.2 + (emisi - 1.0) * 2;
-            return Math.max(-0.2, Math.min(4.2, anomaly));
+    }
+
+    function setupPageEvents(pageId) {
+        if (pageId === 'home') {
+            document.querySelectorAll('.card[data-page]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const targetPage = card.getAttribute('data-page');
+                    if (targetPage && pages[targetPage]) renderPage(targetPage);
+                });
+            });
+            document.querySelectorAll('.card[data-nav]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const targetFile = card.getAttribute('data-nav');
+                    if (targetFile) navigateToFile(targetFile);
+                });
+            });
         }
         
-        function updateVisuals(anomaly) {
-            // Overlay panas - hanya muncul saat anomali > 0.3°C
-            const heatIntensity = Math.min(0.85, Math.max(0, (anomaly - 0.3) / 4.0));
-            overlayMat.uniforms.heatIntensity.value = heatIntensity;
-            
-            // Inti bumi glow
-            const coreIntensity = 0.5 + Math.min(0.6, anomaly * 0.15);
-            coreMat.emissiveIntensity = coreIntensity; 
-            coreLight.intensity = 0.4 + anomaly * 0.1; 
-            coreGlowMat.opacity = 0.1 + anomaly * 0.04;
-            
-            // Warna awan (putih -> kuning -> oranye)
-            const cloudFactor = Math.min(1.0, anomaly / 2.5);
-            if (cloudFactor > 0.08) {
-                const r = 1.0, g = Math.min(1.0, 0.85 + cloudFactor * 0.25), b = Math.min(1.0, 0.85 - cloudFactor * 0.7);
-                cloudMat.color.setRGB(r, g, Math.max(0.3, b)); 
-                cloudMat.emissiveIntensity = cloudFactor * 0.35; 
-                cloudMat.opacity = 0.45 + cloudFactor * 0.25;
-            } else { 
-                cloudMat.color.setHex(0xffffff); 
-                cloudMat.emissiveIntensity = 0; 
-                cloudMat.opacity = 0.45; 
-            }
-            
-            // Warna atmosfer (biru -> kemerahan)
-            const atmosFactor = Math.min(0.25, anomaly * 0.07);
-            atmosMat.color.setRGB(0.5 + atmosFactor, 0.6 + atmosFactor * 0.5, 1.0 - atmosFactor * 1.5);
-            atmosMat.emissiveIntensity = anomaly * 0.05; 
-            atmosMat.opacity = 0.1 + anomaly * 0.02;
-            
-            coronaMat.opacity = 0.06 + anomaly * 0.03; 
-            coronaMat.emissiveIntensity = anomaly * 0.04;
-            
-            // Partikel atmosfer
-            particleMat.color.setRGB(0.5 + anomaly * 0.2, 0.6 + anomaly * 0.2, 1.0 - anomaly * 0.3);
+        if (pageId === 'simulation') {
+            document.querySelectorAll('.card[data-nav]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const targetFile = card.getAttribute('data-nav');
+                    if (targetFile) navigateToFile(targetFile);
+                });
+            });
         }
         
-        // UI Elements
-        const emisiSlider = document.getElementById('emisiSlider'), emisiValueSpan = document.getElementById('emisiValue');
-        const energyStatSpan = document.getElementById('energyStat'), co2StatSpan = document.getElementById('co2Stat'), qStatsSpan = document.getElementById('qStats');
-        const anomaliSpan = document.getElementById('anomaliValue'), statusBadgeSpan = document.getElementById('statusBadge'), warningTextSpan = document.getElementById('warningText');
-        const resetBtn = document.getElementById('resetBtn');
-        let currentEmisi = 0.8;
-        
-        // ========== TOGGLE NAVBAR ==========
-        const uiPanel = document.getElementById('ui');
-        const toggleBtn = document.getElementById('toggleNavBtn');
-        const toggleIcon = document.getElementById('toggleIcon');
-        const toggleText = document.getElementById('toggleText');
-        let isPanelVisible = true;
-        
-        toggleBtn.addEventListener('click', () => {
-            isPanelVisible = !isPanelVisible;
-            if (isPanelVisible) {
-                uiPanel.classList.remove('hidden');
-                toggleIcon.className = 'fas fa-chevron-down';
-                toggleText.innerText = 'Sembunyikan Panel';
-            } else {
-                uiPanel.classList.add('hidden');
-                toggleIcon.className = 'fas fa-chevron-up';
-                toggleText.innerText = 'Tampilkan Panel';
-            }
-        });
-        
-        function updateUI(emisi, anomaly) {
-            emisiValueSpan.innerText = emisi.toFixed(2);
-            energyStatSpan.innerText = Math.floor(internalEnergy * 100) + '%';
-            co2StatSpan.innerText = Math.floor(co2ppm) + ' ppm';
-            qStatsSpan.innerText = qIn.toFixed(2) + '/' + qOut.toFixed(2);
-            anomaliSpan.innerHTML = (anomaly > 0 ? '+' : '') + anomaly.toFixed(1);
-            if (anomaly > 1.8) anomaliSpan.style.color = '#ff4444';
-            else if (anomaly > 1.0) anomaliSpan.style.color = '#ff8866';
-            else if (anomaly > 0.4) anomaliSpan.style.color = '#ffaa66';
-            else anomaliSpan.style.color = '#88ccff';
+        if (pageId === 'scanner') {
+            // Setup event untuk tombol scanner
+            const startBtn = document.getElementById('startScannerBtn');
+            const stopBtn = document.getElementById('stopScannerBtn');
             
-            if (emisi < 0.85) { 
-                statusBadgeSpan.innerHTML = 'Pra-Industri (Seimbang)'; 
-                warningTextSpan.innerHTML = ''; 
-            } else if (emisi < 1.05) { 
-                statusBadgeSpan.innerHTML = 'Kondisi Saat Ini (Pemanasan)'; 
-                warningTextSpan.innerHTML = '🔥 +1.2°C sejak era industri'; 
-            } else if (emisi < 1.5) { 
-                statusBadgeSpan.innerHTML = 'Pemanasan Signifikan'; 
-                warningTextSpan.innerHTML = '⚠️ Melebihi target Paris Agreement (1.5°C)'; 
-            } else if (emisi < 1.9) { 
-                statusBadgeSpan.innerHTML = 'Krisis Iklim'; 
-                warningTextSpan.innerHTML = '⚡ Gelombang panas, naiknya air laut'; 
-            } else { 
-                statusBadgeSpan.innerHTML = 'Skenario Terburuk'; 
-                warningTextSpan.innerHTML = '🆘 Anomali >3°C | Titik kritis!'; 
+            if (startBtn) {
+                startBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    startScanner();
+                });
+            }
+            
+            if (stopBtn) {
+                stopBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    stopScanner();
+                });
+            }
+
+            // Hentikan scanner saat halaman di-unload atau visibility berubah
+            window.addEventListener('beforeunload', function() {
+                stopScanner();
+            });
+            
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && isScannerActive) {
+                    // pause scanning tapi tetap stream
+                }
+            });
+        }
+        
+        if (pageId === 'ar') {
+            const arBtn = document.getElementById('startARBtn');
+            if (arBtn) {
+                arBtn.addEventListener('click', () => {
+                    alert("📱 Fitur AR:\n\nArahkan kamera ke permukaan datar. Model atom 3D akan muncul.\n\nCatatan: Untuk pengalaman AR penuh, gunakan browser yang mendukung WebXR atau aplikasi dengan library AR.js.\n\nDemo: Model atom Helium dengan elektron berotasi di sekitar inti.");
+                });
             }
         }
         
-        emisiSlider.addEventListener('input', (e) => {
-            currentEmisi = parseFloat(e.target.value);
-            const anomaly = updateTemperature(currentEmisi);
-            currentAnomaly = anomaly;
-            updateVisuals(anomaly);
-            updateUI(currentEmisi, anomaly);
-        });
-        
-        resetBtn.addEventListener('click', () => {
-            currentEmisi = 0.8; 
-            emisiSlider.value = '0.8';
-            const anomaly = updateTemperature(0.8);
-            currentAnomaly = anomaly;
-            updateVisuals(anomaly);
-            updateUI(0.8, anomaly);
-        });
-        
-        let time = 0;
-        function animate() {
-            time += 0.016;
-            const anomaly = updateTemperature(currentEmisi);
-            currentAnomaly = anomaly;
-            updateVisuals(anomaly);
-            updateUI(currentEmisi, anomaly);
+        if (pageId === 'animation') {
+            const startBtn = document.getElementById('startAnimBtn');
+            const vibrationBtn = document.getElementById('vibrationBtn');
+            const backBtn = document.getElementById('backHomeBtn');
             
-            const pulse = 1 + Math.sin(time * 3) * 0.03;
-            core.scale.set(pulse, pulse, pulse); 
-            coreGlow.scale.set(pulse * 1.05, pulse * 1.05, pulse * 1.05);
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    startElectronAnimation();
+                });
+            }
             
-            clouds.rotation.y += 0.0008; 
-            atmosphereParticles.rotation.y += 0.0003; 
-            stars.rotation.y += 0.0002;
+            if (vibrationBtn) {
+                vibrationBtn.addEventListener('click', () => {
+                    alert("🎬 Animasi Vibrasi Molekul:\n\nKetika suhu meningkat, atom-atom dalam kisi kristal bergetar lebih cepat. Fenomena ini disebut FONON. Semakin tinggi energi termal → amplitudo getaran membesar → entropi sistem meningkat (Hk.II Termodinamika).\n\nDalam simulasi 3D, Anda dapat melihat partikel-partikel bergerak acak semakin cepat saat suhu dinaikkan.");
+                });
+            }
             
-            controls.update();
-            renderer.render(scene, camera);
-            requestAnimationFrame(animate);
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    renderPage('home');
+                });
+            }
+            
+            setTimeout(() => startElectronAnimation(), 100);
         }
         
-        updateTemperature(0.8); 
-        updateVisuals(0); 
-        updateUI(0.8, 0);
-        animate();
+        if (pageId === 'laws') {
+            const backBtn = document.getElementById('backHomeFromLaws');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    renderPage('home');
+                });
+            }
+        }
+    }
+
+    function renderPage(pageId) {
+        const container = document.getElementById('mainContent');
+        if (!container) return;
         
-        window.addEventListener('resize', () => { 
-            camera.aspect = window.innerWidth / window.innerHeight; 
-            camera.updateProjectionMatrix(); 
-            renderer.setSize(window.innerWidth, window.innerHeight); 
+        const pageData = pages[pageId];
+        if (!pageData) return;
+        
+        // Hentikan scanner jika berpindah halaman dari scanner
+        if (currentPage === 'scanner') {
+            stopScanner();
+        }
+        
+        stopAnimation();
+        container.innerHTML = pageData.render();
+        currentPage = pageId;
+        
+        setTimeout(() => setupPageEvents(pageId), 50);
+        
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            const btnPage = btn.getAttribute('data-page');
+            if (btnPage === pageId) btn.classList.add('active');
+            else btn.classList.remove('active');
         });
-    </script>
+    }
+
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const page = btn.getAttribute('data-page');
+            if (page && pages[page]) renderPage(page);
+        });
+    });
+
+    document.getElementById('menuBtn')?.addEventListener('click', () => {
+        alert("📱 ThermoAtom v2.0\n\n• Beranda - Fitur utama (Simulasi, Hukum, Scanner, AR, Animasi)\n• Simulasi - Simulasi 3D atom\n• Scanner - QR scanner edukasi\n• AR - Augmented Reality atom 3D\n\nMenu Animasi dan Hukum dapat diakses dari halaman Beranda.");
+    });
+
+    renderPage('home');
+</script>
 </body>
 </html>
