@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Fisikaku - QR & AR</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js">
+    </script>
+    <style>
+        /* ===== GAYA TETAP SAMA (tidak diubah) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #1a1a2e;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100vh;
+            height: 100dvh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.04);
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border-bottom: 1px solid #e8ecf0;
+            flex-shrink: 0;
+            z-index: 30;
+            position: relative;
+            min-height: 64px;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .icon-badge {
+            width: 42px;
+            height: 42px;
+            background: #ff6b35;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .icon-badge i {
+            font-size: 20px;
+            color: white;
+        }
+        .title-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: -0.3px;
+        }
+        .title-text h1 span {
+            color: #ff6b35;
+        }
+        .title-text p {
+            font-size: 0.55rem;
+            color: #6b6b80;
+            margin-top: 1px;
+            letter-spacing: 0.4px;
+            font-weight: 500;
+        }
+        .menu-btn {
+            background: transparent;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            color: #1a1a2e;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-btn:active {
+            background: rgba(0, 0, 0, 0.04);
+            transform: scale(0.92);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px 16px 80px;
+            background: #f8f9fc;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .main-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        .main-content::-webkit-scrollbar-track {
+            background: #eef0f4;
+        }
+        .main-content::-webkit-scrollbar-thumb {
+            background: #ff6b35;
+            border-radius: 10px;
+        }
+
+        /* ===== FAKTA HARIAN — SUPER BAGUS ===== */
+        .fact-card {
+            position: relative;
+            background: linear-gradient(135deg, #ff6b35 0%, #f5576c 50%, #ff6b6b 100%);
+            border-radius: 20px;
+            padding: 18px 20px 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(255, 107, 53, 0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .fact-card:active {
+            transform: scale(0.98);
+        }
+        .fact-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -40px;
+            width: 160px;
+            height: 160px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .fact-card::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -30px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .fact-badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .fact-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.20);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding: 4px 14px 4px 12px;
+            border-radius: 100px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .fact-badge i {
+            font-size: 0.65rem;
+            color: #ffe066;
+        }
+        .fact-number {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.10);
+            padding: 2px 10px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .fact-body {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            position: relative;
+            z-index: 2;
+        }
+        .fact-icon-wrap {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation: factPulse 3s ease-in-out infinite;
+        }
+        .fact-icon-wrap i {
+            font-size: 20px;
+            color: #fff;
+        }
+        @keyframes factPulse {
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+            }
+        }
+
+        .fact-text-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+        .fact-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.45;
+            letter-spacing: -0.2px;
+            margin-bottom: 2px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+        .fact-text .highlight {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+        .fact-sub {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        .fact-sub i {
+            font-size: 0.5rem;
+            opacity: 0.6;
+        }
+
+        .fact-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .fact-refresh-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .fact-refresh-btn:active {
+            transform: scale(0.85) rotate(60deg);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .fact-refresh-btn i {
+            transition: transform 0.4s ease;
+        }
+        .fact-refresh-btn:active i {
+            transform: rotate(180deg);
+        }
+
+        .fact-shimmer {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+            animation: shimmerSlide 5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes shimmerSlide {
+            0% {
+                left: -100%;
+            }
+            60% {
+                left: 150%;
+            }
+            100% {
+                left: 150%;
+            }
+        }
+
+        /* ===== HOME GRID — 3 KOLOM HORIZONTAL ===== */
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .grid-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 14px 6px 12px;
+            text-align: center;
+            border: 1px solid #e8ecf0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 110px;
+        }
+        .grid-card:active {
+            transform: scale(0.94);
+            border-color: #ff6b35;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.08);
+        }
+
+        .grid-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .grid-card:nth-child(1) .grid-icon {
+            background: #ff6b35;
+        }
+        .grid-card:nth-child(2) .grid-icon {
+            background: #00b4d8;
+        }
+        .grid-card:nth-child(3) .grid-icon {
+            background: #f5576c;
+        }
+
+        .grid-card h3 {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+        .grid-card p {
+            font-size: 0.5rem;
+            color: #6b6b80;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        /* ===== INFO WIDGET ===== */
+        .info-widget {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-top: 6px;
+            border-left: 3px solid #ff6b35;
+            border: 1px solid #e8ecf0;
+        }
+        .info-widget i {
+            color: #ff6b35;
+            margin-right: 6px;
+            font-size: 0.65rem;
+        }
+        .info-text {
+            font-size: 0.6rem;
+            color: #4a4a5e;
+            line-height: 1.4;
+        }
+        .info-text strong {
+            color: #1a1a2e;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 4px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-left: 2px;
+            color: #1a1a2e;
+        }
+        .section-title i {
+            font-size: 0.95rem;
+        }
+        .section-title .fa-qrcode {
+            color: #00b4d8;
+        }
+        .section-title .fa-vr-cardboard {
+            color: #f5576c;
+        }
+        .section-title .fa-robot {
+            color: #ff6b35;
+        }
+
+        /* ===== AR ===== */
+        .ar-container {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 12px;
+            border: 1px solid #e8ecf0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .ar-preview {
+            width: 100%;
+            height: 180px;
+            background: #f0f2f6;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            border: 1px dashed #d0d4db;
+        }
+        .ar-placeholder {
+            text-align: center;
+            color: #6b6b80;
+        }
+        .ar-placeholder i {
+            font-size: 36px;
+            margin-bottom: 4px;
+            display: block;
+            color: #00b4d8;
+        }
+        .ar-placeholder p {
+            font-size: 0.7rem;
+            color: #6b6b80;
+        }
+        .ar-btn {
+            background: #00b4d8;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .ar-btn:active {
+            transform: scale(0.96);
+            background: #0090b0;
+        }
+
+        /* ===== SCANNER ===== */
+        .scanner-container {
+            background: #f0f2f6;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 2px solid #d0d4db;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        #scanner-video {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            background: #000;
+            display: none;
+        }
+        #scanner-canvas {
+            width: 100%;
+            height: 280px;
+            display: none;
+        }
+        .scanner-placeholder {
+            width: 100%;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f2f6;
+            color: #6b6b80;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .scanner-placeholder i {
+            font-size: 40px;
+            color: #00b4d8;
+        }
+        .scanner-placeholder p {
+            font-size: 0.75rem;
+        }
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scanner-frame {
+            width: 180px;
+            height: 180px;
+            border: 3px solid rgba(0, 180, 216, 0.5);
+            border-radius: 12px;
+            position: relative;
+        }
+        .scanner-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 24px;
+            height: 24px;
+            border-top: 4px solid #00b4d8;
+            border-left: 4px solid #00b4d8;
+            border-radius: 4px 0 0 0;
+        }
+        .scanner-frame::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 24px;
+            height: 24px;
+            border-bottom: 4px solid #00b4d8;
+            border-right: 4px solid #00b4d8;
+            border-radius: 0 0 4px 0;
+        }
+        .scanner-controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .scanner-controls button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-start-scanner {
+            background: #00b4d8;
+            color: white;
+        }
+        .btn-stop-scanner {
+            background: rgba(255, 60, 60, 0.06);
+            color: #d63031;
+            border: 1px solid #ff6b6b;
+        }
+        .btn-start-scanner:active,
+        .btn-stop-scanner:active {
+            transform: scale(0.95);
+        }
+        .scan-result {
+            background: #f0faf0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            border-left: 3px solid #00c853;
+        }
+        .scan-result h4 {
+            color: #00c853;
+            font-size: 0.75rem;
+            margin-bottom: 2px;
+        }
+        .scan-result p {
+            color: #1a1a2e;
+            font-size: 0.65rem;
+            word-break: break-all;
+        }
+        .scan-result .btn-open-link {
+            margin-top: 6px;
+            padding: 6px 14px;
+            background: #00c853;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.65rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .scan-result .btn-open-link:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== REDIRECT ===== */
+        .redirect-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            padding: 24px 32px;
+            border-radius: 20px;
+            border: 1px solid #e8ecf0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
+            text-align: center;
+            z-index: 1000;
+            max-width: 90%;
+        }
+        .redirect-notification i {
+            font-size: 40px;
+            color: #00c853;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .redirect-notification h3 {
+            color: #1a1a2e;
+            margin-bottom: 6px;
+            font-size: 1rem;
+        }
+        .redirect-notification p {
+            color: #6b6b80;
+            font-size: 0.75rem;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+        .redirect-notification .btn-redirect {
+            padding: 8px 24px;
+            background: #ff6b35;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 6px;
+            transition: all 0.2s;
+        }
+        .redirect-notification .btn-cancel {
+            padding: 8px 24px;
+            background: #f0f2f6;
+            border: none;
+            border-radius: 30px;
+            color: #6b6b80;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .redirect-notification .btn-redirect:active,
+        .redirect-notification .btn-cancel:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 480px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 8px 18px;
+            border-top: 1px solid #e8ecf0;
+            z-index: 50;
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.02);
+        }
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: none;
+            border: none;
+            color: #8a8a9e;
+            font-size: 11px;
+            padding: 6px 0 4px;
+            border-radius: 30px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-weight: 500;
+            max-width: 80px;
+            position: relative;
+        }
+        .nav-item i {
+            font-size: 24px;
+            transition: all 0.2s;
+        }
+        .nav-item span {
+            font-size: 11px;
+            line-height: 1.1;
+            font-weight: 500;
+        }
+        .nav-item.active {
+            color: #ff6b35;
+        }
+        .nav-item.active i {
+            transform: scale(1.05);
+        }
+        .nav-item:nth-child(1).active i {
+            color: #ff6b35;
+        }
+        .nav-item:nth-child(2).active i {
+            color: #00b4d8;
+        }
+        .nav-item:nth-child(3).active i {
+            color: #f5576c;
+        }
+        .nav-item:nth-child(4).active i {
+            color: #ff6b6b;
+        }
+        .nav-item:active {
+            transform: scale(0.90);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .scanning-active {
+            border-color: #00c853 !important;
+        }
+
+        /* ===== KALKULATOR FISIKA ===== */
+        .calc-container {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e8ecf0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            margin-top: 6px;
+            margin-bottom: 12px;
+        }
+        .calc-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .calc-title i {
+            color: #00b4d8;
+            font-size: 1rem;
+        }
+        .calc-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .calc-row label {
+            flex: 1 0 100%;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #4a4a5e;
+            margin-bottom: 2px;
+        }
+        .calc-row input,
+        .calc-row select {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d0d4db;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            background: #f8f9fc;
+            color: #1a1a2e;
+            outline: none;
+            transition: all 0.2s;
+            min-width: 0;
+        }
+        .calc-row input:focus,
+        .calc-row select:focus {
+            border-color: #ff6b35;
+            background: #ffffff;
+        }
+        .calc-row select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b80' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+        .calc-row .calc-btn {
+            flex: 0 0 auto;
+            padding: 8px 20px;
+            background: #ff6b35;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 4px;
+        }
+        .calc-row .calc-btn:active {
+            transform: scale(0.96);
+            background: #e55a2b;
+        }
+        .calc-result {
+            background: #f0faf0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            border-left: 3px solid #00c853;
+            font-size: 0.7rem;
+            color: #1a1a2e;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .calc-result i {
+            color: #00c853;
+            font-size: 0.9rem;
+        }
+        .calc-result .result-value {
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .calc-result .result-label {
+            color: #4a4a5e;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 420px) {
+            .home-grid {
+                gap: 6px;
+            }
+            .grid-card {
+                padding: 10px 4px 10px;
+                min-height: 90px;
+                border-radius: 12px;
+            }
+            .grid-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 15px;
+                margin-bottom: 4px;
+            }
+            .grid-card h3 {
+                font-size: 0.6rem;
+            }
+            .grid-card p {
+                font-size: 0.45rem;
+            }
+            .fact-card {
+                padding: 14px 16px 12px;
+                border-radius: 16px;
+            }
+            .fact-text {
+                font-size: 0.75rem;
+            }
+            .fact-icon-wrap {
+                width: 36px;
+                height: 36px;
+            }
+            .fact-icon-wrap i {
+                font-size: 16px;
+            }
+            .calc-row input,
+            .calc-row select {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .home-grid {
+                gap: 4px;
+            }
+            .grid-card {
+                padding: 8px 2px 8px;
+                min-height: 78px;
+            }
+            .grid-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+                margin-bottom: 3px;
+            }
+            .grid-card h3 {
+                font-size: 0.5rem;
+            }
+            .grid-card p {
+                font-size: 0.4rem;
+            }
+            .fact-text {
+                font-size: 0.68rem;
+            }
+            .fact-card {
+                padding: 12px 14px 10px;
+            }
+            .calc-row input,
+            .calc-row select {
+                font-size: 0.65rem;
+                padding: 5px 8px;
+            }
+            .calc-row .calc-btn {
+                font-size: 0.7rem;
+                padding: 6px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ===== HEADER ===== -->
+        <div class="app-header">
+            <div class="logo-area">
+                <div class="icon-badge"><i class="fas fa-atom"></i></div>
+                <div class="title-text">
+                    <h1>Fisikaku</h1>
+                    <p>QR · AR · AI Scanner</p>
+                </div>
+            </div>
+            <button class="menu-btn" id="menuBtn"><i class="fas fa-ellipsis-v"></i></button>
+        </div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <div class="main-content" id="mainContent"></div>
+
+        <!-- ===== BOTTOM NAV ===== -->
+        <div class="bottom-nav">
+            <button class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>Beranda</span></button>
+            <button class="nav-item" data-page="scanner"><i class="fas fa-qrcode"></i><span>Scanner</span></button>
+            <button class="nav-item" data-page="ar"><i class="fas fa-vr-cardboard"></i><span>AR</span></button>
+            <!-- Tombol AI sekarang menjadi scanner AI -->
+            <button class="nav-item" data-page="ai"><i class="fas fa-robot"></i><span>AI Scan</span></button>
+        </div>
+    </div>
+
+    <script>
+        // ===== FAKTA HARIAN =====
+        const dailyFacts = [{
+            text: 'Entropi alam semesta <span class="highlight">selalu meningkat</span> sesuai Hukum II Termodinamika.',
+            icon: 'fa-chart-line',
+            label: 'Hukum II'
+        }, {
+            text: 'Energi <span class="highlight">tidak dapat diciptakan</span> atau dimusnahkan, hanya berubah bentuk (Hukum I).',
+            icon: 'fa-bolt',
+            label: 'Hukum I'
+        }, {
+            text: 'Atom terdiri dari inti <span class="highlight">(proton & neutron)</span> dan elektron yang mengorbit.',
+            icon: 'fa-atom',
+            label: 'Struktur Atom'
+        }, {
+            text: 'Suhu adalah ukuran <span class="highlight">energi kinetik rata-rata</span> partikel dalam suatu sistem.',
+            icon: 'fa-thermometer-half',
+            label: 'Suhu'
+        }, {
+            text: 'Fonon adalah kuantum getaran kisi kristal yang <span class="highlight">meningkat seiring suhu</span>.',
+            icon: 'fa-wave-square',
+            label: 'Fonon'
+        }, {
+            text: 'Kalor selalu mengalir dari benda <span class="highlight">bersuhu tinggi</span> ke bersuhu rendah.',
+            icon: 'fa-fire',
+            label: 'Perpindahan Kalor'
+        }, {
+            text: 'Mesin kalor <span class="highlight">tidak mungkin</span> memiliki efisiensi 100% (Hukum II).',
+            icon: 'fa-cogs',
+            label: 'Mesin Kalor'
+        }, {
+            text: 'Proses isotermal terjadi pada <span class="highlight">suhu konstan</span>, ΔU = 0.',
+            icon: 'fa-circle-notch',
+            label: 'Isotermal'
+        }, {
+            text: 'Proses adiabatik <span class="highlight">tanpa pertukaran kalor</span> dengan lingkungan (Q = 0).',
+            icon: 'fa-shield-alt',
+            label: 'Adiabatik'
+        }, {
+            text: 'Siklus Carnot memberikan <span class="highlight">efisiensi maksimum</span> untuk mesin kalor.',
+            icon: 'fa-sync-alt',
+            label: 'Carnot'
+        }, {
+            text: 'Teori kinetik gas: tekanan gas berasal dari <span class="highlight">tumbukan partikel</span> dengan dinding.',
+            icon: 'fa-wind',
+            label: 'Gas Ideal'
+        }, {
+            text: 'Energi dalam (U) adalah total <span class="highlight">energi kinetik & potensial</span> partikel sistem.',
+            icon: 'fa-database',
+            label: 'Energi Dalam'
+        }, {
+            text: 'Pompa kalor memindahkan panas dari <span class="highlight">tempat dingin ke hangat</span> menggunakan kerja.',
+            icon: 'fa-snowflake',
+            label: 'Pompa Kalor'
+        }, {
+            text: 'Hukum ke-0 Termodinamika: jika dua sistem <span class="highlight">setimbang</span> dengan sistem ketiga, mereka setimbang.',
+            icon: 'fa-balance-scale',
+            label: 'Hukum ke-0'
+        }, {
+            text: 'Pada 0 K (nol mutlak), <span class="highlight">entropi mendekati nol</span> (Hukum III).',
+            icon: 'fa-temperature-low',
+            label: 'Hukum III'
+        }];
+
+        function getRandomFact() {
+            const rand = Math.floor(Math.random() * dailyFacts.length);
+            return dailyFacts[rand];
+        }
+
+        let currentFactIndex = -1;
+
+        function getFactForDisplay() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            const index = dayOfYear % dailyFacts.length;
+            currentFactIndex = index;
+            return dailyFacts[index];
+        }
+
+        function renderFactCard(fact) {
+            const dateStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long',
+                year: 'numeric' });
+            return `
+                        <div class="fact-card" id="factCard">
+                            <div class="fact-shimmer"></div>
+                            <div class="fact-badge-row">
+                                <span class="fact-badge"><i class="fas fa-star"></i> Fakta Hari Ini</span>
+                                <span class="fact-number">#${currentFactIndex + 1} · ${dateStr}</span>
+                            </div>
+                            <div class="fact-body">
+                                <div class="fact-icon-wrap">
+                                    <i class="fas ${fact.icon}"></i>
+                                </div>
+                                <div class="fact-text-wrap">
+                                    <p class="fact-text">${fact.text}</p>
+                                    <div class="fact-sub">
+                                        <i class="fas fa-tag"></i> ${fact.label}
+                                        <span style="opacity:0.4;margin:0 4px;">·</span>
+                                        <i class="fas fa-lightbulb" style="opacity:0.5;"></i> Ketuk untuk fakt baru
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="fact-actions">
+                                <button class="fact-refresh-btn" id="factRefreshBtn" title="Fakta baru">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+        }
+
+        // ===== SCANNER =====
+        let scannerStream = null;
+        let isScannerActive = false;
+        let scanAnimationId = null;
+        let lastScanTime = 0;
+        let isRedirecting = false;
+
+        const pages = {
+            home: {
+                render: () => {
+                    const fact = getFactForDisplay();
+                    return `
+                                <div id="homePage">
+                                    ${renderFactCard(fact)}
+                                    <div class="home-grid">
+                                        <div class="grid-card" data-page="scanner">
+                                            <div class="grid-icon"><i class="fas fa-qrcode"></i></div>
+                                            <h3>QR Scanner</h3>
+                                            <p>Scan kode QR edukasi</p>
+                                        </div>
+                                        <div class="grid-card" data-page="ar">
+                                            <div class="grid-icon"><i class="fas fa-vr-cardboard"></i></div>
+                                            <h3>AR Atom 3D</h3>
+                                            <p>Lihat atom di dunia nyata</p>
+                                        </div>
+                                        <!-- Grid card AI sekarang scanner AI -->
+                                        <div class="grid-card" data-page="ai">
+                                            <div class="grid-icon"><i class="fas fa-robot"></i></div>
+                                            <h3>AI Scanner</h3>
+                                            <p>Scan QR untuk Asisten AI</p>
+                                        </div>
+                                    </div>
+                                    <!-- KALKULATOR FISIKA -->
+                                    <div class="calc-container">
+                                        <div class="calc-title">
+                                            <i class="fas fa-calculator"></i> Kalkulator Fisika
+                                        </div>
+                                        <div class="calc-row">
+                                            <label for="calcType">Pilih Rumus</label>
+                                            <select id="calcType">
+                                                <option value="kecepatan">Kecepatan (v = s / t)</option>
+                                                <option value="gaya">Gaya (F = m × a)</option>
+                                                <option value="usaha">Usaha (W = F × s)</option>
+                                                <option value="energi_kinetik">Energi Kinetik (Ek = ½ m v²)</option>
+                                                <option value="tekanan">Tekanan (P = F / A)</option>
+                                                <option value="hukum_ohm">Hukum Ohm (V = I × R)</option>
+                                                <option value="daya">Daya (P = W / t)</option>
+                                                <option value="kalor">Kalor (Q = m × c × ΔT)</option>
+                                            </select>
+                                        </div>
+                                        <div class="calc-row" id="calcInputs">
+                                            <!-- Dinamis diisi oleh JS -->
+                                        </div>
+                                        <div class="calc-row">
+                                            <button class="calc-btn" id="calcBtn"><i class="fas fa-play"></i> Hitung</button>
+                                        </div>
+                                        <div class="calc-result" id="calcResult">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>Masukkan nilai dan tekan Hitung</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-widget">
+                                        <i class="fas fa-atom"></i>
+                                        <span class="info-text"><strong>Fakta:</strong> Entropi alam semesta selalu meningkat (Hk.II). Energi tidak dapat diciptakan/dimusnahkan (Hk.I).</span>
+                                    </div>
+                                </div>
+                            `;
+                }
+            },
+            scanner: {
+                render: () => `
+                            <div class="section-title"><i class="fas fa-qrcode" style="color:#00b4d8;"></i> QR & Barcode Scanner</div>
+                            <div class="scanner-container" id="scannerContainer">
+                                <video id="scanner-video" playsinline autoplay></video>
+                                <canvas id="scanner-canvas"></canvas>
+                                <div class="scanner-placeholder" id="scannerPlaceholder">
+                                    <i class="fas fa-camera"></i>
+                                    <p>Tekan tombol "Mulai Scanner" untuk mengaktifkan kamera</p>
+                                </div>
+                                <div class="scanner-overlay">
+                                    <div class="scanner-frame" id="scannerFrame"></div>
+                                </div>
+                            </div>
+                            <div class="scanner-controls">
+                                <button class="btn-start-scanner" id="startScannerBtn">
+                                    <i class="fas fa-play"></i> Mulai Scanner
+                                </button>
+                                <button class="btn-stop-scanner" id="stopScannerBtn">
+                                    <i class="fas fa-stop"></i> Berhenti
+                                </button>
+                            </div>
+                            <div id="scanResultContainer">
+                                <div class="scan-result hidden" id="scanResult">
+                                    <h4><i class="fas fa-check-circle"></i> Hasil Scan</h4>
+                                    <p id="scanResultText">-</p>
+                                    <button class="btn-open-link" id="openLinkBtn">
+                                        <i class="fas fa-external-link-alt"></i> Buka Link
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="info-widget">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="info-text"><strong>Informasi:</strong> Arahkan kamera ke kode QR. Link akan otomatis terbuka setelah scan.</span>
+                            </div>
+                            <div class="info-widget">
+                                <i class="fas fa-lightbulb"></i>
+                                <span class="info-text"><strong>Tips:</strong> Pastikan pencahayaan cukup dan QR code terlihat jelas.</span>
+                            </div>
+                        `
+            },
+            ar: {
+                render: () => `
+                            <div class="section-title"><i class="fas fa-vr-cardboard" style="color:#f5576c;"></i> Augmented Reality</div>
+                            <div class="ar-container">
+                                <div class="ar-preview" id="arPreview">
+                                    <div class="ar-placeholder">
+                                        <i class="fas fa-camera"></i>
+                                        <p>AR akan membuka kamera untuk menampilkan model atom 3D di lingkungan nyata</p>
+                                    </div>
+                                </div>
+                                <button class="ar-btn" id="startARBtn">
+                                    <i class="fas fa-play"></i> Mulai AR (Lihat Atom 3D)
+                                </button>
+                            </div>
+                            <div class="info-widget">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="info-text"><strong>Cara Penggunaan AR:</strong> Klik tombol "Mulai AR", izinkan akses kamera, lalu arahkan ke permukaan datar untuk melihat model atom 3D.</span>
+                            </div>
+                            <div class="info-widget">
+                                <i class="fas fa-lightbulb"></i>
+                                <span class="info-text"><strong>Fitur AR:</strong> Tampilkan model atom helium, elektron berotasi, dan informasi energi secara real-time.</span>
+                            </div>
+                        `
+            },
+            ai: {
+                // Halaman AI sekarang adalah scanner dengan label khusus
+                render: () => `
+                            <div class="section-title"><i class="fas fa-robot" style="color:#ff6b35;"></i> AI Scanner — Scan QR untuk Asisten</div>
+                            <div class="scanner-container" id="scannerContainer">
+                                <video id="scanner-video" playsinline autoplay></video>
+                                <canvas id="scanner-canvas"></canvas>
+                                <div class="scanner-placeholder" id="scannerPlaceholder">
+                                    <i class="fas fa-robot" style="color:#ff6b35;"></i>
+                                    <p>Scan QR code untuk mengakses Asisten AI</p>
+                                </div>
+                                <div class="scanner-overlay">
+                                    <div class="scanner-frame" id="scannerFrame"></div>
+                                </div>
+                            </div>
+                            <div class="scanner-controls">
+                                <button class="btn-start-scanner" id="startScannerBtn">
+                                    <i class="fas fa-play"></i> Mulai Scan AI
+                                </button>
+                                <button class="btn-stop-scanner" id="stopScannerBtn">
+                                    <i class="fas fa-stop"></i> Berhenti
+                                </button>
+                            </div>
+                            <div id="scanResultContainer">
+                                <div class="scan-result hidden" id="scanResult">
+                                    <h4><i class="fas fa-check-circle"></i> Hasil Scan AI</h4>
+                                    <p id="scanResultText">-</p>
+                                    <button class="btn-open-link" id="openLinkBtn">
+                                        <i class="fas fa-external-link-alt"></i> Buka Link AI
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="info-widget">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="info-text"><strong>Informasi:</strong> Scan QR code yang berisi link ke asisten AI atau materi fisika.</span>
+                            </div>
+                            <div class="info-widget">
+                                <i class="fas fa-lightbulb"></i>
+                                <span class="info-text"><strong>Tips:</strong> Pastikan QR code berisi link yang valid agar bisa diakses.</span>
+                            </div>
+                        `
+            }
+        };
+
+        let currentPage = 'home';
+
+        // ===== SCANNER FUNCTIONS =====
+        function stopScanner() {
+            if (scannerStream) {
+                try { scannerStream.getTracks().forEach(track => track.stop());
+                    scannerStream = null; } catch (e) { console.log('Error stopping stream:', e); }
+            }
+            if (scanAnimationId) { cancelAnimationFrame(scanAnimationId);
+                scanAnimationId = null; }
+            isScannerActive = false;
+            const video = document.getElementById('scanner-video');
+            const canvas = document.getElementById('scanner-canvas');
+            const placeholder = document.getElementById('scannerPlaceholder');
+            const container = document.getElementById('scannerContainer');
+            const frame = document.getElementById('scannerFrame');
+            if (video) { video.style.display = 'none';
+                video.srcObject = null; }
+            if (canvas) { canvas.style.display = 'none'; }
+            if (placeholder) { placeholder.style.display = 'flex'; }
+            if (container) { container.classList.remove('scanning-active'); }
+            if (frame) { frame.style.borderColor = 'rgba(0, 180, 216, 0.5)'; }
+            const resultContainer = document.getElementById('scanResult');
+            if (resultContainer) { resultContainer.classList.add('hidden'); }
+        }
+
+        function showRedirectNotification(url) {
+            const oldNotif = document.querySelector('.redirect-notification');
+            if (oldNotif) oldNotif.remove();
+            const notif = document.createElement('div');
+            notif.className = 'redirect-notification';
+            notif.innerHTML = `
+                        <i class="fas fa-link"></i>
+                        <h3>📱 Membuka Link...</h3>
+                        <p>${url}</p>
+                        <div>
+                            <button class="btn-redirect" onclick="openLinkDirectly('${url}')">
+                                <i class="fas fa-external-link-alt"></i> Buka Sekarang
+                            </button>
+                            <button class="btn-cancel" onclick="this.closest('.redirect-notification').remove()">
+                                <i class="fas fa-times"></i> Batal
+                            </button>
+                        </div>
+                    `;
+            document.body.appendChild(notif);
+            setTimeout(() => {
+                const notifEl = document.querySelector('.redirect-notification');
+                if (notifEl) { openLinkDirectly(url);
+                    notifEl.remove(); }
+            }, 3000);
+        }
+
+        function openLinkDirectly(url) {
+            if (isRedirecting) return;
+            isRedirecting = true;
+            try {
+                let finalUrl = url.trim();
+                if (!finalUrl.match(/^https?:\/\//i) && !finalUrl.match(/^[a-zA-Z]+:\/\//)) {
+                    if (finalUrl.match(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)) {
+                        finalUrl = 'https://' + finalUrl;
+                    } else {
+                        alert('Hasil Scan: ' + finalUrl);
+                        isRedirecting = false;
+                        return;
+                    }
+                }
+                try {
+                    const win = window.open(finalUrl, '_blank');
+                    if (!win || win.closed) { window.location.href = finalUrl; }
+                } catch (e) { window.location.href = finalUrl; }
+                setTimeout(() => { stopScanner(); }, 500);
+            } catch (e) { alert('Tidak dapat membuka link: ' + url); }
+            setTimeout(() => { isRedirecting = false; }, 2000);
+        }
+
+        function scanFrame() {
+            if (!isScannerActive) return;
+            const video = document.getElementById('scanner-video');
+            const canvas = document.getElementById('scanner-canvas');
+            if (!video || !canvas) { scanAnimationId = requestAnimationFrame(scanFrame); return; }
+            try {
+                const ctx = canvas.getContext('2d');
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    try {
+                        const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+                        if (code && code.data) {
+                            const now = Date.now();
+                            if (now - lastScanTime > 2000) { lastScanTime = now;
+                                handleScanResult(code.data); }
+                        }
+                    } catch (e) {}
+                }
+            } catch (e) {}
+            scanAnimationId = requestAnimationFrame(scanFrame);
+        }
+
+        function handleScanResult(content) {
+            const resultContainer = document.getElementById('scanResult');
+            const resultText = document.getElementById('scanResultText');
+            const openLinkBtn = document.getElementById('openLinkBtn');
+            const frame = document.getElementById('scannerFrame');
+            if (resultContainer && resultText) {
+                resultContainer.classList.remove('hidden');
+                let displayText = content;
+                let isUrl = false;
+                try {
+                    const data = JSON.parse(content);
+                    displayText = JSON.stringify(data, null, 2);
+                    if (data.url) { content = data.url;
+                        isUrl = true; } else if (data.link) { content = data.link;
+                        isUrl = true; }
+                } catch (e) {
+                    if (content.match(/^https?:\/\//i) || content.match(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)) { isUrl = true; }
+                    displayText = content;
+                }
+                resultText.textContent = displayText;
+                if (openLinkBtn) {
+                    if (isUrl) {
+                        openLinkBtn.style.display = 'block';
+                        openLinkBtn.onclick = function() { openLinkDirectly(content); };
+                    } else { openLinkBtn.style.display = 'none'; }
+                }
+                if (frame) {
+                    frame.style.borderColor = '#00c853';
+                    setTimeout(() => { frame.style.borderColor = 'rgba(0, 180, 216, 0.5)'; }, 500);
+                }
+                if (navigator.vibrate) { navigator.vibrate(100); }
+                try {
+                    const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    gainNode.gain.value = 0.3;
+                    oscillator.start();
+                    setTimeout(() => { oscillator.stop(); }, 150);
+                } catch (e) {}
+                if (isUrl) { showRedirectNotification(content); }
+            }
+        }
+
+        function startScanner() {
+            const video = document.getElementById('scanner-video');
+            const canvas = document.getElementById('scanner-canvas');
+            const placeholder = document.getElementById('scannerPlaceholder');
+            const container = document.getElementById('scannerContainer');
+            const frame = document.getElementById('scannerFrame');
+            if (!video) return;
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Browser Anda tidak mendukung akses kamera. Gunakan browser terbaru.');
+                return;
+            }
+            stopScanner();
+            if (placeholder) { placeholder.innerHTML = '<i class="fas fa-spinner fa-spin"></i><p>Mengakses kamera...</p>'; }
+            navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
+            }).then(function(stream) {
+                scannerStream = stream;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                if (canvas) { canvas.style.display = 'none'; }
+                if (placeholder) { placeholder.style.display = 'none'; }
+                if (container) { container.classList.add('scanning-active'); }
+                if (frame) { frame.style.borderColor = 'rgba(0, 180, 216, 0.5)'; }
+                isScannerActive = true;
+                video.onloadedmetadata = function() {
+                    video.play();
+                    if (scanAnimationId) cancelAnimationFrame(scanAnimationId);
+                    scanFrame();
+                };
+                video.onerror = function() { alert('Error pada video stream. Coba refresh halaman.');
+                    stopScanner(); };
+            }).catch(function(err) {
+                console.error('Error accessing camera:', err);
+                navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+                }).then(function(stream) {
+                    scannerStream = stream;
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    if (canvas) { canvas.style.display = 'none'; }
+                    if (placeholder) { placeholder.style.display = 'none'; }
+                    if (container) { container.classList.add('scanning-active'); }
+                    if (frame) { frame.style.borderColor = 'rgba(0, 180, 216, 0.5)'; }
+                    isScannerActive = true;
+                    video.onloadedmetadata = function() {
+                        video.play();
+                        if (scanAnimationId) cancelAnimationFrame(scanAnimationId);
+                        scanFrame();
+                    };
+                    video.onerror = function() { alert('Error pada video stream. Coba refresh halaman.');
+                        stopScanner(); };
+                }).catch(function(err2) {
+                    console.error('Error accessing front camera:', err2);
+                    if (placeholder) {
+                        placeholder.innerHTML =
+                            '<i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i><p>Tidak dapat mengakses kamera. Pastikan Anda memberikan izin.</p>';
+                    }
+                    alert('Tidak dapat mengakses kamera. Pastikan Anda memberikan izin akses kamera dan menggunakan HTTPS.');
+                });
+            });
+        }
+
+        // ===== FACT REFRESH =====
+        function setupFactRefresh() {
+            const refreshBtn = document.getElementById('factRefreshBtn');
+            const factCard = document.getElementById('factCard');
+            if (!refreshBtn || !factCard) return;
+
+            refreshBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const fact = getRandomFact();
+                const factIndex = dailyFacts.indexOf(fact);
+                currentFactIndex = factIndex >= 0 ? factIndex : Math.floor(Math.random() * dailyFacts.length);
+
+                const badgeRow = factCard.querySelector('.fact-badge-row');
+                const body = factCard.querySelector('.fact-body');
+                const actions = factCard.querySelector('.fact-actions');
+
+                if (badgeRow) {
+                    const numberSpan = badgeRow.querySelector('.fact-number');
+                    if (numberSpan) {
+                        const dateStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric',
+                            month: 'long', year: 'numeric' });
+                        numberSpan.textContent = `#${currentFactIndex + 1} · ${dateStr}`;
+                    }
+                }
+
+                if (body) {
+                    const iconWrap = body.querySelector('.fact-icon-wrap i');
+                    const textP = body.querySelector('.fact-text');
+                    const subDiv = body.querySelector('.fact-sub');
+                    if (iconWrap) {
+                        iconWrap.className = `fas ${fact.icon}`;
+                    }
+                    if (textP) {
+                        textP.innerHTML = fact.text;
+                    }
+                    if (subDiv) {
+                        const tagSpan = subDiv.querySelector('span:first-of-type') || subDiv.querySelector('span');
+                        if (tagSpan) {
+                            tagSpan.textContent = fact.label;
+                        } else {
+                            subDiv.innerHTML =
+                                `<i class="fas fa-tag"></i> ${fact.label} <span style="opacity:0.4;margin:0 4px;">·</span> <i class="fas fa-lightbulb" style="opacity:0.5;"></i> Ketuk untuk fakt baru`;
+                        }
+                    }
+                }
+
+                if (navigator.vibrate) navigator.vibrate(20);
+            });
+
+            factCard.addEventListener('click', function(e) {
+                if (e.target.closest('.fact-refresh-btn')) return;
+                const fact = getRandomFact();
+                const factIndex = dailyFacts.indexOf(fact);
+                currentFactIndex = factIndex >= 0 ? factIndex : Math.floor(Math.random() * dailyFacts.length);
+
+                const badgeRow = factCard.querySelector('.fact-badge-row');
+                const body = factCard.querySelector('.fact-body');
+
+                if (badgeRow) {
+                    const numberSpan = badgeRow.querySelector('.fact-number');
+                    if (numberSpan) {
+                        const dateStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric',
+                            month: 'long', year: 'numeric' });
+                        numberSpan.textContent = `#${currentFactIndex + 1} · ${dateStr}`;
+                    }
+                }
+
+                if (body) {
+                    const iconWrap = body.querySelector('.fact-icon-wrap i');
+                    const textP = body.querySelector('.fact-text');
+                    const subDiv = body.querySelector('.fact-sub');
+                    if (iconWrap) {
+                        iconWrap.className = `fas ${fact.icon}`;
+                    }
+                    if (textP) {
+                        textP.innerHTML = fact.text;
+                    }
+                    if (subDiv) {
+                        const tagSpan = subDiv.querySelector('span:first-of-type') || subDiv.querySelector('span');
+                        if (tagSpan) {
+                            tagSpan.textContent = fact.label;
+                        }
+                    }
+                }
+
+                if (navigator.vibrate) navigator.vibrate(10);
+            });
+        }
+
+        // ===== KALKULATOR FISIKA =====
+        function setupCalculator() {
+            const typeSelect = document.getElementById('calcType');
+            const inputsContainer = document.getElementById('calcInputs');
+            const calcBtn = document.getElementById('calcBtn');
+            const resultDiv = document.getElementById('calcResult');
+
+            if (!typeSelect || !inputsContainer || !calcBtn || !resultDiv) return;
+
+            // Definisi rumus: label, satuan, dan fields
+            const formulas = {
+                kecepatan: {
+                    label: 'Kecepatan (v = s / t)',
+                    fields: [
+                        { name: 's', label: 'Jarak (s)', unit: 'm', placeholder: 'misal 100' },
+                        { name: 't', label: 'Waktu (t)', unit: 's', placeholder: 'misal 5' }
+                    ],
+                    calculate: (vals) => {
+                        const s = parseFloat(vals.s);
+                        const t = parseFloat(vals.t);
+                        if (isNaN(s) || isNaN(t) || t === 0) return null;
+                        return { value: s / t, unit: 'm/s' };
+                    }
+                },
+                gaya: {
+                    label: 'Gaya (F = m × a)',
+                    fields: [
+                        { name: 'm', label: 'Massa (m)', unit: 'kg', placeholder: 'misal 10' },
+                        { name: 'a', label: 'Percepatan (a)', unit: 'm/s²', placeholder: 'misal 2' }
+                    ],
+                    calculate: (vals) => {
+                        const m = parseFloat(vals.m);
+                        const a = parseFloat(vals.a);
+                        if (isNaN(m) || isNaN(a)) return null;
+                        return { value: m * a, unit: 'N' };
+                    }
+                },
+                usaha: {
+                    label: 'Usaha (W = F × s)',
+                    fields: [
+                        { name: 'F', label: 'Gaya (F)', unit: 'N', placeholder: 'misal 50' },
+                        { name: 's', label: 'Jarak (s)', unit: 'm', placeholder: 'misal 3' }
+                    ],
+                    calculate: (vals) => {
+                        const F = parseFloat(vals.F);
+                        const s = parseFloat(vals.s);
+                        if (isNaN(F) || isNaN(s)) return null;
+                        return { value: F * s, unit: 'J' };
+                    }
+                },
+                energi_kinetik: {
+                    label: 'Energi Kinetik (Ek = ½ m v²)',
+                    fields: [
+                        { name: 'm', label: 'Massa (m)', unit: 'kg', placeholder: 'misal 5' },
+                        { name: 'v', label: 'Kecepatan (v)', unit: 'm/s', placeholder: 'misal 10' }
+                    ],
+                    calculate: (vals) => {
+                        const m = parseFloat(vals.m);
+                        const v = parseFloat(vals.v);
+                        if (isNaN(m) || isNaN(v)) return null;
+                        return { value: 0.5 * m * v * v, unit: 'J' };
+                    }
+                },
+                tekanan: {
+                    label: 'Tekanan (P = F / A)',
+                    fields: [
+                        { name: 'F', label: 'Gaya (F)', unit: 'N', placeholder: 'misal 100' },
+                        { name: 'A', label: 'Luas (A)', unit: 'm²', placeholder: 'misal 0.5' }
+                    ],
+                    calculate: (vals) => {
+                        const F = parseFloat(vals.F);
+                        const A = parseFloat(vals.A);
+                        if (isNaN(F) || isNaN(A) || A === 0) return null;
+                        return { value: F / A, unit: 'Pa' };
+                    }
+                },
+                hukum_ohm: {
+                    label: 'Hukum Ohm (V = I × R)',
+                    fields: [
+                        { name: 'I', label: 'Arus (I)', unit: 'A', placeholder: 'misal 2' },
+                        { name: 'R', label: 'Hambatan (R)', unit: 'Ω', placeholder: 'misal 5' }
+                    ],
+                    calculate: (vals) => {
+                        const I = parseFloat(vals.I);
+                        const R = parseFloat(vals.R);
+                        if (isNaN(I) || isNaN(R)) return null;
+                        return { value: I * R, unit: 'V' };
+                    }
+                },
+                daya: {
+                    label: 'Daya (P = W / t)',
+                    fields: [
+                        { name: 'W', label: 'Usaha (W)', unit: 'J', placeholder: 'misal 200' },
+                        { name: 't', label: 'Waktu (t)', unit: 's', placeholder: 'misal 4' }
+                    ],
+                    calculate: (vals) => {
+                        const W = parseFloat(vals.W);
+                        const t = parseFloat(vals.t);
+                        if (isNaN(W) || isNaN(t) || t === 0) return null;
+                        return { value: W / t, unit: 'W' };
+                    }
+                },
+                kalor: {
+                    label: 'Kalor (Q = m × c × ΔT)',
+                    fields: [
+                        { name: 'm', label: 'Massa (m)', unit: 'kg', placeholder: 'misal 2' },
+                        { name: 'c', label: 'Kalor jenis (c)', unit: 'J/kg°C', placeholder: 'misal 4200' },
+                        { name: 'dt', label: 'Perubahan suhu (ΔT)', unit: '°C', placeholder: 'misal 10' }
+                    ],
+                    calculate: (vals) => {
+                        const m = parseFloat(vals.m);
+                        const c = parseFloat(vals.c);
+                        const dt = parseFloat(vals.dt);
+                        if (isNaN(m) || isNaN(c) || isNaN(dt)) return null;
+                        return { value: m * c * dt, unit: 'J' };
+                    }
+                }
+            };
+
+            function updateInputs() {
+                const type = typeSelect.value;
+                const formula = formulas[type];
+                if (!formula) return;
+                let html = '';
+                formula.fields.forEach(field => {
+                    html += `
+                                <div style="flex:1; min-width: 80px;">
+                                    <label style="font-size:0.6rem; font-weight:600; color:#4a4a5e; display:block; margin-bottom:2px;">${field.label}</label>
+                                    <input type="number" step="any" id="calc_${field.name}" placeholder="${field.placeholder}" style="width:100%; padding:8px 12px; border:1px solid #d0d4db; border-radius:10px; font-size:0.75rem; background:#f8f9fc; outline:none; transition:0.2s;">
+                                </div>
+                            `;
+                });
+                inputsContainer.innerHTML = html;
+                // Event listener untuk Enter
+                inputsContainer.querySelectorAll('input').forEach(inp => {
+                    inp.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') calcBtn.click();
+                    });
+                });
+            }
+
+            function calculate() {
+                const type = typeSelect.value;
+                const formula = formulas[type];
+                if (!formula) return;
+                const vals = {};
+                let valid = true;
+                formula.fields.forEach(field => {
+                    const el = document.getElementById(`calc_${field.name}`);
+                    if (el) {
+                        const val = el.value.trim();
+                        if (val === '') {
+                            valid = false;
+                        } else {
+                            vals[field.name] = val;
+                        }
+                    }
+                });
+                if (!valid) {
+                    resultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i> <span style="color:#d63031;">Harap isi semua nilai dengan benar.</span>`;
+                    return;
+                }
+                const result = formula.calculate(vals);
+                if (result === null) {
+                    resultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i> <span style="color:#d63031;">Periksa kembali nilai (pembagian dengan nol atau nilai tidak valid).</span>`;
+                    return;
+                }
+                resultDiv.innerHTML = `
+                            <i class="fas fa-check-circle"></i>
+                            <span><span class="result-label">Hasil:</span> <span class="result-value">${result.value.toFixed(4)}</span> ${result.unit}</span>
+                        `;
+            }
+
+            typeSelect.addEventListener('change', updateInputs);
+            calcBtn.addEventListener('click', calculate);
+            updateInputs();
+        }
+
+        // ===== SETUP PAGE EVENTS =====
+        function setupPageEvents(pageId) {
+            if (pageId === 'home') {
+                // Klik pada grid card sekarang semua menggunakan data-page
+                document.querySelectorAll('.grid-card[data-page]').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const targetPage = card.getAttribute('data-page');
+                        if (targetPage && pages[targetPage]) renderPage(targetPage);
+                    });
+                });
+                setTimeout(setupFactRefresh, 100);
+                setTimeout(setupCalculator, 150);
+            }
+            if (pageId === 'scanner' || pageId === 'ai') {
+                const startBtn = document.getElementById('startScannerBtn');
+                const stopBtn = document.getElementById('stopScannerBtn');
+                if (startBtn) {
+                    startBtn.addEventListener('click', (e) => { e.preventDefault();
+                        startScanner(); });
+                }
+                if (stopBtn) {
+                    stopBtn.addEventListener('click', (e) => { e.preventDefault();
+                        stopScanner(); });
+                }
+                window.addEventListener('beforeunload', function() { stopScanner(); });
+            }
+            if (pageId === 'ar') {
+                const arBtn = document.getElementById('startARBtn');
+                if (arBtn) {
+                    arBtn.addEventListener('click', () => {
+                        alert(
+                            "📱 Fitur AR:\n\nArahkan kamera ke permukaan datar. Model atom 3D akan muncul.\n\nCatatan: Untuk pengalaman AR penuh, gunakan browser yang mendukung WebXR atau library AR.js.\n\nDemo: Model atom Helium dengan elektron berotasi."
+                            );
+                    });
+                }
+            }
+        }
+
+        function renderPage(pageId) {
+            const container = document.getElementById('mainContent');
+            if (!container) return;
+            const pageData = pages[pageId];
+            if (!pageData) return;
+            if (currentPage === 'scanner' || currentPage === 'ai') { stopScanner(); }
+            container.innerHTML = pageData.render();
+            currentPage = pageId;
+            setTimeout(() => setupPageEvents(pageId), 50);
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                const btnPage = btn.getAttribute('data-page');
+                if (btnPage === pageId) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+        }
+
+        // ===== NAVIGATION =====
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = btn.getAttribute('data-page');
+                if (page && pages[page]) renderPage(page);
+            });
+        });
+
+        document.getElementById('menuBtn')?.addEventListener('click', () => {
+            alert("📱 Fisikaku\n\n• QR Scanner - Scan kode QR edukasi\n• AR Atom 3D - Lihat atom di dunia nyata\n• AI Scanner - Scan QR untuk Asisten AI\n• Kalkulator Fisika - Hitung rumus fisika dasar");
+        });
+
+        renderPage('home');
+    </script>
+</body>
+</html>
