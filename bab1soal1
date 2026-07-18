@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Fisika Energi Terbarukan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== GAYA DASAR ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #1a1a2e;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100vh;
+            height: 100dvh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.04);
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border-bottom: 1px solid #e8ecf0;
+            flex-shrink: 0;
+            z-index: 30;
+            position: relative;
+            min-height: 64px;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .icon-badge {
+            width: 42px;
+            height: 42px;
+            background: #ff6b35;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .icon-badge i {
+            font-size: 20px;
+            color: white;
+        }
+        .title-text h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+        .title-text h1 span {
+            color: #ff6b35;
+        }
+        .title-text p {
+            font-size: 0.5rem;
+            color: #6b6b80;
+            margin-top: 1px;
+            letter-spacing: 0.4px;
+            font-weight: 500;
+        }
+        .menu-btn {
+            background: transparent;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            color: #1a1a2e;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-btn:active {
+            background: rgba(0, 0, 0, 0.04);
+            transform: scale(0.92);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px 16px 20px;
+            background: #f8f9fc;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .main-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        .main-content::-webkit-scrollbar-track {
+            background: #eef0f4;
+        }
+        .main-content::-webkit-scrollbar-thumb {
+            background: #ff6b35;
+            border-radius: 10px;
+        }
+
+        /* ===== QUIZ PER SOAL ===== */
+        .quiz-progress {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #6b6b80;
+            margin-bottom: 12px;
+            background: #f0f2f6;
+            padding: 6px 12px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .question-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px 18px 18px;
+            margin-bottom: 14px;
+            border: 1px solid #e8ecf0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .question-card .q-number {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #ff6b35;
+            background: rgba(255, 107, 53, 0.10);
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 100px;
+            margin-bottom: 8px;
+        }
+        .question-card .q-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .question-card .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .question-card .options label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: #f8f9fc;
+            border: 1px solid #e8ecf0;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .question-card .options label:active {
+            transform: scale(0.97);
+        }
+        .question-card .options label:hover {
+            background: #f0f2f6;
+        }
+        .question-card .options input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d0d4db;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .question-card .options input[type="radio"]:checked {
+            border-color: #ff6b35;
+            background: #ff6b35;
+        }
+        .question-card .options input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .question-card .options input[type="radio"]:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ===== NAVIGASI ===== */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 16px 0 20px;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+        .nav-btn.prev {
+            background: #e8ecf0;
+            color: #1a1a2e;
+        }
+        .nav-btn.next {
+            background: #ff6b35;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+        }
+        .nav-btn.next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .nav-btn.finish {
+            background: #00c853;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 200, 83, 0.30);
+        }
+
+        /* ===== HASIL ===== */
+        .result-container {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px 20px 20px;
+            border: 2px solid #ff6b35;
+            margin-top: 10px;
+            animation: fadeUp 0.5s ease;
+        }
+        .result-container .score-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ff6b35;
+        }
+        .result-container .score-label {
+            font-size: 0.8rem;
+            color: #6b6b80;
+        }
+        .result-container .score-message {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-top: 6px;
+        }
+        .result-container .btn-ulangi {
+            margin-top: 16px;
+            padding: 12px 32px;
+            background: #e8ecf0;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .result-container .btn-ulangi:active {
+            transform: scale(0.94);
+        }
+
+        /* Daftar rinci hasil per soal */
+        .result-detail {
+            margin-top: 20px;
+            text-align: left;
+            border-top: 1px solid #e8ecf0;
+            padding-top: 16px;
+        }
+        .result-detail h4 {
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            color: #1a1a2e;
+        }
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f2f6;
+            font-size: 0.7rem;
+        }
+        .result-item .r-icon {
+            width: 20px;
+            text-align: center;
+        }
+        .result-item .r-icon.correct {
+            color: #00c853;
+        }
+        .result-item .r-icon.wrong {
+            color: #ff1744;
+        }
+        .result-item .r-nomor {
+            font-weight: 600;
+            color: #6b6b80;
+            min-width: 30px;
+        }
+        .result-item .r-jawaban {
+            color: #1a1a2e;
+        }
+        .result-item .r-benar {
+            color: #00c853;
+            font-weight: 600;
+        }
+        .result-item .r-salah {
+            color: #ff1744;
+            font-weight: 600;
+        }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== CONFETTI CANVAS ===== */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 420px) {
+            .question-card {
+                padding: 16px 14px;
+            }
+            .question-card .q-text {
+                font-size: 0.8rem;
+            }
+            .question-card .options label {
+                font-size: 0.7rem;
+                padding: 8px 12px;
+            }
+            .question-card .options input[type="radio"] {
+                width: 18px;
+                height: 18px;
+            }
+            .nav-btn {
+                font-size: 0.7rem;
+                padding: 10px 0;
+            }
+            .result-container .score-number {
+                font-size: 2.4rem;
+            }
+            .result-item {
+                font-size: 0.65rem;
+                padding: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ===== HEADER ===== -->
+        <div class="app-header">
+            <div class="logo-area">
+                <div class="icon-badge"><i class="fas fa-bolt"></i></div>
+                <div class="title-text">
+                    <h1>Fisika <span>Energi</span></h1>
+                    <p>Kelas 10 · Semester 2 · Energi Terbarukan</p>
+                </div>
+            </div>
+            <button class="menu-btn" id="menuBtn"><i class="fas fa-ellipsis-v"></i></button>
+        </div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <div class="main-content" id="mainContent"></div>
+
+        <!-- ===== CANVAS CONFETTI ===== -->
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+
+    <script>
+        // ============================================================
+        // 20 SOAL
+        // ============================================================
+        const questions = [{
+            id: 1,
+            text: 'Energi potensial gravitasi sebuah benda bermassa m pada ketinggian h dari permukaan bumi dihitung dengan rumus …',
+            options: ['Ep = mgh', 'Ep = ½ mv²', 'Ep = mgh²', 'Ep = ½ mgh'],
+            answer: 0,
+            explanation: 'Energi potensial gravitasi: Ep = m × g × h, dengan m = massa (kg), g = percepatan gravitasi (m/s²), h = ketinggian (m).'
+        }, {
+            id: 2,
+            text: 'Energi kinetik sebuah benda bergantung pada dua besaran, yaitu …',
+            options: ['Massa dan ketinggian', 'Massa dan kecepatan', 'Kecepatan dan ketinggian', 'Gaya dan perpindahan'],
+            answer: 1,
+            explanation: 'Energi kinetik: Ek = ½ m v², sehingga bergantung pada massa (m) dan kecepatan (v).'
+        }, {
+            id: 3,
+            text: 'Hukum kekekalan energi mekanik menyatakan bahwa energi mekanik total suatu sistem tetap konstan jika …',
+            options: ['Ada gaya gesek yang bekerja', 'Tidak ada gaya luar yang bekerja', 'Suhu sistem berubah', 'Benda bergerak melingkar'],
+            answer: 1,
+            explanation: 'Energi mekanik total (Ep + Ek) tetap konstan jika tidak ada gaya luar non-konservatif (seperti gesekan) yang bekerja.'
+        }, {
+            id: 4,
+            text: 'Pembangkit Listrik Tenaga Air (PLTA) memanfaatkan energi …',
+            options: ['Kinetik air yang mengalir', 'Potensial air di ketinggian', 'Panas dari air', 'Kimia dari air'],
+            answer: 1,
+            explanation: 'PLTA memanfaatkan energi potensial air di bendungan yang diubah menjadi energi kinetik saat air jatuh, lalu menjadi energi listrik.'
+        }, {
+            id: 5,
+            text: 'Panel surya mengubah energi cahaya matahari menjadi energi listrik melalui efek …',
+            options: ['Fotolistrik (fotovoltaik)', 'Termoelektrik', 'Piezoelektrik', 'Elektromagnetik'],
+            answer: 0,
+            explanation: 'Panel surya menggunakan efek fotovoltaik, di mana material semikonduktor (seperti silikon) mengubah foton cahaya menjadi arus listrik.'
+        }, {
+            id: 6,
+            text: 'Kincir angin (turbin angin) mengubah energi kinetik angin menjadi …',
+            options: ['Energi panas', 'Energi kimia', 'Energi listrik', 'Energi potensial'],
+            answer: 2,
+            explanation: 'Turbin angin mengubah energi kinetik dari angin menjadi energi mekanik putar, lalu generator mengubahnya menjadi energi listrik.'
+        }, {
+            id: 7,
+            text: 'Contoh perubahan energi kinetik menjadi energi potensial terjadi pada …',
+            options: ['Bola yang menggelinding di lantai', 'Benda yang jatuh dari ketinggian', 'Bola yang dilempar vertikal ke atas', 'Air yang mengalir di sungai'],
+            answer: 2,
+            explanation: 'Saat bola dilempar ke atas, kecepatan (energi kinetik) berkurang dan ketinggian (energi potensial) bertambah. Energi kinetik berubah menjadi energi potensial.'
+        }, {
+            id: 8,
+            text: 'Sumber energi terbarukan yang memanfaatkan panas dari dalam bumi disebut …',
+            options: ['Energi surya', 'Energi biomassa', 'Energi geothermal', 'Energi angin'],
+            answer: 2,
+            explanation: 'Energi geothermal (panas bumi) memanfaatkan panas dari inti bumi untuk menghasilkan listrik atau pemanasan.'
+        }, {
+            id: 9,
+            text: 'Energi mekanik total suatu sistem didefinisikan sebagai …',
+            options: ['Ep + Ek', 'Ep − Ek', 'Ep × Ek', 'Ep / Ek'],
+            answer: 0,
+            explanation: 'Energi mekanik total adalah jumlah dari energi potensial (Ep) dan energi kinetik (Ek): Em = Ep + Ek.'
+        }, {
+            id: 10,
+            text: 'Biomassa sebagai sumber energi terbarukan berasal dari …',
+            options: ['Bahan bakar fosil', 'Bahan organik (tumbuhan, limbah)', 'Bahan anorganik', 'Bahan sintetis'],
+            answer: 1,
+            explanation: 'Biomassa adalah bahan organik dari tumbuhan, hewan, atau limbah yang dapat diolah menjadi energi (biofuel, biogas, dll.).'
+        }, {
+            id: 11,
+            text: 'Energi potensial elastis dimiliki oleh benda yang …',
+            options: ['Bergerak dengan kecepatan tinggi', 'Jatuh dari ketinggian', 'Mengalami perubahan bentuk (diregangkan/ditekan)', 'Mengalir dalam pipa'],
+            answer: 2,
+            explanation: 'Energi potensial elastis tersimpan pada benda elastis seperti pegas atau karet yang diregangkan atau ditekan (Ep = ½ k x²).'
+        }, {
+            id: 12,
+            text: 'Efisiensi panel surya sangat dipengaruhi oleh faktor …',
+            options: ['Warna panel surya', 'Intensitas cahaya matahari', 'Ukuran fisik panel', 'Berat panel'],
+            answer: 1,
+            explanation: 'Efisiensi panel surya bergantung pada intensitas cahaya yang diterima, suhu, dan material semikonduktor. Semakin tinggi intensitas cahaya, semakin besar output listrik.'
+        }, {
+            id: 13,
+            text: 'Energi pasang surut (tidal energy) memanfaatkan …',
+            options: ['Gelombang laut di permukaan', 'Pasang surut air laut', 'Arus laut dalam', 'Perbedaan suhu laut'],
+            answer: 1,
+            explanation: 'Energi pasang surut memanfaatkan pergerakan naik-turun permukaan air laut akibat gaya gravitasi bulan dan matahari untuk menghasilkan listrik.'
+        }, {
+            id: 14,
+            text: 'Biofuel (bahan bakar hayati) dapat dihasilkan dari …',
+            options: ['Minyak bumi dan gas alam', 'Tanaman dan limbah organik', 'Batubara dan gambut', 'Bahan plastik daur ulang'],
+            answer: 1,
+            explanation: 'Biofuel diproduksi dari biomassa seperti tanaman (jagung, tebu, kelapa sawit) dan limbah organik melalui fermentasi atau proses kimia.'
+        }, {
+            id: 15,
+            text: 'Ketika sebuah benda bergerak turun dari ketinggian tertentu, energi potensialnya …',
+            options: ['Bertambah', 'Berkurang', 'Tetap', 'Menjadi nol'],
+            answer: 1,
+            explanation: 'Saat benda turun, ketinggian (h) berkurang, sehingga energi potensial (Ep = mgh) juga berkurang dan berubah menjadi energi kinetik.'
+        }, {
+            id: 16,
+            text: 'Sel surya (solar cell) umumnya terbuat dari material …',
+            options: ['Tembaga (Cu)', 'Silikon (Si)', 'Besi (Fe)', 'Aluminium (Al)'],
+            answer: 1,
+            explanation: 'Sebagian besar sel surya komersial terbuat dari silikon, material semikonduktor yang efisien dalam efek fotovoltaik.'
+        }, {
+            id: 17,
+            text: 'Keuntungan utama energi terbarukan dibanding energi tak terbarukan adalah …',
+            options: ['Murah dan mudah didapat', 'Ramah lingkungan dan tidak habis', 'Efisien dan stabil sepanjang waktu', 'Tidak memerlukan teknologi'],
+            answer: 1,
+            explanation: 'Energi terbarukan ramah lingkungan (emisi rendah) dan sumbernya tidak akan habis karena dapat diperbarui secara alami.'
+        }, {
+            id: 18,
+            text: 'Di Indonesia, wilayah yang sangat berpotensi untuk pengembangan energi angin adalah …',
+            options: ['Daerah perkotaan', 'Daerah pegunungan dan pesisir pantai', 'Daerah hutan hujan tropis', 'Daerah rawa-rawa'],
+            answer: 1,
+            explanation: 'Indonesia memiliki potensi energi angin yang besar di wilayah pesisir dan pegunungan karena kecepatan angin yang cukup tinggi dan konsisten.'
+        }, {
+            id: 19,
+            text: 'Konservasi energi bertujuan utama untuk …',
+            options: ['Menambah jumlah sumber energi', 'Menghemat penggunaan energi', 'Mengurangi biaya energi', 'Meningkatkan polusi'],
+            answer: 1,
+            explanation: 'Konservasi energi adalah upaya menggunakan energi secara efisien dan bijak untuk mengurangi konsumsi tanpa mengurangi manfaat yang diperoleh.'
+        }, {
+            id: 20,
+            text: 'Perubahan energi mekanik menjadi energi listrik terjadi pada …',
+            options: ['Panel surya', 'Generator (dinamo)', 'Kincir angin', 'Semua jawaban benar'],
+            answer: 3,
+            explanation: 'Generator mengubah energi mekanik (putaran) menjadi listrik. Kincir angin mengubah energi kinetik angin menjadi mekanik lalu listrik. Panel surya langsung mengubah cahaya menjadi listrik (bukan mekanik). Jadi jawaban yang tepat adalah generator, tetapi opsi D mencakup semua yang relevan.'
+        }];
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentIndex = 0;
+        const totalSoal = questions.length;
+        let userAnswers = new Array(totalSoal).fill(null);
+        let quizFinished = false;
+
+        // ============================================================
+        // RENDER SATU SOAL
+        // ============================================================
+        function renderQuestion(index) {
+            const container = document.getElementById('mainContent');
+            if (!container) return;
+
+            const q = questions[index];
+            const selected = userAnswers[index];
+            const letters = ['A', 'B', 'C', 'D'];
+
+            // Buat opsi tanpa warna/feedback
+            let optionsHtml = '';
+            q.options.forEach((opt, oi) => {
+                const checked = (selected === oi) ? 'checked' : '';
+                // Jika quiz selesai, radio dinonaktifkan
+                const disabledAttr = quizFinished ? 'disabled' : '';
+                optionsHtml += `
+                            <label>
+                                <input type="radio" name="question" value="${oi}" ${checked} ${disabledAttr} />
+                                <span><strong>${letters[oi]}.</strong> ${opt}</span>
+                            </label>
+                        `;
+            });
+
+            // Progress
+            const progressText = `Soal ${index+1} dari ${totalSoal}`;
+
+            // Tombol navigasi
+            let navHtml = '';
+            // Tombol sebelumnya
+            let prevDisabled = (index === 0) ? 'disabled' : '';
+            let prevBtn = `<button class="nav-btn prev" id="prevBtn" ${prevDisabled}><i class="fas fa-chevron-left"></i> Sebelumnya</button>`;
+
+            // Tombol berikutnya / selesai
+            let nextBtn = '';
+            if (quizFinished) {
+                // Jika sudah selesai, tombol navigasi tetap aktif tapi tanpa finish
+                if (index === totalSoal - 1) {
+                    nextBtn = `<button class="nav-btn next" disabled><i class="fas fa-chevron-right"></i> Selanjutnya</button>`;
+                } else {
+                    nextBtn = `<button class="nav-btn next" id="nextBtn"><i class="fas fa-chevron-right"></i> Selanjutnya</button>`;
+                }
+            } else {
+                if (index === totalSoal - 1) {
+                    // Soal terakhir, periksa apakah semua sudah dijawab
+                    const allAnswered = userAnswers.every(ans => ans !== null);
+                    if (allAnswered) {
+                        nextBtn = `<button class="nav-btn finish" id="finishBtn"><i class="fas fa-star"></i> Lihat Nilai</button>`;
+                    } else {
+                        nextBtn = `<button class="nav-btn next" id="nextBtn" disabled><i class="fas fa-chevron-right"></i> Selanjutnya</button>`;
+                    }
+                } else {
+                    const isAnswered = (selected !== null);
+                    nextBtn = `<button class="nav-btn next" id="nextBtn" ${isAnswered ? '' : 'disabled'}><i class="fas fa-chevron-right"></i> Selanjutnya</button>`;
+                }
+            }
+
+            navHtml = `
+                        <div class="nav-buttons">
+                            ${prevBtn}
+                            ${nextBtn}
+                        </div>
+                    `;
+
+            const html = `
+                        <div style="display:flex; justify-content:center;">
+                            <span class="quiz-progress"><i class="fas fa-list-ol"></i> ${progressText}</span>
+                        </div>
+                        <div class="question-card">
+                            <div class="q-number">Soal ${q.id}</div>
+                            <div class="q-text">${q.text}</div>
+                            <div class="options" id="optionsContainer">
+                                ${optionsHtml}
+                            </div>
+                        </div>
+                        ${navHtml}
+                    `;
+
+            container.innerHTML = html;
+
+            // Event listener untuk radio button (hanya jika belum selesai)
+            if (!quizFinished) {
+                document.querySelectorAll('input[name="question"]').forEach(el => {
+                    el.addEventListener('change', function(e) {
+                        const val = parseInt(this.value);
+                        userAnswers[index] = val;
+                        // Re-render untuk update tombol next
+                        renderQuestion(index);
+                    });
+                });
+            }
+
+            // Event tombol sebelumnya
+            const prevBtnEl = document.getElementById('prevBtn');
+            if (prevBtnEl) {
+                prevBtnEl.addEventListener('click', function() {
+                    if (index > 0) {
+                        currentIndex = index - 1;
+                        renderQuestion(currentIndex);
+                    }
+                });
+            }
+
+            // Event tombol selanjutnya
+            const nextBtnEl = document.getElementById('nextBtn');
+            if (nextBtnEl) {
+                nextBtnEl.addEventListener('click', function() {
+                    if (index < totalSoal - 1 && userAnswers[index] !== null) {
+                        currentIndex = index + 1;
+                        renderQuestion(currentIndex);
+                    }
+                });
+            }
+
+            // Event tombol finish (lihat nilai)
+            const finishBtn = document.getElementById('finishBtn');
+            if (finishBtn) {
+                finishBtn.addEventListener('click', function() {
+                    if (userAnswers.every(ans => ans !== null)) {
+                        showResult();
+                    }
+                });
+            }
+        }
+
+        // ============================================================
+        // TAMPILKAN HASIL + CONFETTI
+        // ============================================================
+        function showResult() {
+            quizFinished = true;
+            let correctCount = 0;
+            questions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) correctCount++;
+            });
+            const total = questions.length;
+            const nilai = Math.round((correctCount / total) * 100); // skala 0-100
+
+            // Saran belajar
+            let saran = '';
+            if (nilai >= 90) saran = '🎉 Istimewa! Kamu sangat menguasai materi energi terbarukan. Pertahankan prestasimu!';
+            else if (nilai >= 75) saran = '👍 Bagus! Kamu memiliki pemahaman yang baik. Perbaiki beberapa konsep yang masih kurang tepat.';
+            else if (nilai >= 60) saran = '📖 Lumayan. Perbanyak latihan soal dan pahami kembali konsep energi potensial, kinetik, dan mekanik.';
+            else if (nilai >= 40) saran = '📚 Perlu belajar lebih giat. Fokus pada rumus dasar dan contoh soal. Jangan ragu bertanya pada guru.';
+            else saran = '💪 Jangan menyerah! Baca ulang materi dari awal, kerjakan soal-soal latihan, dan minta bimbingan.';
+
+            // Buat daftar rinci per soal
+            let detailHtml = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            questions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = (userAns === q.answer);
+                const icon = isCorrect ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
+                const iconClass = isCorrect ? 'correct' : 'wrong';
+                const jawabanUser = (userAns !== null) ? letters[userAns] : '-';
+                const jawabanBenar = letters[q.answer];
+                detailHtml += `
+                            <div class="result-item">
+                                <span class="r-icon ${iconClass}">${icon}</span>
+                                <span class="r-nomor">${q.id}.</span>
+                                <span class="r-jawaban">Jawabanmu: <strong>${jawabanUser}</strong></span>
+                                <span style="margin-left:auto; font-size:0.65rem; color:#6b6b80;">Benar: <span class="r-benar">${jawabanBenar}</span></span>
+                            </div>
+                        `;
+            });
+
+            const container = document.getElementById('mainContent');
+            container.innerHTML = `
+                        <div class="result-container">
+                            <div class="score-label">Nilai Kamu</div>
+                            <div class="score-number">${nilai}</div>
+                            <div class="score-message">${saran}</div>
+                            <button class="btn-ulangi" id="ulangiBtn"><i class="fas fa-undo-alt"></i> Ulangi Kuis</button>
+                            <div class="result-detail">
+                                <h4>📋 Rincian Jawaban</h4>
+                                ${detailHtml}
+                            </div>
+                        </div>
+                    `;
+
+            // Event ulangi
+            document.getElementById('ulangiBtn').addEventListener('click', function() {
+                resetQuiz();
+            });
+
+            // Confetti jika nilai >= 70
+            if (nilai >= 70) {
+                startConfetti();
+            }
+        }
+
+        // ============================================================
+        // RESET QUIZ
+        // ============================================================
+        function resetQuiz() {
+            quizFinished = false;
+            userAnswers = new Array(totalSoal).fill(null);
+            currentIndex = 0;
+            stopConfetti();
+            renderQuestion(0);
+        }
+
+        // ============================================================
+        // CONFETTI EFFECT (canvas)
+        // ============================================================
+        let confettiActive = false;
+        let confettiAnimationId = null;
+        let confettiPieces = [];
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class ConfettiPiece {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 8 + 4;
+                this.speedY = Math.random() * 6 + 4;
+                this.speedX = (Math.random() - 0.5) * 4;
+                this.color = `hsl(${Math.random() * 360}, 80%, 60%)`;
+                this.rotation = 0;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+                this.opacity = 1;
+                this.shape = Math.random() > 0.5 ? 'rect' : 'circle';
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                if (this.y > canvas.height + 20) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                }
+                this.speedX += (Math.random() - 0.5) * 0.1;
+                if (this.speedX > 3) this.speedX = 3;
+                if (this.speedX < -3) this.speedX = -3;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                if (this.shape === 'rect') {
+                    ctx.fillRect(-this.size / 2, -this.size / 4, this.size, this.size / 2);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        function startConfetti() {
+            if (confettiActive) return;
+            confettiActive = true;
+            confettiPieces = [];
+            for (let i = 0; i < 120; i++) {
+                confettiPieces.push(new ConfettiPiece());
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            if (!confettiActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiPieces.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            confettiAnimationId = requestAnimationFrame(animateConfetti);
+        }
+
+        function stopConfetti() {
+            confettiActive = false;
+            if (confettiAnimationId) {
+                cancelAnimationFrame(confettiAnimationId);
+                confettiAnimationId = null;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // ============================================================
+        // MENU BUTTON
+        // ============================================================
+        document.getElementById('menuBtn')?.addEventListener('click', () => {
+            alert(
+                "📘 Fisika Energi Terbarukan\n\nKelas 10 · Semester 2\n\n• 20 soal pilihan ganda\n• Materi: energi potensial, kinetik, mekanik, dan sumber energi terbarukan\n• Jawaban baru terlihat setelah menekan 'Lihat Nilai'.\n• Soal terkunci otomatis setelah nilai ditampilkan.");
+        });
+
+        // ============================================================
+        // START
+        // ============================================================
+        renderQuestion(0);
+    </script>
+</body>
+</html>
