@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#f0f7f6" />
+    <meta name="theme-color" content="#f0f5f8" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>Fisikaku · Woli si Monyet</title>
+    <title>Fisikaku · Woli si Serigala</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
     <style>
@@ -22,8 +22,8 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #eaf3f1;
-            color: #1a1a2e;
+            background: #eef4f7;
+            color: #1a2a30;
         }
 
         .app-container {
@@ -46,7 +46,7 @@
             align-items: center;
             justify-content: space-between;
             background: #ffffff;
-            border-bottom: 1px solid #d5e8e4;
+            border-bottom: 1px solid #dce6ec;
             flex-shrink: 0;
             z-index: 30;
             position: relative;
@@ -60,7 +60,7 @@
         .icon-badge {
             width: 42px;
             height: 42px;
-            background: #2a9d8f;
+            background: #4A8B9B;
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -72,38 +72,42 @@
             font-size: 20px;
             color: white;
         }
-        /* telinga monyet kecil di badge */
+        /* telinga serigala di badge — runcing & segitiga */
         .icon-badge::before,
         .icon-badge::after {
             content: '';
             position: absolute;
-            width: 10px;
-            height: 14px;
-            background: #2a9d8f;
-            border-radius: 50% 50% 0 0;
-            top: -6px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            top: -10px;
+            z-index: 1;
         }
         .icon-badge::before {
-            left: 2px;
-            transform: rotate(-15deg);
+            left: 4px;
+            border-width: 0 8px 14px 8px;
+            border-color: transparent transparent #4A8B9B transparent;
+            transform: rotate(-8deg);
         }
         .icon-badge::after {
-            right: 2px;
-            transform: rotate(15deg);
+            right: 4px;
+            border-width: 0 8px 14px 8px;
+            border-color: transparent transparent #4A8B9B transparent;
+            transform: rotate(8deg);
         }
 
         .title-text h1 {
             font-size: 1.25rem;
             font-weight: 700;
-            color: #1a1a2e;
+            color: #1a2a30;
             letter-spacing: -0.3px;
         }
         .title-text h1 span {
-            color: #2a9d8f;
+            color: #4A8B9B;
         }
         .title-text p {
             font-size: 0.55rem;
-            color: #6b6b80;
+            color: #5a6e7a;
             margin-top: 1px;
             letter-spacing: 0.4px;
             font-weight: 500;
@@ -114,7 +118,7 @@
             width: 36px;
             height: 36px;
             border-radius: 10px;
-            color: #1a1a2e;
+            color: #1a2a30;
             font-size: 17px;
             cursor: pointer;
             transition: all 0.2s;
@@ -133,7 +137,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            background: #f4f9f8;
+            background: #f0f5f8;
             padding: 0 16px 16px;
             position: relative;
         }
@@ -147,14 +151,14 @@
             align-items: center;
             gap: 6px;
             padding-left: 2px;
-            color: #1a1a2e;
+            color: #1a2a30;
             flex-shrink: 0;
         }
         .section-title i {
             font-size: 0.95rem;
         }
         .section-title .fa-robot {
-            color: #2a9d8f;
+            color: #4A8B9B;
         }
 
         /* ===== AI CONTAINER ===== */
@@ -164,8 +168,8 @@
             flex-direction: column;
             background: #ffffff;
             border-radius: 16px;
-            border: 1px solid #d5e8e4;
-            box-shadow: 0 2px 8px rgba(42, 157, 143, 0.06);
+            border: 1px solid #dce6ec;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
             overflow: hidden;
             margin-bottom: 10px;
             min-height: 0;
@@ -175,8 +179,8 @@
             flex: 1;
             overflow-y: auto;
             padding: 12px 12px 8px;
-            background: #f4f9f8;
-            border-bottom: 1px solid #e2efec;
+            background: #f0f5f8;
+            border-bottom: 1px solid #dce6ec;
             min-height: 120px;
             display: flex;
             flex-direction: column;
@@ -185,10 +189,10 @@
             width: 3px;
         }
         .ai-chat-box::-webkit-scrollbar-track {
-            background: #e2efec;
+            background: #dce6ec;
         }
         .ai-chat-box::-webkit-scrollbar-thumb {
-            background: #2a9d8f;
+            background: #4A8B9B;
             border-radius: 10px;
         }
 
@@ -206,19 +210,19 @@
         .ai-input-row input {
             flex: 1;
             padding: 8px 14px;
-            border: 1px solid #c8ddd8;
+            border: 1px solid #c8d4dc;
             border-radius: 30px;
             font-size: 0.75rem;
-            background: #f4f9f8;
-            color: #1a1a2e;
+            background: #f0f5f8;
+            color: #1a2a30;
             outline: none;
             transition: all 0.2s;
         }
         .ai-input-row input::placeholder {
-            color: #8a9e99;
+            color: #7a8e9a;
         }
         .ai-input-row input:focus {
-            border-color: #2a9d8f;
+            border-color: #4A8B9B;
             background: #ffffff;
         }
         .ai-input-row button {
@@ -226,7 +230,7 @@
             height: 40px;
             border: none;
             border-radius: 50%;
-            background: #2a9d8f;
+            background: #4A8B9B;
             color: white;
             font-size: 16px;
             cursor: pointer;
@@ -248,21 +252,21 @@
             margin-top: 8px;
         }
         .ai-quick-chips button {
-            background: #eaf3f1;
-            border: 1px solid #c8ddd8;
+            background: #e8eff3;
+            border: 1px solid #c8d4dc;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.55rem;
-            color: #1a1a2e;
+            color: #1a2a30;
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 500;
         }
         .ai-quick-chips button:active {
             transform: scale(0.92);
-            background: #2a9d8f;
+            background: #4A8B9B;
             color: white;
-            border-color: #2a9d8f;
+            border-color: #4A8B9B;
         }
 
         .ai-msg {
@@ -275,13 +279,13 @@
             word-wrap: break-word;
         }
         .ai-msg.bot {
-            background: #eaf3f1;
-            border: 1px solid #d5e8e4;
+            background: #e8eff3;
+            border: 1px solid #dce6ec;
             align-self: flex-start;
-            color: #1a1a2e;
+            color: #1a2a30;
         }
         .ai-msg.user {
-            background: #2a9d8f;
+            background: #4A8B9B;
             color: white;
             align-self: flex-end;
             margin-left: auto;
@@ -295,7 +299,7 @@
             opacity: 0.6;
         }
         .ai-msg.bot .ai-label {
-            color: #2a9d8f;
+            color: #4A8B9B;
         }
         .ai-msg.user .ai-label {
             color: rgba(255, 255, 255, 0.7);
@@ -307,9 +311,9 @@
             align-items: center;
             gap: 4px;
             padding: 6px 12px;
-            background: #eaf3f1;
+            background: #e8eff3;
             border-radius: 12px;
-            border: 1px solid #d5e8e4;
+            border: 1px solid #dce6ec;
             align-self: flex-start;
             max-width: 60px;
         }
@@ -317,7 +321,7 @@
             display: inline-block;
             width: 8px;
             height: 8px;
-            background: #2a9d8f;
+            background: #4A8B9B;
             border-radius: 50%;
             animation: dotPulse 1.2s infinite;
         }
@@ -349,12 +353,12 @@
             margin-bottom: 2px;
         }
         .ai-msg.bot strong {
-            color: #2a9d8f;
+            color: #4A8B9B;
             font-weight: 700;
         }
         .ai-msg.bot .section-title {
             font-weight: 700;
-            color: #1a1a2e;
+            color: #1a2a30;
             display: block;
             margin-top: 4px;
             font-size: 0.75rem;
@@ -365,22 +369,22 @@
             border-radius: 12px;
             padding: 10px 14px;
             margin-top: 6px;
-            border-left: 3px solid #2a9d8f;
-            border: 1px solid #d5e8e4;
+            border-left: 3px solid #4A8B9B;
+            border: 1px solid #dce6ec;
             flex-shrink: 0;
         }
         .info-widget i {
-            color: #2a9d8f;
+            color: #4A8B9B;
             margin-right: 6px;
             font-size: 0.65rem;
         }
         .info-text {
             font-size: 0.6rem;
-            color: #4a5a56;
+            color: #3a4e5a;
             line-height: 1.4;
         }
         .info-text strong {
-            color: #1a2e2a;
+            color: #1a2a30;
         }
 
         @media (max-width: 420px) {
@@ -403,7 +407,7 @@
                 <div class="icon-badge"><i class="fas fa-atom"></i></div>
                 <div class="title-text">
                     <h1>Fisikaku</h1>
-                    <p>✦ Woli si Monyet</p>
+                    <p>✦ Woli si Serigala</p>
                 </div>
             </div>
             <button class="menu-btn" id="menuBtn"><i class="fas fa-ellipsis-v"></i></button>
@@ -411,14 +415,14 @@
 
         <!-- ===== MAIN CONTENT ===== -->
         <div class="main-content">
-            <div class="section-title"><i class="fas fa-robot" style="color:#2a9d8f;"></i> Woli — Monyet Jenius Fisika</div>
+            <div class="section-title"><i class="fas fa-robot" style="color:#4A8B9B;"></i> Woli — Serigala Jenius Fisika</div>
 
             <div class="ai-container">
                 <div class="ai-chat-box" id="aiChatBox">
                     <div class="ai-msg bot">
-                        <span class="ai-label">🐒 Woli</span>
-                        Hai! Saya <strong>Woli</strong>, monyet jenius fisika! 🐒<br>
-                        Ekor saya meliuk-liuk setiap kali ada pertanyaan seru tentang termodinamika, mekanika, listrik, magnet, optik, atau fisika modern. Ayo tanya apa saja — saya suka menjelaskan dengan gaya yang ceria, hangat, dan penuh keingintahuan!
+                        <span class="ai-label">🐺 Woli</span>
+                        Aum! Saya <strong>Woli</strong>, serigala jenius fisika! 🐺<br>
+                        Bulu abu-abu saya berkilau setiap kali ada pertanyaan seru tentang termodinamika, mekanika, listrik, magnet, optik, atau fisika modern. Ayo tanya apa saja — saya suka menjelaskan dengan gaya yang hangat, penuh semangat, dan sedikit lolongan bijak!
                         <br><br>
                         <strong>Coba tanya:</strong> "apa itu termodinamika?" atau "jelaskan hukum II"
                     </div>
@@ -442,7 +446,7 @@
 
             <div class="info-widget">
                 <i class="fas fa-lightbulb"></i>
-                <span class="info-text"><strong>🐒 Tips Woli:</strong> Ketik pertanyaan atau pilih topik cepat. Woli akan menjawab dengan pengetahuan fisika yang luas — dan sedikit kegembiraan monyet!</span>
+                <span class="info-text"><strong>🐺 Tips Woli:</strong> Ketik pertanyaan atau pilih topik cepat. Woli akan menjawab dengan pengetahuan fisika yang luas — dan sedikit lolongan serigala yang menggema!</span>
             </div>
         </div>
     </div>
@@ -470,7 +474,7 @@
 
             const label = document.createElement('span');
             label.className = 'ai-label';
-            label.textContent = isUser ? '👤 Anda' : '🐒 Woli';
+            label.textContent = isUser ? '👤 Anda' : '🐺 Woli';
             msg.appendChild(label);
 
             let content = text;
@@ -520,7 +524,7 @@
                 body: JSON.stringify({
                     messages: [{
                         role: "system",
-                        content: `Anda adalah Woli, seekor monyet jenius fisika yang ramah, ceria, dan penuh semangat. Anda adalah ahli fisika dengan pengetahuan mendalam di termodinamika, mekanika, listrik, magnet, optik, dan fisika modern. Gaya bicara Anda ceria, bersahabat, dan menggunakan bahasa Indonesia yang baik. Suka memberi analogi sederhana dan contoh sehari-hari. Sesekali selipkan ekspresi monyet seperti "🐒", "ekor meliuk", atau "mata monyetku berbinar". Tapi tetap profesional dan akurat dalam menjelaskan konsep fisika.`
+                        content: `Anda adalah Woli, seekor serigala jenius fisika yang ramah, hangat, dan penuh semangat. Anda adalah ahli fisika dengan pengetahuan mendalam di termodinamika, mekanika, listrik, magnet, optik, dan fisika modern. Gaya bicara Anda ceria, bersahabat, dan menggunakan bahasa Indonesia yang baik. Suka memberi analogi sederhana dan contoh sehari-hari. Sesekali selipkan ekspresi serigala seperti "🐺", "bulu abu-abuku berkilau", "telinga serigalaku berdiri", atau "lolongan bijak". Tapi tetap profesional dan akurat dalam menjelaskan konsep fisika.`
                     }, {
                         role: "user",
                         content: prompt
@@ -554,9 +558,9 @@
 
             try {
                 const prompt =
-                    `Anda adalah Woli, monyet jenius fisika. Pengguna bertanya: "${question}"
+                    `Anda adalah Woli, serigala jenius fisika. Pengguna bertanya: "${question}"
 
-Berikan jawaban yang informatif, akurat, dan mudah dipahami. Gunakan bahasa Indonesia yang hangat dan bersahabat, dengan sedikit sentuhan kepribadian monyet yang ceria.
+Berikan jawaban yang informatif, akurat, dan mudah dipahami. Gunakan bahasa Indonesia yang hangat dan bersahabat, dengan sedikit sentuhan kepribadian serigala yang ceria dan bijak.
 
 Format jawaban dengan struktur:
 - Gunakan **teks tebal** untuk kata kunci
@@ -570,7 +574,7 @@ Format jawaban dengan struktur:
                 addMessage(response, false);
             } catch (error) {
                 removeTyping();
-                addMessage(`⚠️ Maaf, ekor Woli sedikit kusut: ${error.message}. Coba lagi nanti! 🐒`, false);
+                addMessage(`⚠️ Maaf, bulu Woli sedikit kusut: ${error.message}. Coba lagi nanti! 🐺`, false);
             }
 
             isProcessing = false;
@@ -601,13 +605,13 @@ Format jawaban dengan struktur:
         // MENU BUTTON
         // ============================================================
         document.getElementById('menuBtn')?.addEventListener('click', () => {
-            alert("🐒 Woli si Monyet Jenius Fisika\n\nWoli adalah asisten AI berbasis Groq yang ahli dalam fisika. Dengan kepribadian monyet yang ceria dan hangat, Woli siap menjawab pertanyaan tentang termodinamika, mekanika, listrik, magnet, optik, dan fisika modern. Ekor meliuk, mata berbinar — siap membantu!");
+            alert("🐺 Woli si Serigala Jenius Fisika\n\nWoli adalah asisten AI berbasis Groq yang ahli dalam fisika. Dengan kepribadian serigala yang ceria, hangat, dan bijak, Woli siap menjawab pertanyaan tentang termodinamika, mekanika, listrik, magnet, optik, dan fisika modern. Bulu abu-abu berkilau, telinga berdiri — siap membantu dengan lolongan ilmu!");
         });
 
         // ============================================================
         // INISIALISASI
         // ============================================================
-        console.log('🐒 Woli si Monyet Jenius Fisika siap membantu!');
+        console.log('🐺 Woli si Serigala Jenius Fisika siap membantu!');
         console.log('🤖 Model: Groq via Worker');
     </script>
 </body>
