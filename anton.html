@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Fisikaku · Anton si Rubah</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== GAYA DASAR ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #1a1a2e;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100vh;
+            height: 100dvh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.04);
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border-bottom: 1px solid #e8ecf0;
+            flex-shrink: 0;
+            z-index: 30;
+            position: relative;
+            min-height: 64px;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .icon-badge {
+            width: 42px;
+            height: 42px;
+            background: #e8751a;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .icon-badge i {
+            font-size: 20px;
+            color: white;
+        }
+        /* telinga rubah kecil di badge */
+        .icon-badge::before,
+        .icon-badge::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 14px;
+            background: #e8751a;
+            border-radius: 50% 50% 0 0;
+            top: -6px;
+        }
+        .icon-badge::before {
+            left: 2px;
+            transform: rotate(-15deg);
+        }
+        .icon-badge::after {
+            right: 2px;
+            transform: rotate(15deg);
+        }
+
+        .title-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: -0.3px;
+        }
+        .title-text h1 span {
+            color: #e8751a;
+        }
+        .title-text p {
+            font-size: 0.55rem;
+            color: #6b6b80;
+            margin-top: 1px;
+            letter-spacing: 0.4px;
+            font-weight: 500;
+        }
+        .menu-btn {
+            background: transparent;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            color: #1a1a2e;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-btn:active {
+            background: rgba(0, 0, 0, 0.04);
+            transform: scale(0.92);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fc;
+            padding: 0 16px 16px;
+            position: relative;
+        }
+
+        /* ===== SECTION TITLE ===== */
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 12px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-left: 2px;
+            color: #1a1a2e;
+            flex-shrink: 0;
+        }
+        .section-title i {
+            font-size: 0.95rem;
+        }
+        .section-title .fa-robot {
+            color: #e8751a;
+        }
+
+        /* ===== AI CONTAINER ===== */
+        .ai-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e8ecf0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            margin-bottom: 10px;
+            min-height: 0;
+        }
+
+        .ai-chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 12px 8px;
+            background: #f8f9fc;
+            border-bottom: 1px solid #eef0f4;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+        }
+        .ai-chat-box::-webkit-scrollbar {
+            width: 3px;
+        }
+        .ai-chat-box::-webkit-scrollbar-track {
+            background: #eef0f4;
+        }
+        .ai-chat-box::-webkit-scrollbar-thumb {
+            background: #e8751a;
+            border-radius: 10px;
+        }
+
+        .ai-bottom-area {
+            flex-shrink: 0;
+            padding: 10px 14px 14px;
+            background: #ffffff;
+        }
+
+        .ai-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .ai-input-row input {
+            flex: 1;
+            padding: 8px 14px;
+            border: 1px solid #d0d4db;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            background: #f8f9fc;
+            color: #1a1a2e;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .ai-input-row input::placeholder {
+            color: #8a8a9e;
+        }
+        .ai-input-row input:focus {
+            border-color: #e8751a;
+            background: #ffffff;
+        }
+        .ai-input-row button {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: #e8751a;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .ai-input-row button:active {
+            transform: scale(0.90);
+        }
+        .ai-input-row button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ai-quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        .ai-quick-chips button {
+            background: #f0f2f6;
+            border: 1px solid #d0d4db;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.55rem;
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .ai-quick-chips button:active {
+            transform: scale(0.92);
+            background: #e8751a;
+            color: white;
+            border-color: #e8751a;
+        }
+
+        .ai-msg {
+            padding: 6px 12px;
+            border-radius: 12px;
+            margin-bottom: 6px;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            max-width: 92%;
+            word-wrap: break-word;
+        }
+        .ai-msg.bot {
+            background: #f0f2f6;
+            border: 1px solid #e8ecf0;
+            align-self: flex-start;
+            color: #1a1a2e;
+        }
+        .ai-msg.user {
+            background: #e8751a;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+            border: none;
+        }
+        .ai-msg .ai-label {
+            font-weight: 600;
+            font-size: 0.55rem;
+            display: block;
+            margin-bottom: 2px;
+            opacity: 0.6;
+        }
+        .ai-msg.bot .ai-label {
+            color: #e8751a;
+        }
+        .ai-msg.user .ai-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ===== TYPING INDICATOR ===== */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: #f0f2f6;
+            border-radius: 12px;
+            border: 1px solid #e8ecf0;
+            align-self: flex-start;
+            max-width: 60px;
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #e8751a;
+            border-radius: 50%;
+            animation: dotPulse 1.2s infinite;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes dotPulse {
+            0%,
+            60%,
+            100% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        .ai-msg.bot ul,
+        .ai-msg.bot ol {
+            padding-left: 18px;
+            margin: 4px 0;
+        }
+        .ai-msg.bot li {
+            margin-bottom: 2px;
+        }
+        .ai-msg.bot strong {
+            color: #e8751a;
+            font-weight: 700;
+        }
+        .ai-msg.bot .section-title {
+            font-weight: 700;
+            color: #1a1a2e;
+            display: block;
+            margin-top: 4px;
+            font-size: 0.75rem;
+        }
+
+        .info-widget {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-top: 6px;
+            border-left: 3px solid #e8751a;
+            border: 1px solid #e8ecf0;
+            flex-shrink: 0;
+        }
+        .info-widget i {
+            color: #e8751a;
+            margin-right: 6px;
+            font-size: 0.65rem;
+        }
+        .info-text {
+            font-size: 0.6rem;
+            color: #4a4a5e;
+            line-height: 1.4;
+        }
+        .info-text strong {
+            color: #1a1a2e;
+        }
+
+        @media (max-width: 420px) {
+            .ai-chat-box {
+                min-height: 100px;
+            }
+        }
+        @media (max-width: 360px) {
+            .ai-chat-box {
+                min-height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ===== HEADER ===== -->
+        <div class="app-header">
+            <div class="logo-area">
+                <div class="icon-badge"><i class="fas fa-atom"></i></div>
+                <div class="title-text">
+                    <h1>Fisikaku</h1>
+                    <p>✦ Anton si Rubah</p>
+                </div>
+            </div>
+            <button class="menu-btn" id="menuBtn"><i class="fas fa-ellipsis-v"></i></button>
+        </div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <div class="main-content">
+            <div class="section-title"><i class="fas fa-robot" style="color:#e8751a;"></i> Anton — Rubah Jenius Fisika</div>
+
+            <div class="ai-container">
+                <div class="ai-chat-box" id="aiChatBox">
+                    <div class="ai-msg bot">
+                        <span class="ai-label">🦊 Anton</span>
+                        Halo! Saya <strong>Anton</strong>, rubah jenius fisika! 🦊<br>
+                        Ekor saya bergoyang setiap kali ada pertanyaan seru tentang termodinamika, mekanika, listrik, magnet, optik, atau fisika modern. Ayo tanya apa saja — saya suka menjelaskan dengan gaya yang hangat dan penuh semangat!
+                        <br><br>
+                        <strong>Coba tanya:</strong> "apa itu termodinamika?" atau "jelaskan hukum II"
+                    </div>
+                </div>
+
+                <div class="ai-bottom-area">
+                    <div class="ai-input-row">
+                        <input type="text" id="aiInput" placeholder="Tanya Anton tentang fisika..." autocomplete="off" />
+                        <button id="aiSendBtn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                    <div class="ai-quick-chips">
+                        <button data-q="apa itu termodinamika">Apa itu Termo?</button>
+                        <button data-q="hukum 1 termodinamika">Hukum I</button>
+                        <button data-q="hukum 2 termodinamika">Hukum II</button>
+                        <button data-q="entropi">Entropi</button>
+                        <button data-q="apa itu atom">Atom</button>
+                        <button data-q="fonon">Fonon</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-widget">
+                <i class="fas fa-lightbulb"></i>
+                <span class="info-text"><strong>🦊 Tips Anton:</strong> Ketik pertanyaan atau pilih topik cepat. Anton akan menjawab dengan pengetahuan fisika yang luas — dan sedikit kegembiraan rubah!</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // KONFIGURASI GROQ AI
+        // ============================================================
+        const WORKER_URL = "https://nayra-ai.astrob379.workers.dev";
+        let isProcessing = false;
+
+        // ============================================================
+        // ELEMEN DOM
+        // ============================================================
+        const chatBox = document.getElementById('aiChatBox');
+        const input = document.getElementById('aiInput');
+        const sendBtn = document.getElementById('aiSendBtn');
+
+        // ============================================================
+        // FUNGSI CHAT
+        // ============================================================
+        function addMessage(text, isUser = false) {
+            const msg = document.createElement('div');
+            msg.className = `ai-msg ${isUser ? 'user' : 'bot'}`;
+
+            const label = document.createElement('span');
+            label.className = 'ai-label';
+            label.textContent = isUser ? '👤 Anda' : '🦊 Anton';
+            msg.appendChild(label);
+
+            let content = text;
+            if (!isUser) {
+                content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                content = content.replace(/^[•\-]\s+(.*)$/gm, '<li>$1</li>');
+                content = content.replace(/^(\d+)\.\s+(.*)$/gm, '<li>$2</li>');
+                if (content.includes('<li>')) {
+                    content = content.replace(/((?:<li>.*?<\/li>\s*)+)/g, '<ul>$1</ul>');
+                }
+                content = content.replace(/\*\*(.*?):\*\*/g, '<span class="section-title">$1:</span>');
+                content = content.replace(/\n/g, '<br>');
+            }
+
+            const contentSpan = document.createElement('span');
+            contentSpan.innerHTML = content;
+            msg.appendChild(contentSpan);
+
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return msg;
+        }
+
+        function showTyping() {
+            const typing = document.createElement('div');
+            typing.className = 'typing-indicator';
+            typing.id = 'typingIndicator';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            chatBox.appendChild(typing);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function removeTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+
+        // ============================================================
+        // CALL GROQ API
+        // ============================================================
+        async function callGroq(prompt) {
+            const response = await fetch(WORKER_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    messages: [{
+                        role: "system",
+                        content: `Anda adalah Anton, seekor rubah jenius fisika yang ramah, hangat, dan penuh semangat. Anda adalah ahli fisika dengan pengetahuan mendalam di termodinamika, mekanika, listrik, magnet, optik, dan fisika modern. Gaya bicara Anda ceria, bersahabat, dan menggunakan bahasa Indonesia yang baik. Suka memberi analogi sederhana dan contoh sehari-hari. Sesekali selipkan ekspresi rubah seperti "🦊", "ekor bergoyang", atau "telinga rubahku berdiri". Tapi tetap profesional dan akurat dalam menjelaskan konsep fisika.`
+                    }, {
+                        role: "user",
+                        content: prompt
+                    }]
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Worker Error");
+            }
+
+            return data.choices?.[0]?.message?.content || "Tidak ada respons dari Anton.";
+        }
+
+        // ============================================================
+        // KIRIM PERTANYAAN KE ANTON
+        // ============================================================
+        async function askAI(question) {
+            if (isProcessing) return;
+            if (!question.trim()) return;
+
+            isProcessing = true;
+            sendBtn.disabled = true;
+
+            addMessage(question, true);
+            input.value = '';
+
+            showTyping();
+
+            try {
+                const prompt =
+                    `Anda adalah Anton, rubah jenius fisika. Pengguna bertanya: "${question}"
+
+Berikan jawaban yang informatif, akurat, dan mudah dipahami. Gunakan bahasa Indonesia yang hangat dan bersahabat, dengan sedikit sentuhan kepribadian rubah yang ceria.
+
+Format jawaban dengan struktur:
+- Gunakan **teks tebal** untuk kata kunci
+- Gunakan bullet points (•) untuk poin-poin penting
+- Gunakan **Judul:** untuk bagian-bagian penting
+- Pisahkan paragraf dengan jelas
+- Maksimal 200 kata.`;
+
+                const response = await callGroq(prompt);
+                removeTyping();
+                addMessage(response, false);
+            } catch (error) {
+                removeTyping();
+                addMessage(`⚠️ Maaf, ekor Anton sedikit kusut: ${error.message}. Coba lagi nanti! 🦊`, false);
+            }
+
+            isProcessing = false;
+            sendBtn.disabled = false;
+            input.focus();
+        }
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+        sendBtn.addEventListener('click', () => askAI(input.value));
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                askAI(input.value);
+            }
+        });
+
+        document.querySelectorAll('.ai-quick-chips button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const q = btn.getAttribute('data-q');
+                if (q) askAI(q);
+            });
+        });
+
+        // ============================================================
+        // MENU BUTTON
+        // ============================================================
+        document.getElementById('menuBtn')?.addEventListener('click', () => {
+            alert("🦊 Anton si Rubah Jenius Fisika\n\nAnton adalah asisten AI berbasis Groq yang ahli dalam fisika. Dengan kepribadian rubah yang ceria dan hangat, Anton siap menjawab pertanyaan tentang termodinamika, mekanika, listrik, magnet, optik, dan fisika modern. Ekor bergoyang, telinga berdiri — siap membantu!");
+        });
+
+        // ============================================================
+        // INISIALISASI
+        // ============================================================
+        console.log('🦊 Anton si Rubah Jenius Fisika siap membantu!');
+        console.log('🤖 Model: Groq via Worker');
+    </script>
+</body>
+</html> 
