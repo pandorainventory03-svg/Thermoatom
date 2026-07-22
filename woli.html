@@ -57,101 +57,105 @@
                    HEADER — DeepSeek style
                    ============================================================ */
         .app-header {
-            padding: 14px 20px;
+            padding: 16px 20px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: #ffffff;
-            border-bottom: 1px solid #dce6ec;
             flex-shrink: 0;
             z-index: 30;
             position: relative;
-            min-height: 64px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
         }
 
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .icon-badge {
-            width: 42px;
-            height: 42px;
+        .logo-icon {
+            width: 32px;
+            height: 32px;
             background: #4A8B9B;
-            border-radius: 14px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
             position: relative;
         }
-        .icon-badge i {
-            font-size: 20px;
+        .logo-icon i {
+            font-size: 15px;
             color: white;
         }
-        /* telinga serigala di badge — runcing & segitiga */
-        .icon-badge::before,
-        .icon-badge::after {
+        /* telinga serigala runcing */
+        .logo-icon::before,
+        .logo-icon::after {
             content: '';
             position: absolute;
             width: 0;
             height: 0;
             border-style: solid;
-            top: -10px;
+            top: -8px;
             z-index: 1;
         }
-        .icon-badge::before {
-            left: 4px;
-            border-width: 0 8px 14px 8px;
+        .logo-icon::before {
+            left: 3px;
+            border-width: 0 6px 11px 6px;
             border-color: transparent transparent #4A8B9B transparent;
             transform: rotate(-8deg);
         }
-        .icon-badge::after {
-            right: 4px;
-            border-width: 0 8px 14px 8px;
+        .logo-icon::after {
+            right: 3px;
+            border-width: 0 6px 11px 6px;
             border-color: transparent transparent #4A8B9B transparent;
             transform: rotate(8deg);
         }
 
-        .title-text h1 {
-            font-size: 1.25rem;
+        .logo-text {
+            font-size: 1.1rem;
             font-weight: 700;
             letter-spacing: -0.3px;
             color: #1a2a30;
         }
-        /* "Fisika" — BIRU (#4A8B9B) selaras dengan tema */
-        .title-text .physics {
+        /* "Fisika" — BIRU (#4A8B9B) */
+        .logo-text .physics {
             color: #4A8B9B;
         }
         /* "ku" — HITAM (#1a2a30) */
-        .title-text .possessive {
+        .logo-text .possessive {
             color: #1a2a30;
         }
 
-        .title-text p {
-            font-size: 0.55rem;
-            color: #5a6e7a;
-            margin-top: 1px;
-            letter-spacing: 0.4px;
+        .logo-sub {
+            font-size: 0.5rem;
             font-weight: 500;
+            color: #7a8e9a;
+            letter-spacing: 0.3px;
+            margin-left: 4px;
         }
 
-        .menu-btn {
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .header-btn {
             background: transparent;
             border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            color: #1a2a30;
-            font-size: 17px;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            color: #5a6e7a;
+            font-size: 15px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .menu-btn:active {
+        .header-btn:active {
             background: rgba(0, 0, 0, 0.04);
             transform: scale(0.92);
         }
@@ -165,193 +169,101 @@
             display: flex;
             flex-direction: column;
             background: #f0f5f8;
-            padding: 0 16px 16px;
+            padding: 0;
             position: relative;
         }
 
         /* ============================================================
-                   SECTION TITLE
+                   CHAT AREA
                    ============================================================ */
-        .section-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin: 12px 0 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding-left: 2px;
-            color: #1a2a30;
-            flex-shrink: 0;
-        }
-        .section-title i {
-            font-size: 0.95rem;
-        }
-        .section-title .fa-robot {
-            color: #4A8B9B;
-        }
-
-        /* ============================================================
-                   AI CONTAINER
-                   ============================================================ */
-        .ai-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #dce6ec;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-            overflow: hidden;
-            margin-bottom: 10px;
-            min-height: 0;
-        }
-
-        .ai-chat-box {
+        .chat-area {
             flex: 1;
             overflow-y: auto;
-            padding: 12px 12px 8px;
-            background: #f0f5f8;
-            border-bottom: 1px solid #dce6ec;
-            min-height: 120px;
+            padding: 16px 20px 8px;
             display: flex;
             flex-direction: column;
+            gap: 2px;
+            background: #f0f5f8;
         }
-        .ai-chat-box::-webkit-scrollbar {
+        .chat-area::-webkit-scrollbar {
             width: 3px;
         }
-        .ai-chat-box::-webkit-scrollbar-track {
-            background: #dce6ec;
+        .chat-area::-webkit-scrollbar-track {
+            background: transparent;
         }
-        .ai-chat-box::-webkit-scrollbar-thumb {
-            background: #4A8B9B;
+        .chat-area::-webkit-scrollbar-thumb {
+            background: #b8c8d2;
             border-radius: 10px;
-        }
-
-        .ai-bottom-area {
-            flex-shrink: 0;
-            padding: 10px 14px 14px;
-            background: #ffffff;
-        }
-
-        .ai-input-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        .ai-input-row input {
-            flex: 1;
-            padding: 8px 14px;
-            border: 1px solid #c8d4dc;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            background: #f0f5f8;
-            color: #1a2a30;
-            outline: none;
-            transition: all 0.2s;
-        }
-        .ai-input-row input::placeholder {
-            color: #7a8e9a;
-        }
-        .ai-input-row input:focus {
-            border-color: #4A8B9B;
-            background: #ffffff;
-        }
-        .ai-input-row button {
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 50%;
-            background: #4A8B9B;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .ai-input-row button:active {
-            transform: scale(0.90);
-        }
-        .ai-input-row button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .ai-quick-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 8px;
-        }
-        .ai-quick-chips button {
-            background: #e8eff3;
-            border: 1px solid #c8d4dc;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.55rem;
-            color: #1a2a30;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        .ai-quick-chips button:active {
-            transform: scale(0.92);
-            background: #4A8B9B;
-            color: white;
-            border-color: #4A8B9B;
         }
 
         /* ============================================================
                    MESSAGES
                    ============================================================ */
-        .ai-msg {
-            padding: 6px 12px;
-            border-radius: 12px;
-            margin-bottom: 6px;
-            font-size: 0.72rem;
-            line-height: 1.5;
-            max-width: 92%;
+        .msg {
+            max-width: 88%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.78rem;
+            line-height: 1.6;
             word-wrap: break-word;
+            animation: msgFade 0.25s ease-out;
         }
-        .ai-msg.bot {
-            background: #e8eff3;
+        @keyframes msgFade {
+            0% {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .msg-bot {
+            background: #ffffff;
             border: 1px solid #dce6ec;
             align-self: flex-start;
             color: #1a2a30;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
-        .ai-msg.user {
+        .msg-user {
             background: #4A8B9B;
-            color: white;
+            color: #ffffff;
             align-self: flex-end;
+            border-bottom-right-radius: 4px;
             margin-left: auto;
-            border: none;
         }
-        .ai-msg .ai-label {
+
+        .msg .msg-label {
             font-weight: 600;
             font-size: 0.55rem;
             display: block;
             margin-bottom: 2px;
-            opacity: 0.6;
+            opacity: 0.5;
+            letter-spacing: 0.2px;
         }
-        .ai-msg.bot .ai-label {
+        .msg-bot .msg-label {
             color: #4A8B9B;
+            opacity: 0.7;
         }
-        .ai-msg.user .ai-label {
+        .msg-user .msg-label {
             color: rgba(255, 255, 255, 0.7);
         }
 
-        .ai-msg.bot ul,
-        .ai-msg.bot ol {
-            padding-left: 18px;
+        .msg-bot ul,
+        .msg-bot ol {
+            padding-left: 20px;
             margin: 4px 0;
         }
-        .ai-msg.bot li {
+        .msg-bot li {
             margin-bottom: 2px;
         }
-        .ai-msg.bot strong {
+        .msg-bot strong {
             color: #4A8B9B;
             font-weight: 700;
         }
-        .ai-msg.bot .section-title {
+        .msg-bot .section-title {
             font-weight: 700;
             color: #1a2a30;
             display: block;
@@ -360,13 +272,13 @@
         }
 
         /* ===== LaTeX rendering inside messages ===== */
-        .ai-msg.bot .katex-display {
+        .msg-bot .katex-display {
             margin: 6px 0 4px;
         }
-        .ai-msg.bot .katex {
+        .msg-bot .katex {
             font-size: 1.05em;
         }
-        .ai-msg.bot .katex-display>.katex {
+        .msg-bot .katex-display>.katex {
             font-size: 1.15em;
         }
 
@@ -377,17 +289,19 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 6px 12px;
-            background: #e8eff3;
-            border-radius: 12px;
+            padding: 10px 14px;
+            background: #ffffff;
             border: 1px solid #dce6ec;
+            border-radius: 14px;
+            border-bottom-left-radius: 4px;
             align-self: flex-start;
-            max-width: 60px;
+            max-width: 56px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
         .typing-indicator span {
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             background: #4A8B9B;
             border-radius: 50%;
             animation: dotPulse 1.2s infinite;
@@ -412,43 +326,171 @@
         }
 
         /* ============================================================
-                   INFO WIDGET
+                   INPUT AREA — DeepSeek style
                    ============================================================ */
-        .info-widget {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-top: 6px;
-            border-left: 3px solid #4A8B9B;
-            border: 1px solid #dce6ec;
+        .input-area {
             flex-shrink: 0;
+            padding: 10px 16px 16px;
+            background: #f0f5f8;
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
         }
-        .info-widget i {
-            color: #4A8B9B;
-            margin-right: 6px;
-            font-size: 0.65rem;
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            border: 1px solid #c8d4dc;
+            border-radius: 28px;
+            padding: 2px 4px 2px 18px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
         }
-        .info-text {
-            font-size: 0.6rem;
-            color: #3a4e5a;
-            line-height: 1.4;
+        .input-wrapper:focus-within {
+            border-color: #4A8B9B;
+            box-shadow: 0 0 0 3px rgba(74, 139, 155, 0.12);
         }
-        .info-text strong {
+
+        .input-wrapper input {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            background: transparent;
+            font-size: 0.82rem;
+            font-family: 'Inter', sans-serif;
             color: #1a2a30;
+            outline: none;
+            min-width: 0;
+        }
+        .input-wrapper input::placeholder {
+            color: #7a8e9a;
+            font-weight: 400;
+        }
+
+        .input-wrapper button {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 50%;
+            background: #4A8B9B;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .input-wrapper button:active {
+            transform: scale(0.90);
+        }
+        .input-wrapper button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ============================================================
+                   QUICK CHIPS
+                   ============================================================ */
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .quick-chips button {
+            background: transparent;
+            border: 1px solid #c8d4dc;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: #3a4e5a;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .quick-chips button:active {
+            transform: scale(0.94);
+            background: #4A8B9B;
+            color: white;
+            border-color: #4A8B9B;
+        }
+        .quick-chips button:hover {
+            border-color: #4A8B9B;
+            color: #4A8B9B;
+        }
+
+        /* ============================================================
+                   WELCOME MESSAGE
+                   ============================================================ */
+        .welcome-msg .msg-label {
+            opacity: 0.5;
+        }
+        .welcome-msg strong {
+            color: #4A8B9B;
         }
 
         /* ============================================================
                    RESPONSIVE
                    ============================================================ */
         @media (max-width: 420px) {
-            .ai-chat-box {
-                min-height: 100px;
+            .chat-area {
+                padding: 12px 14px 6px;
+            }
+            .msg {
+                font-size: 0.74rem;
+                padding: 8px 12px;
+            }
+            .input-wrapper {
+                padding: 2px 4px 2px 14px;
+            }
+            .input-wrapper input {
+                font-size: 0.76rem;
+                padding: 8px 0;
+            }
+            .input-wrapper button {
+                width: 34px;
+                height: 34px;
+                font-size: 13px;
+            }
+            .quick-chips button {
+                font-size: 0.55rem;
+                padding: 3px 12px;
             }
         }
         @media (max-width: 360px) {
-            .ai-chat-box {
-                min-height: 80px;
+            .logo-text {
+                font-size: 0.95rem;
             }
+            .logo-sub {
+                font-size: 0.45rem;
+            }
+            .chat-area {
+                padding: 10px 10px 4px;
+            }
+            .msg {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+                max-width: 94%;
+            }
+        }
+
+        /* ============================================================
+                   SCROLLBAR GLOBAL
+                   ============================================================ */
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #b8c8d2;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -458,52 +500,52 @@
         <!-- ===== HEADER — "Fisika" biru + "ku" hitam ===== -->
         <div class="app-header">
             <div class="logo-area">
-                <div class="icon-badge"><i class="fas fa-atom"></i></div>
-                <div class="title-text">
-                    <h1>
+                <div class="logo-icon">
+                    <i class="fas fa-atom"></i>
+                </div>
+                <div>
+                    <span class="logo-text">
                         <span class="physics">Fisika</span><span class="possessive">ku</span>
-                    </h1>
-                    <p>✦ Woli si Serigala</p>
+                    </span>
+                    <span class="logo-sub">· Woli</span>
                 </div>
             </div>
-            <button class="menu-btn" id="menuBtn"><i class="fas fa-ellipsis-v"></i></button>
+            <div class="header-actions">
+                <button class="header-btn" id="menuBtn" aria-label="Tentang Woli"><i class="fas fa-ellipsis-v"></i></button>
+            </div>
         </div>
 
         <!-- ===== MAIN CONTENT ===== -->
         <div class="main-content">
-            <div class="section-title"><i class="fas fa-robot" style="color:#4A8B9B;"></i> Woli — Serigala Jenius Fisika</div>
-
-            <div class="ai-container">
-                <div class="ai-chat-box" id="aiChatBox">
-                    <div class="ai-msg bot" id="welcomeMsg">
-                        <span class="ai-label">🐺 Woli</span>
+            <!-- CHAT AREA -->
+            <div class="chat-area" id="chatArea">
+                <!-- Welcome message -->
+                <div class="msg msg-bot welcome-msg" id="welcomeMsg">
+                    <span class="msg-label">🐺 Woli</span>
+                    <span>
                         Aum! Saya <strong>Woli</strong>, serigala jenius fisika! 🐺<br>
                         Bulu abu-abu saya berkilau setiap kali ada pertanyaan seru tentang termodinamika, mekanika, listrik, magnet, optik, atau fisika modern. Ayo tanya apa saja — saya suka menjelaskan dengan gaya yang hangat, penuh semangat, dan sedikit lolongan bijak!
                         <br><br>
                         <strong>Coba tanya:</strong> "apa itu termodinamika?" atau "jelaskan hukum II"<br>
                         <span style="font-size:0.7rem; opacity:0.6;">💡 Saya bisa menulis <strong>LaTeX</strong> untuk rumus! Contoh: \( E = mc^2 \) atau $$ F = ma $$</span>
-                    </div>
-                </div>
-
-                <div class="ai-bottom-area">
-                    <div class="ai-input-row">
-                        <input type="text" id="aiInput" placeholder="Tanya Woli tentang fisika..." autocomplete="off" />
-                        <button id="aiSendBtn"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                    <div class="ai-quick-chips">
-                        <button data-q="apa itu termodinamika">Apa itu Termo?</button>
-                        <button data-q="hukum 1 termodinamika">Hukum I</button>
-                        <button data-q="hukum 2 termodinamika">Hukum II</button>
-                        <button data-q="entropi">Entropi</button>
-                        <button data-q="apa itu atom">Atom</button>
-                        <button data-q="fonon">Fonon</button>
-                    </div>
+                    </span>
                 </div>
             </div>
 
-            <div class="info-widget">
-                <i class="fas fa-lightbulb"></i>
-                <span class="info-text"><strong>🐺 Tips Woli:</strong> Ketik pertanyaan atau pilih topik cepat. Woli akan menjawab dengan pengetahuan fisika yang luas — dan sedikit lolongan serigala yang menggema!</span>
+            <!-- INPUT AREA -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="aiInput" placeholder="Tanya Woli tentang fisika..." autocomplete="off" />
+                    <button id="aiSendBtn" aria-label="Kirim"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <div class="quick-chips">
+                    <button data-q="apa itu termodinamika">Termodinamika</button>
+                    <button data-q="hukum 1 termodinamika">Hukum I</button>
+                    <button data-q="hukum 2 termodinamika">Hukum II</button>
+                    <button data-q="entropi">Entropi</button>
+                    <button data-q="apa itu atom">Atom</button>
+                    <button data-q="fonon">Fonon</button>
+                </div>
             </div>
         </div>
     </div>
@@ -518,7 +560,7 @@
         // ================================================================
         // ELEMEN DOM
         // ================================================================
-        const chatBox = document.getElementById('aiChatBox');
+        const chatArea = document.getElementById('chatArea');
         const input = document.getElementById('aiInput');
         const sendBtn = document.getElementById('aiSendBtn');
 
@@ -547,15 +589,15 @@
         }
 
         // ================================================================
-        // FUNGSI CHAT
+        // TAMBAH PESAN KE CHAT
         // ================================================================
         function addMessage(text, isUser = false) {
             const msg = document.createElement('div');
-            msg.className = `ai-msg ${isUser ? 'user' : 'bot'}`;
+            msg.className = `msg ${isUser ? 'msg-user' : 'msg-bot'}`;
 
             const label = document.createElement('span');
-            label.className = 'ai-label';
-            label.textContent = isUser ? '👤 Anda' : '🐺 Woli';
+            label.className = 'msg-label';
+            label.textContent = isUser ? 'Anda' : '🐺 Woli';
             msg.appendChild(label);
 
             let content = text;
@@ -574,8 +616,8 @@
             contentSpan.innerHTML = content;
             msg.appendChild(contentSpan);
 
-            chatBox.appendChild(msg);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            chatArea.appendChild(msg);
+            chatArea.scrollTop = chatArea.scrollHeight;
 
             if (!isUser) {
                 renderLatex(msg);
@@ -592,8 +634,8 @@
             typing.className = 'typing-indicator';
             typing.id = 'typingIndicator';
             typing.innerHTML = '<span></span><span></span><span></span>';
-            chatBox.appendChild(typing);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            chatArea.appendChild(typing);
+            chatArea.scrollTop = chatArea.scrollHeight;
         }
 
         function removeTyping() {
@@ -693,7 +735,7 @@
             }
         });
 
-        document.querySelectorAll('.ai-quick-chips button').forEach(btn => {
+        document.querySelectorAll('.quick-chips button').forEach(btn => {
             btn.addEventListener('click', () => {
                 const q = btn.getAttribute('data-q');
                 if (q) askAI(q);
