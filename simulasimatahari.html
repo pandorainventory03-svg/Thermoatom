@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Bumi & Matahari - Sinar Menyorot</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #050510; font-family: 'Segoe UI', system-ui, sans-serif; }
+        #info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: rgba(255,255,240,0.7);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(6px);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            border-left: 3px solid #ffaa33;
+            pointer-events: none;
+            z-index: 10;
+        }
+        #controls-note {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: #8899aa;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            border: 1px solid #ffaa3344;
+            pointer-events: none;
+            z-index: 10;
+        }
+        @media (max-width: 600px) {
+            #info { font-size: 11px; padding: 6px 12px; bottom: 14px; left: 14px; }
+            #controls-note { font-size: 10px; padding: 4px 10px; bottom: 14px; right: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="info">🌞 Sinar Matahari menyoroti Bumi</div>
+    <div id="controls-note">🔄 Geser untuk melihat</div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- Setup Scene ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x070720);
+
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.2, 30);
+        camera.position.set(0, 1.8, 6.5);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = false;
+        controls.enableZoom = true;
+        controls.rotateSpeed = 0.8;
+        controls.target.set(0, 0, 0);
+        controls.maxPolarAngle = Math.PI / 2.2;
+
+        // ========== MATAHARI (kiri) ==========
+        const sunGroup = new THREE.Group();
+        sunGroup.position.set(-2.2, 0.4, 0);
+        scene.add(sunGroup);
+
+        // Bola matahari
+        const sunMat = new THREE.MeshStandardMaterial({
+            color: 0xffaa44,
+            emissive: 0xff8833,
+            emissiveIntensity: 2.5,
+        });
+        const sunGeom = new THREE.SphereGeometry(0.8, 64, 64);
+        const sunMesh = new THREE.Mesh(sunGeom, sunMat);
+        sunGroup.add(sunMesh);
+
+        // Glow corona
+        const glowMat = new THREE.MeshBasicMaterial({
+            color: 0xff6600,
+            transparent: true,
+            opacity: 0.18,
+            side: THREE.BackSide
+        });
+        const glowGeom = new THREE.SphereGeometry(1.0, 48, 48);
+        const glowMesh = new THREE.Mesh(glowGeom, glowMat);
+        sunGroup.add(glowMesh);
+
+        // Halo (sprite)
+        const haloMat = new THREE.SpriteMaterial({
+            map: (() => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256; canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+                const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+                gradient.addColorStop(0, 'rgba(255, 180, 80, 1)');
+                gradient.addColorStop(0.3, 'rgba(255, 140, 40, 0.8)');
+                gradient.addColorStop(1, 'rgba(255, 100, 20, 0)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 256, 256);
+                return new THREE.CanvasTexture(canvas);
+            })(),
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+        });
+        const halo = new THREE.Sprite(haloMat);
+        halo.scale.set(4.5, 4.5, 1);
+        sunGroup.add(halo);
+
+        // Sinar-sinar di sekitar matahari (efek starburst)
+        const rayGroup = new THREE.Group();
+        sunGroup.add(rayGroup);
+        for (let i = 0; i < 24; i++) {
+            const angle = (i / 24) * Math.PI * 2;
+            const length = 2.8 + Math.random() * 0.6;
+            const rayMat = new THREE.MeshBasicMaterial({
+                color: new THREE.Color().setHSL(0.09, 1, 0.6 + Math.random() * 0.3),
+                transparent: true,
+                opacity: 0.2 + Math.random() * 0.2,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+            });
+            const rayGeom = new THREE.PlaneGeometry(0.012, length);
+            const ray = new THREE.Mesh(rayGeom, rayMat);
+            const radius = 0.85 + Math.random() * 0.15;
+            ray.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius * 0.7, (Math.random() - 0.5) * 0.3);
+            ray.rotation.z = angle + Math.PI / 2;
+            ray.scale.x = 0.5 + Math.random() * 0.8;
+            rayGroup.add(ray);
+        }
+
+        // ========== BUMI (kanan) ==========
+        const earthGroup = new THREE.Group();
+        earthGroup.position.set(2.2, -0.2, 0.8);
+        scene.add(earthGroup);
+
+        // Tekstur Bumi
+        const textureLoader = new THREE.TextureLoader();
+        const earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+        const earthSpecular = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+        const earthMat = new THREE.MeshPhongMaterial({
+            map: earthMap,
+            specularMap: earthSpecular,
+            shininess: 6,
+            specular: new THREE.Color('grey')
+        });
+        const earthGeom = new THREE.SphereGeometry(0.9, 96, 96);
+        const earthMesh = new THREE.Mesh(earthGeom, earthMat);
+        earthGroup.add(earthMesh);
+
+        // Awan
+        const cloudCanvas = document.createElement('canvas');
+        cloudCanvas.width = 512; cloudCanvas.height = 512;
+        const ctx = cloudCanvas.getContext('2d');
+        ctx.fillStyle = 'white'; ctx.fillRect(0, 0, 512, 512);
+        for (let i = 0; i < 3000; i++) {
+            const x = Math.random() * 512, y = Math.random() * 512, r = 3 + Math.random() * 20;
+            const alpha = 0.15 + Math.random() * 0.4;
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`; ctx.fill();
+        }
+        const cloudTexture = new THREE.CanvasTexture(cloudCanvas);
+        cloudTexture.wrapS = THREE.RepeatWrapping;
+        cloudTexture.wrapT = THREE.RepeatWrapping;
+        cloudTexture.repeat.set(2.5, 1.5);
+        const cloudMat = new THREE.MeshPhongMaterial({
+            map: cloudTexture,
+            transparent: true,
+            opacity: 0.35,
+            blending: THREE.AdditiveBlending,
+            color: 0xffffff,
+        });
+        const cloudGeom = new THREE.SphereGeometry(0.94, 64, 64);
+        const cloudMesh = new THREE.Mesh(cloudGeom, cloudMat);
+        earthGroup.add(cloudMesh);
+
+        // Atmosfer tipis
+        const atmosMat = new THREE.MeshPhongMaterial({
+            color: 0x88aaff,
+            transparent: true,
+            opacity: 0.12,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+        });
+        const atmosGeom = new THREE.SphereGeometry(1.02, 48, 48);
+        const atmosMesh = new THREE.Mesh(atmosGeom, atmosMat);
+        earthGroup.add(atmosMesh);
+
+        // ========== SINAR MATAHARI MENYOROT BUMI ==========
+        const sunRayGroup = new THREE.Group();
+        scene.add(sunRayGroup);
+
+        function createSunRays() {
+            // Hapus sinar lama
+            while(sunRayGroup.children.length > 0) {
+                sunRayGroup.remove(sunRayGroup.children[0]);
+            }
+
+            const sunPos = sunGroup.position.clone();
+            const earthPos = earthGroup.position.clone();
+
+            // Sinar utama (garis terang)
+            const numRays = 24;
+            for (let i = 0; i < numRays; i++) {
+                const offsetX = (Math.random() - 0.5) * 0.6;
+                const offsetY = (Math.random() - 0.5) * 0.6;
+                const offsetZ = (Math.random() - 0.5) * 0.6;
+
+                const startPos = sunPos.clone().add(new THREE.Vector3(offsetX * 0.2, offsetY * 0.2, offsetZ * 0.2));
+                const endPos = earthPos.clone().add(new THREE.Vector3(offsetX * 0.4, offsetY * 0.4, offsetZ * 0.4));
+
+                const points = [startPos, endPos];
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                const material = new THREE.LineBasicMaterial({
+                    color: new THREE.Color().setHSL(0.10, 1, 0.55 + Math.random() * 0.25),
+                    transparent: true,
+                    opacity: 0.15 + Math.random() * 0.15,
+                });
+                const line = new THREE.Line(geometry, material);
+                sunRayGroup.add(line);
+            }
+
+            // Sinar lebih tebal (glow)
+            for (let i = 0; i < 10; i++) {
+                const offsetX = (Math.random() - 0.5) * 0.9;
+                const offsetY = (Math.random() - 0.5) * 0.9;
+                const offsetZ = (Math.random() - 0.5) * 0.9;
+                const startPos = sunPos.clone().add(new THREE.Vector3(offsetX * 0.15, offsetY * 0.15, offsetZ * 0.15));
+                const endPos = earthPos.clone().add(new THREE.Vector3(offsetX * 0.5, offsetY * 0.5, offsetZ * 0.5));
+                const points = [startPos, endPos];
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                const material = new THREE.LineBasicMaterial({
+                    color: 0xffaa44,
+                    transparent: true,
+                    opacity: 0.08,
+                });
+                const line = new THREE.Line(geometry, material);
+                sunRayGroup.add(line);
+            }
+
+            // Tambahkan titik-titik cahaya di sepanjang sinar (efek partikel)
+            const particleCount = 60;
+            const particleGeo = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount; i++) {
+                const t = Math.random();
+                const offsetX = (Math.random() - 0.5) * 0.7;
+                const offsetY = (Math.random() - 0.5) * 0.7;
+                const offsetZ = (Math.random() - 0.5) * 0.7;
+                const x = sunPos.x + (earthPos.x - sunPos.x) * t + offsetX * 0.3;
+                const y = sunPos.y + (earthPos.y - sunPos.y) * t + offsetY * 0.3;
+                const z = sunPos.z + (earthPos.z - sunPos.z) * t + offsetZ * 0.3;
+                positions[i*3] = x;
+                positions[i*3+1] = y;
+                positions[i*3+2] = z;
+            }
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particleMat = new THREE.PointsMaterial({
+                color: 0xffaa55,
+                size: 0.025,
+                transparent: true,
+                opacity: 0.3,
+                blending: THREE.AdditiveBlending,
+            });
+            const particles = new THREE.Points(particleGeo, particleMat);
+            sunRayGroup.add(particles);
+        }
+
+        // ========== Pencahayaan ==========
+        const ambient = new THREE.AmbientLight(0x223344, 0.3);
+        scene.add(ambient);
+
+        // Cahaya dari matahari
+        const sunLight = new THREE.PointLight(0xffdd99, 1.8, 15);
+        sunLight.position.copy(sunGroup.position);
+        scene.add(sunLight);
+
+        // Cahaya pengisi
+        const fillLight = new THREE.DirectionalLight(0x446688, 0.25);
+        fillLight.position.set(-1, 1, 3);
+        scene.add(fillLight);
+
+        // Bintang latar
+        const starField = new THREE.BufferGeometry();
+        const starPositions = [];
+        for (let i = 0; i < 1500; i++) {
+            const r = 20 + Math.random() * 50;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            starPositions.push(
+                r * Math.sin(phi) * Math.cos(theta),
+                r * Math.sin(phi) * Math.sin(theta),
+                r * Math.cos(phi)
+            );
+        }
+        starField.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPositions), 3));
+        const stars = new THREE.Points(starField, new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 0.12,
+            transparent: true,
+            opacity: 0.7,
+            blending: THREE.AdditiveBlending,
+        }));
+        scene.add(stars);
+
+        // ========== Animasi ==========
+        let time = 0;
+
+        function animate() {
+            time += 0.016;
+
+            // Rotasi Bumi
+            earthMesh.rotation.y += 0.003;
+            cloudMesh.rotation.y += 0.002;
+            atmosMesh.rotation.y += 0.0015;
+
+            // Rotasi matahari pelan
+            sunGroup.rotation.y += 0.0008;
+            sunGroup.rotation.x += 0.0003;
+
+            // Pulsasi matahari
+            const pulse = 1 + Math.sin(time * 2.5) * 0.015;
+            sunMesh.scale.set(pulse, pulse, pulse);
+            glowMesh.scale.set(pulse * 1.08, pulse * 1.08, pulse * 1.08);
+
+            // Update sinar (setiap 2 detik agar tetap dinamis)
+            if (Math.floor(time * 2) % 2 === 0) {
+                createSunRays();
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // ========== Resize ==========
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Inisialisasi sinar
+        setTimeout(() => createSunRays(), 50);
+
+        console.log('🌞 Bumi & Matahari siap!');
+    </script>
+</body>
+</html>
